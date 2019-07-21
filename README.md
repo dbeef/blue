@@ -14,6 +14,7 @@ Examples cover:
 3. Load model (included) and render
 4. Same as 3, but with FPS camera
 5. Imgui integration (TODO)
+6. Textured rectangle (TODO)
 
 ![Android example](readme/blue-example-android.png)
 
