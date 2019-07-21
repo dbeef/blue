@@ -44,6 +44,10 @@ cmake .. -DCMAKE_INSTALL_PREFIX=$BLUE_ROOT/blue_install
 cmake --build . --target install --config Release -- -j 2
 ```
 
+### Crosscompiling to Android
+
+TODO
+
 ### Testing
 
 Tests are enabled by default, however, to disable tests, 
