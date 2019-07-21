@@ -6,6 +6,16 @@ Supports Android / Windows / Linux.
 
 ![Android example](readme/blue-example-android.png)
 
+Tutorial code is provided under `examples` directory and will produce artifacts by default,
+unless `-DBLUE_EXAMPLES=OFF` is passed during CMake configuration.
+
+Examples cover:
+
+1. Create window
+2. Render triangle
+3. Load model (included) and render
+4. Same as 3, but with FPS camera
+5. Imgui integration (TODO)
 
 ## Dependency matrix
 
@@ -23,17 +33,6 @@ Supports Android / Windows / Linux.
 Additionally, Blue requires compiler supporting at least C++ 11 standard and a platform 
 providing at least OpenGL 4.3 / OpenGL ES 3.0 context. 
 
-Tutorial code is provided under `examples` directory and will produce artifacts by default, 
-unless `-DBLUE_EXAMPLES=OFF` is passed during CMake configuration.
-
-Examples cover:
-
-1. Create window
-2. Render triangle
-3. Load model (included) and render
-4. Same as 3, but with FPS camera
-5. Imgui integration (TODO)
-                        
 ### Building
 
 ```bash
