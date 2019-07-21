@@ -1,0 +1,6 @@
+project(samples)
+    add_subdirectory(1-clear-color)
+    add_subdirectory(2-triangle)
+    add_subdirectory(3-model-loading)
+    add_subdirectory(4-camera)
+    add_subdirectory(5-imgui)

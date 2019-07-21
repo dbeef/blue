@@ -1,0 +1,113 @@
+#include "blue/Window.hpp"
+#include "blue/Context.hpp"
+#include "blue/Assertions.h"
+
+#include "glad/glad.h"
+#ifdef BLUE_ANDROID
+#	include <glad_egl.h>
+#endif
+
+namespace 
+{
+	void set_window_attributes()
+	{
+#ifdef BLUE_ANDROID
+		SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
+		SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 0);
+		SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_ES);
+#else
+		SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
+		SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 3);
+		SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
+#endif
+		SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 8);
+		SDL_GL_SetAttribute(SDL_GL_STENCIL_SIZE, 8);
+	}
+}
+
+namespace blue
+{
+	Window::~Window()
+	{
+		SDL_GL_DeleteContext(_gl_context);
+		SDL_DestroyWindow(_window_handle);
+	}
+
+	void Window::update_size()
+	{
+		int display_w, display_h;
+		SDL_GetWindowSize(_window_handle, &display_w, &display_h);
+		_width = display_w;
+		_height = display_h;
+	}
+
+	bool Window::create()
+	{
+		_fullscreen = true;
+		return _create();
+	}
+
+	bool Window::create(std::uint16_t width, std::uint16_t height)
+	{
+		_fullscreen = false;
+		_width = width;
+		_height = height;
+		return _create();
+	}
+
+	bool Window::_create()
+	{
+		SDL_Init(SDL_INIT_VIDEO);
+		set_window_attributes();
+
+		Uint32 flags = SDL_WINDOW_OPENGL;
+		if (_fullscreen)
+		{
+			flags = flags | SDL_WINDOW_FULLSCREEN_DESKTOP;
+		}
+
+		_window_handle = SDL_CreateWindow(
+			_title.c_str(),
+			SDL_WINDOWPOS_UNDEFINED, // initial x position
+			SDL_WINDOWPOS_UNDEFINED, // initial y position
+			_width,
+			_height,
+			flags
+		);
+
+		if (_window_handle == nullptr)
+		{
+			blue::Context::logger().info("Failed to create window");
+			return false;
+		}
+		
+		// Size may have changed if fullscreen was specified.
+		update_size();
+		blue::Context::logger().info("Created window.");
+		return true;
+	}
+
+	bool Window::init_gl_context()
+	{
+		_gl_context = SDL_GL_CreateContext(_window_handle);
+		SDL_GL_MakeCurrent(_window_handle, _gl_context);
+
+#ifdef BLUE_ANDROID
+		gladLoadGLES2Loader((GLADloadproc)SDL_GL_GetProcAddress);
+#else
+		assert(gladLoadGLLoader((GLADloadproc)SDL_GL_GetProcAddress));
+#endif
+
+		DebugGlCall(glEnable(GL_DEPTH_TEST));
+		DebugGlCall(glEnable(GL_STENCIL_TEST));
+		DebugGlCall(glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE));
+
+		SDL_SetRelativeMouseMode(SDL_TRUE);
+		SDL_SetWindowGrab(_window_handle, SDL_TRUE);
+		SDL_WarpMouseInWindow(_window_handle, get_width() / 2, get_height() / 2);
+
+		DebugGlCall(glViewport(0, 0, get_width(), get_height()));
+
+		return true;
+	}
+}

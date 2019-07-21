@@ -1,0 +1,8 @@
+//
+// Created by dbeef on 5/26/19.
+//
+
+#ifndef OPENGL_PLAYGROUND_SUN_HPP
+#define OPENGL_PLAYGROUND_SUN_HPP
+
+#endif //OPENGL_PLAYGROUND_SUN_HPP

@@ -1,0 +1,5 @@
+if(ANDROID)
+    add_subdirectory(opengl-es)
+else()
+    add_subdirectory(opengl)
+endif()
