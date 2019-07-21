@@ -4,8 +4,6 @@ Very basic rendering engine written in C++ over OpenGL.
 
 Supports Android / Windows / Linux.
 
-![Android example](readme/blue-example-android.png)
-
 Tutorial code is provided under `examples` directory and will produce artifacts by default,
 unless `-DBLUE_EXAMPLES=OFF` is passed during CMake configuration.
 
@@ -16,6 +14,8 @@ Examples cover:
 3. Load model (included) and render
 4. Same as 3, but with FPS camera
 5. Imgui integration (TODO)
+
+![Android example](readme/blue-example-android.png)
 
 ## Dependency matrix
 
