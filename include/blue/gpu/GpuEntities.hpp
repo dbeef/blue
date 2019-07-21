@@ -1,5 +1,7 @@
 #pragma once
 
+#include "blue/Assertions.h"
+
 #include <glad/glad.h>
 #include <glm/mat4x4.hpp>
 
@@ -30,6 +32,7 @@ struct ShaderAttribute
 		case Type::VEC2: return 2;
 		case Type::VEC3: return 3;
 		case Type::VEC4: return 4;
+		default: BLUE_ASSERT(false); return 0;
 		}
 	}
 

@@ -11,7 +11,7 @@
 static void debug_break()
 {
 #if defined BLUE_WINDOWS
-	__debugbreak;
+	__debugbreak();
 #else
 	std::cin.ignore();
 #endif
