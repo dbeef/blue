@@ -2,16 +2,65 @@
 #include "blue/Context.hpp"
 #include "blue/Timestep.hpp"
 
+#include "imgui/imgui.h"
+#include "imgui/imgui_impl_sdl.h"
+#include "imgui/imgui_impl_opengl3.h"
+
+namespace
+{
+	void init_imgui()
+	{
+		IMGUI_CHECKVERSION();
+		ImGui::CreateContext();
+		ImGuiIO& io = ImGui::GetIO();
+		(void)io;
+		ImGui::StyleColorsDark();
+		ImGui_ImplSDL2_InitForOpenGL(blue::Context::window().get_window(), blue::Context::window().get_context());
+#ifdef ANDROID
+		ImGui_ImplOpenGL3_Init("#version 300 es");
+#else
+		ImGui_ImplOpenGL3_Init("#version 330 core");
+#endif
+	}
+
+	inline void imgui_start()
+	{
+		ImGui_ImplOpenGL3_NewFrame();
+		ImGui_ImplSDL2_NewFrame(blue::Context::window().get_window());
+		ImGui::NewFrame();
+	}
+
+	inline void imgui_end()
+	{
+		ImGui::Render();
+		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+	}
+}
+
 bool GpuThread::is_running()
 {
 	return _thread_running.load();
 }
 
-void GpuThread::run()
+bool GpuThread::run()
 {
 	_thread_running.store(true);
+
+	// Wait for OpenGL context initialisation result.
+	auto start_thread_future = _start_thread_status.get_future();
 	_thread = std::thread(&GpuThread::render_thread_loop, this);
-	blue::Context::logger().info("Started GPU thread.");
+	start_thread_future.wait();
+
+	if (start_thread_future.get())
+	{
+		blue::Context::logger().info("Started GPU thread.");
+		return true;
+	}
+	else
+	{
+		blue::Context::logger().info("Failed to start GPU thread.");
+		return false;
+	}
 }
 
 void GpuThread::stop()
@@ -27,15 +76,31 @@ void GpuThread::render_thread_loop()
 	auto& gpu_system = blue::Context::gpu_system();
 	auto& renderer = blue::Context::renderer();
 
-	blue::Context::window().init_gl_context();
+	bool context_init_success = blue::Context::window().init_gl_context();
+	_start_thread_status.set_value(context_init_success);
+	if (!context_init_success)
+	{
+		return;
+	}
+
 	Timestep timestep(60, true);
+
+	init_imgui();
 
 	while (blue::Context::gpu_thread().is_running())
 	{
 		timestep.mark_start();
 
+		renderer.lock();
+
 		renderer.clear();
-		renderer.draw();
+		renderer.draw_render_entities();
+
+		imgui_start();
+		renderer.draw_imgui_entities();
+		imgui_end();
+
+		renderer.unlock();
 
 		window.swap_buffers();
 

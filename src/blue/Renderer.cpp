@@ -29,10 +29,17 @@ void Renderer::clear() const
 	DebugGlCall(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT));
 }
 
-void Renderer::draw()
+void Renderer::draw_imgui_entities()
 {
-	lock();
+	for (const auto& pair : imgui_entities)
+	{
+		const auto& imgui_entity = pair.second;
+		imgui_entity();
+	}
+}
 
+void Renderer::draw_render_entities()
+{
 	static ShaderId current_shader = 0;
 	static UniformBufferId current_environment = 0;
 
@@ -72,8 +79,16 @@ void Renderer::draw()
 			DebugGlCall(glBindVertexArray(0));
 		}
 	}
+}
 
+ImGuiEntityId Renderer::add(const ImGuiEntity& entity)
+{
+	lock();
+	static ImGuiEntityId id = 1;
+	id++;
+	imgui_entities.emplace_back(std::make_pair(id, entity));
 	unlock();
+	return id;
 }
 
 RenderEntityId Renderer::add(const RenderEntity& entity)
@@ -107,7 +122,7 @@ void Renderer::update(const RenderEntity& entity)
 	unlock();
 }
 
-void Renderer::remove(const RenderEntityId& id)
+void Renderer::remove_render_entity(const RenderEntityId& id)
 {
 	lock();
 	auto iterator = std::remove_if(render_entities.begin(), render_entities.end(), [id](const RenderEntity& list_entity) -> bool {
@@ -117,6 +132,20 @@ void Renderer::remove(const RenderEntityId& id)
 	if (iterator != render_entities.end())
 	{
 		render_entities.erase(iterator);
+	}
+	unlock();
+}
+
+void Renderer::remove_imgui_entity(const ImGuiEntityId& id)
+{
+	lock();
+	auto iterator = std::remove_if(imgui_entities.begin(), imgui_entities.end(), [id](const std::pair<ImGuiEntityId, ImGuiEntity>& list_entity) -> bool {
+		return list_entity.first == id;
+		});
+
+	if (iterator != imgui_entities.end())
+	{
+		imgui_entities.erase(iterator);
 	}
 	unlock();
 }

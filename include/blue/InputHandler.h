@@ -53,8 +53,6 @@ public:
 	std::vector<KeyCallback> mouseButtonCommands;
 	std::vector<KeyCallback> keyboardKeyCommands;
 	std::vector<MouseCallback> mouseCommands;
-
-	std::atomic_bool cursor_attached {true};
 };
 
 #endif //OPENGL_PLAYGROUND_INPUTHANDLER_H

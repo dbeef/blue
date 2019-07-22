@@ -1,6 +1,10 @@
 #include "blue/InputHandler.h"
 #include "blue/Context.hpp"
 
+#include "imgui/imgui.h"
+#include "imgui/imgui_impl_opengl3.h"
+#include "imgui/imgui_impl_sdl.h"
+
 void InputHandler::poll()
 {
 	SDL_Event event;
@@ -9,8 +13,7 @@ void InputHandler::poll()
 		int xpos = blue::Context::window().get_width() / 2;
 		int ypos = blue::Context::window().get_height() / 2;
 
-		// FIXME:!!
-		//bool processed = ImGui_ImplSDL2_ProcessEvent(&event);
+		bool processed = ImGui_ImplSDL2_ProcessEvent(&event);
 
 		//if (event.type == SDL_EventType::SDL_MULTIGESTURE) {
 		//	if (fabs(event.mgesture.dDist) > 0.002) {
@@ -41,7 +44,7 @@ void InputHandler::poll()
 
 		if (event.type == SDL_EventType::SDL_MOUSEMOTION)
 		{
-			if (cursor_attached.load())
+			if (blue::Context::window().is_cursor_attached())
 				mouse_callback(event.motion.xrel + xpos, event.motion.yrel + ypos);
 			else
 				mouse_callback(event.motion.x, event.motion.y);

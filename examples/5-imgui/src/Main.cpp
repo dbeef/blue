@@ -1,7 +1,7 @@
-// TODO: Actually provide Imgui sample
-
 #include <blue/Context.hpp>
 #include <blue/Timestep.hpp>
+
+#include <imgui/imgui.h>
 
 #include <cmath>
 #include <atomic>
@@ -11,6 +11,7 @@ int main(int argc, char* argv[])
 	blue::Context::init();
 	blue::Context::window().create(800, 600);
 	blue::Context::gpu_thread().run();
+	blue::Context::window().detach_cursor();
 
 	// Now render thread is running and waiting for commands to process,
 	// leaving this thread only for CPU logics. 
@@ -27,6 +28,13 @@ int main(int argc, char* argv[])
 
 	// Start a loop with timestep limited to 30 times per second:
 	Timestep timestep(30);
+
+	// Add imgui entity
+
+	auto imgui_entity_id = blue::Context::renderer().add([]() {
+		ImGui::Begin("Blue integration with Imgui");
+		ImGui::End();
+	});
 
 	float red = 0.0f;
 	while (running)
