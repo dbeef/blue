@@ -41,6 +41,7 @@ void Renderer::draw_imgui_entities()
 void Renderer::draw_render_entities()
 {
 	static ShaderId current_shader = 0;
+	static TextureId current_texture = 0;
 	static UniformBufferId current_environment = 0;
 
 	for (const auto& entity : render_entities)
@@ -57,6 +58,15 @@ void Renderer::draw_render_entities()
 		{
 			current_environment = entity.environment;
 			DebugGlCall(glBindBuffer(GL_UNIFORM_BUFFER, current_environment));
+		}
+
+		if (current_texture != entity.texture && entity.texture != 0)
+		{
+			current_texture = entity.texture;
+			DebugGlCall(glBindTexture(GL_TEXTURE_2D, current_texture));
+			// Right now, blue utilizes only one texture slot.
+			auto loc = glGetUniformLocation(current_shader, "sampler");
+			glUniform1i(loc, 0);
 		}
 
 		glm::mat4 RotationMatrix = glm::toMat4(entity.rotation);
@@ -96,7 +106,7 @@ RenderEntityId Renderer::add(const RenderEntity& entity)
 	lock();
 	static RenderEntityId id = 1;
 	id++;
-	render_entities.emplace_back(RenderEntity{ entity.shader, id, entity.vertex_array, entity.position, entity.rotation, entity.scale, entity.environment });
+	render_entities.emplace_back(RenderEntity{ entity.shader, id, entity.vertex_array, entity.position, entity.rotation, entity.scale, entity.environment, entity.texture });
 	sort_entities_by_shader();
 	unlock();
 	return id;

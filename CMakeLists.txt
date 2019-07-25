@@ -23,6 +23,7 @@ add_subdirectory(vendor)
 
 add_library(
         blue STATIC
+        src/blue/ImageUtils.cpp
         src/blue/Window.cpp
         src/blue/Logger.cpp
         src/blue/Renderer.cpp
@@ -31,6 +32,7 @@ add_library(
         src/blue/InputHandler.cpp
         src/blue/Timestep.cpp
         src/blue/gpu/handlers/CompileShaderHandler.cpp
+        src/blue/gpu/handlers/CreateTextureHandler.cpp
         src/blue/gpu/handlers/DisposeShaderHandler.cpp
         src/blue/gpu/handlers/CreateMeshHandler.cpp
         src/blue/gpu/handlers/DisposeMeshHandler.cpp
@@ -43,13 +45,16 @@ add_library(
         src/blue/ModelLoader.cpp
         src/blue/gpu/handlers/SetClearColorHandler.cpp
         src/blue/GpuThread.cpp
+        include/blue/ImageUtils.hpp
         include/blue/GpuThread.hpp
         include/blue/gpu/handlers/SetClearColorHandler.hpp
         include/blue/ModelLoader.h
         include/blue/gpu/handlers/UpdateEnvironmentHandler.hpp
         include/blue/ShaderUtils.h
         include/blue/gpu/GpuEntities.hpp
+        # TODO: Remove "Handler" postfix; they're already in "handlers" directory.
         include/blue/gpu/handlers/CompileShaderHandler.hpp
+        include/blue/gpu/handlers/CreateTextureHandler.hpp
         include/blue/gpu/handlers/DisposeShaderHandler.hpp
         include/blue/gpu/handlers/CreateMeshHandler.hpp
         include/blue/gpu/handlers/DisposeMeshHandler.hpp

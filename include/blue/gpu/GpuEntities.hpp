@@ -4,6 +4,8 @@
 
 #include <glad/glad.h>
 #include <glm/mat4x4.hpp>
+#include <memory>
+#include <vector>
 
 struct ShaderAttribute
 {
@@ -17,9 +19,10 @@ struct ShaderAttribute
 
 	enum class Purpose
 	{
-		POSITION,
+		VERTEX_POSITION,
+		TEXTURE_COORDINATE,
 		COLOR,
-		NORMAL
+		NORMAL,
 	};
 
 	ShaderAttribute(Type type, const Purpose& purpose) : _type(type), _purpose(purpose) {}
@@ -53,6 +56,7 @@ using Indices = std::vector<IndexType>;
 using Attributes = std::vector<ShaderAttribute>;
 
 using ShaderId = GLuint;
+using TextureId = GLuint;
 using VertexArrayId = GLuint;
 using IndexBufferId = GLuint;
 using VertexBufferId = GLuint;
@@ -66,10 +70,10 @@ struct Environment
 
 struct VertexArray
 {
-	 VertexArrayId vao; // 4 bytes
-	 VertexBufferId vbo; // 4 bytes
-	 IndexBufferId ibo; // 4 bytes
-	 std::uint32_t vertices_count; // 4 bytes
+	VertexArrayId vao; // 4 bytes
+	VertexBufferId vbo; // 4 bytes
+	IndexBufferId ibo; // 4 bytes
+	std::uint32_t vertices_count; // 4 bytes
 };
 
 struct CompileShaderEntity
@@ -86,6 +90,11 @@ struct CreateMeshEntity
 	const std::uint32_t indices_count;
 };
 
+struct CreateTextureEntity
+{
+	std::shared_ptr<std::vector<char>> data;
+};
+
 struct DisposeShaderEntity
 {
 	const ShaderId& shader;
@@ -96,7 +105,7 @@ struct SetClearColorEntity
 	const glm::vec3 color;
 };
 
-struct DisposeMeshEntity 
+struct DisposeMeshEntity
 {
 };
 

@@ -3,6 +3,7 @@
 #include "blue/gpu/handlers/DisposeShaderHandler.hpp"
 #include "blue/gpu/handlers/DisposeMeshHandler.hpp"
 #include "blue/gpu/handlers/CreateMeshHandler.hpp"
+#include "blue/gpu/handlers/CreateTextureHandler.hpp"
 #include "blue/gpu/handlers/CreateEnvironmentHandler.hpp"
 #include "blue/gpu/handlers/UpdateEnvironmentHandler.hpp"
 #include "blue/gpu/handlers/SetClearColorHandler.hpp"
@@ -50,6 +51,12 @@ void GpuCommandSystem::execute()
 	{
 		handle(update_environment_projection_entities.front());
 		update_environment_projection_entities.pop();
+	}
+
+	while (!create_texture_entities.empty())
+	{
+		handle(create_texture_entities.front());
+		create_texture_entities.pop();
 	}
 
 	while (!set_clear_color_entities.empty())
@@ -110,6 +117,19 @@ std::future<UniformBufferId> GpuCommandSystem::submit(const CreateEnvironmentEnt
 	auto pair = std::make_pair(std::move(promise), entity);
 	lock();
 	create_env_entities.push(std::move(pair));
+	unlock();
+
+	return future;
+}
+
+std::future<TextureId> GpuCommandSystem::submit(const CreateTextureEntity& entity)
+{
+	std::promise<TextureId> promise;
+	std::future<TextureId> future = promise.get_future();
+
+	auto pair = std::make_pair(std::move(promise), entity);
+	lock();
+	create_texture_entities.push(std::move(pair));
 	unlock();
 
 	return future;

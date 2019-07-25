@@ -17,12 +17,12 @@ public:
 	std::future<ShaderId> submit(const CompileShaderEntity&);
 	std::future<VertexArray> submit(const CreateMeshEntity&);
 	std::future<UniformBufferId> submit(const CreateEnvironmentEntity&);
+	std::future<TextureId> submit(const CreateTextureEntity&);
 
 	void submit(const DisposeShaderEntity&);
 	void submit(const DisposeMeshEntity&);
 	void submit(const UpdateEnvironmentEntity_Projection&);
 	void submit(const UpdateEnvironmentEntity_View&);
-
 	void submit(const SetClearColorEntity&);
 
 private:
@@ -33,6 +33,7 @@ private:
 
 	std::queue<std::pair<std::promise<VertexArray>, CreateMeshEntity>> create_mesh_entities;
 	std::queue<std::pair<std::promise<ShaderId>, CompileShaderEntity>> compile_shader_entities;
+	std::queue<std::pair<std::promise<TextureId>, CreateTextureEntity>> create_texture_entities;
 	std::queue<std::pair<std::promise<UniformBufferId>, CreateEnvironmentEntity>> create_env_entities;
 
 	std::queue<SetClearColorEntity> set_clear_color_entities;

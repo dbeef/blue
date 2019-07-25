@@ -11,6 +11,7 @@ class ShaderSource
 {
 public:
 
+	// TODO: Return CompileShaderEntity
 	ShaderSource(const std::string vertex_path, const std::string fragment_path);
 
 	std::string vertex;

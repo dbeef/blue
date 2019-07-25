@@ -1,6 +1,8 @@
 #include <blue/Context.hpp>
 #include <blue/Timestep.hpp>
 #include <blue/ShaderUtils.h>
+// TODO: Rename to texture utils.
+#include <blue/ImageUtils.hpp>
 #include <blue/PerspectiveCamera.hpp>
 
 #include <atomic>
@@ -36,26 +38,24 @@ int main(int argc, char* argv[])
 
 	Vertices vertices =
 	{
-		-1.0f, -1.0f, 0.0f, // left - position
-		1.0f,  0.0f, 0.0f,  // left - color
-		1.0f, -1.0f, 0.0f,  // right - position
-		0.0f,  1.0f, 0.0f,  // right - color
-		0.0f,  1.0f, 0.0f,  // up - position
-		0.0f,  0.0f, 1.0f,  // up - color
+		/* Vertex pos */ -1.0, -1.0, 0.0f, /* Tex coord */ 0.0f, 0.0f,
+		/* Vertex pos */ -1.0, 1.0, 0.0f,  /* Tex coord */ 0.0f, 1.0f,
+		/* Vertex pos */ 1.0, 1.0, 0.0f,   /* Tex coord */ 1.0f, 1.0f,
+		/* Vertex pos */ 1.0, -1.0, 0.0f,  /* Tex coord */ 1.0f, 0.0f,
 	};
 
 	Indices indices =
 	{
-		0, 1, 2
+		0, 1, 2, 2, 3, 0
 	};
 
 	Attributes attributes =
 	{
 		{ ShaderAttribute::Type::VEC3, ShaderAttribute::Purpose::VERTEX_POSITION},
-		{ ShaderAttribute::Type::VEC3, ShaderAttribute::Purpose::COLOR}
+		{ ShaderAttribute::Type::VEC2, ShaderAttribute::Purpose::TEXTURE_COORDINATE}
 	};
 
-	auto vertex_array_future = blue::Context::gpu_system().submit(CreateMeshEntity{ vertices, indices, attributes, 3 });
+	auto vertex_array_future = blue::Context::gpu_system().submit(CreateMeshEntity{ vertices, indices, attributes, 6 });
 	vertex_array_future.wait();
 	auto vertex_array = vertex_array_future.get();
 
@@ -68,9 +68,19 @@ int main(int argc, char* argv[])
 	// Upload camera's matrices
 
 	PerspectiveCamera camera;
+	camera.cameraPos.x = 0.0f;
+	camera.cameraPos.y = 0.0f;
+	camera.cameraPos.z = 10.0f;
 
 	blue::Context::gpu_system().submit(UpdateEnvironmentEntity_Projection{ environment_id, camera.get_projection() });
 	blue::Context::gpu_system().submit(UpdateEnvironmentEntity_View{ environment_id, camera.get_view() });
+
+	// Create texture
+
+	auto create_texture_entity = ImageUtils::read("resources/blue.png");
+	auto texture_future = blue::Context::gpu_system().submit(create_texture_entity);
+	texture_future.wait();
+	auto texture = texture_future.get();
 
 	// Submit render command consisting of compiled shader, uploaded mesh and following geometry properties:
 
@@ -79,8 +89,10 @@ int main(int argc, char* argv[])
 	entity.shader = shader;
 	entity.vertex_array = vertex_array;
 	entity.scale = 2.0f;
-	entity.rotation = { 1.0f, 1.0f, 0, 0};
+	entity.rotation = { 0, 0, 0, 0 };
 	entity.environment = environment_id;
+	entity.texture = texture;
+	// TODO: Set texture to zero in other examples.
 
 	RenderEntityId id = blue::Context::renderer().add(entity);
 

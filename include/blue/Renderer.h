@@ -16,17 +16,22 @@ using ImGuiEntity = std::function<void()>;
 using RenderEntityId = std::uint32_t;
 using ImGuiEntityId = std::uint32_t;
 
-// 64 bytes of size - fills CPU cache line on IA32/IA64 and ARM A-series (most of smartphones).
 struct RenderEntity
 {
 	ShaderId shader;
-	RenderEntityId id;
-	VertexArray vertex_array; 
-	glm::vec3 position; 
-	glm::quat rotation; 
-	float scale;
-	UniformBufferId environment;
+	RenderEntityId id; 
+	VertexArray vertex_array;
+	glm::vec3 position;  
+	glm::quat rotation;  
+	float scale; 
+	UniformBufferId environment; 
+	TextureId texture;
 };
+
+// 64 bytes of size - fills CPU cache line on IA32/IA64 and ARM A-series (most of smartphones).
+// It is performance optimization, to keep RenderEntity from being too bloated and get boost 
+// from prefetching on modern CPU's.
+static_assert(sizeof(RenderEntity) <= 64, "Render entity too big.");
 
 class Renderer {
 

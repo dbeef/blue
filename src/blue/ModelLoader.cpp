@@ -154,7 +154,7 @@ std::vector<VertexType> models::parse_scene(const aiScene*& scene, const std::ve
 					{
 						switch (attribute._purpose)
 						{
-						case(ShaderAttribute::Purpose::POSITION):
+						case(ShaderAttribute::Purpose::VERTEX_POSITION):
 						{
 							vertices.push_back(vertex.x);
 							vertices.push_back(vertex.y);

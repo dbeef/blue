@@ -37,7 +37,7 @@ int main(int argc, char* argv[])
 
 	Attributes attributes =
 	{
-		{ ShaderAttribute::Type::VEC3, ShaderAttribute::Purpose::POSITION},
+		{ ShaderAttribute::Type::VEC3, ShaderAttribute::Purpose::VERTEX_POSITION},
 		{ ShaderAttribute::Type::VEC3, ShaderAttribute::Purpose::COLOR},
 		{ ShaderAttribute::Type::VEC3, ShaderAttribute::Purpose::NORMAL}
 	};
