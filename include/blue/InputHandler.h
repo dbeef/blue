@@ -10,6 +10,7 @@
 #include <utility>
 #include <functional>
 #include <atomic>
+#include <algorithm>
 
 // Currently using SDL's enums for keys / actions (press/release).
 // TODO: Map SDL's enums to Blue's enums to have a layer of abstraction from SDL.
@@ -29,11 +30,29 @@ public:
 
 	inline void registerKeyCallback(const KeyCallback& callback)
 	{
+		auto iterator = std::remove_if(keyboardKeyCommands.begin(), keyboardKeyCommands.end(), [callback](const KeyCallback& list_callback) -> bool {
+			return callback.key_type == list_callback.key_type && callback.action == list_callback.action;
+			});
+
+		if (iterator != keyboardKeyCommands.end())
+		{
+			keyboardKeyCommands.erase(iterator);
+		}
+
 		keyboardKeyCommands.emplace_back(callback);
 	}
 	
 	inline void registerMouseKeyCallback(const KeyCallback& callback)
 	{
+		auto iterator = std::remove_if(mouseButtonCommands.begin(), mouseButtonCommands.end(), [callback](const KeyCallback& list_callback) -> bool {
+			return callback.key_type == list_callback.key_type && callback.action == list_callback.action;
+			});
+
+		if (iterator != mouseButtonCommands.end())
+		{
+			mouseButtonCommands.erase(iterator);
+		}
+
 		mouseButtonCommands.emplace_back(callback);
 	}
 
