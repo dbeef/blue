@@ -8,7 +8,7 @@
 
 using CameraId = std::uint32_t;
 
-//A normalized vector is one which is often used just to denote pure directions
+// A normalized vector is one which is often used just to denote pure directions
 // without bothering about the magnitude (set to 1; hence their other, more common name unit vector)
 // i.e. how far the vector pushes doesn't matter but in what direction does it point/push matters.
 
@@ -27,6 +27,18 @@ public:
 	glm::mat4 get_view();
 
 	glm::mat4 get_projection();
+
+	void go_forward(float distance);
+
+	void go_backward(float distance);
+
+	void go_left(float distance);
+
+	void go_right(float distance);
+
+	void mouse_rotation(double xpos, double ypos);
+
+//private:
 
 	// roll is always 0
 	GLfloat yaw = 0;

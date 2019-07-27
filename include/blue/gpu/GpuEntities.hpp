@@ -78,8 +78,8 @@ struct VertexArray
 
 struct CompileShaderEntity
 {
-	const std::string& vertex;
-	const std::string& fragment;
+	std::string vertex;
+	std::string fragment;
 };
 
 struct CreateMeshEntity

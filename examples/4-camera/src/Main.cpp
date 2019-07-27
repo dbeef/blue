@@ -2,10 +2,12 @@
 #include <blue/Timestep.hpp>
 #include <blue/ShaderUtils.h>
 #include <blue/ModelLoader.h>
-#include <blue/PerspectiveCamera.hpp>
+#include <blue/camera/PerspectiveCamera.hpp>
 
 #include <cmath>
 #include <atomic>
+
+static const float CAMERA_SPEED = 0.5f;
 
 int main(int argc, char* argv[])
 {
@@ -28,8 +30,8 @@ int main(int argc, char* argv[])
 
 	// Issue the GPU thread with task of compiling shader program:
 
-	auto shader_source = ShaderSource("resources/Triangle.vertex.glsl", "resources/Triangle.fragment.glsl");
-	auto shader_future = blue::Context::gpu_system().submit(CompileShaderEntity{ shader_source.vertex, shader_source.fragment });
+	auto compile_shader_entity = ShaderUtils::make_entity("resources/Triangle.vertex.glsl", "resources/Triangle.fragment.glsl");
+	auto shader_future = blue::Context::gpu_system().submit(compile_shader_entity);
 	shader_future.wait();
 	auto shader = shader_future.get();
 
@@ -62,8 +64,6 @@ int main(int argc, char* argv[])
 	blue::Context::gpu_system().submit(UpdateEnvironmentEntity_Projection{ environment, camera.get_projection() });
 	blue::Context::gpu_system().submit(UpdateEnvironmentEntity_View{ environment, camera.get_view() });
 
-	// WASD callback + mouse
-
 	blue::Context::input().registerKeyCallback({
 			[&running]() { running = false; },
 			SDLK_ESCAPE,
@@ -73,61 +73,35 @@ int main(int argc, char* argv[])
 
 	auto w_callback = [&camera, &environment]()
 	{
-		const float CAMERA_SPEED = 0.5f;
-		camera.cameraPos += camera.cameraFront * CAMERA_SPEED;
+		camera.go_forward(CAMERA_SPEED);
 		blue::Context::gpu_system().submit(UpdateEnvironmentEntity_View{ environment, camera.get_view() });
 	};
 	blue::Context::input().registerKeyCallback({ w_callback, SDLK_w, SDL_KEYDOWN });
 
+	auto s_callback = [&camera, &environment]()
+	{
+		camera.go_backward(CAMERA_SPEED);
+		blue::Context::gpu_system().submit(UpdateEnvironmentEntity_View{ environment, camera.get_view() });
+	};
+	blue::Context::input().registerKeyCallback({ s_callback, SDLK_s, SDL_KEYDOWN });
+
 	auto a_callback = [&camera, &environment]()
 	{
-		const float CAMERA_SPEED = 0.5f;
-		camera.cameraPos -= glm::normalize(glm::cross(camera.cameraFront, camera.CAMERA_UP)) * CAMERA_SPEED;
+		camera.go_left(CAMERA_SPEED);
 		blue::Context::gpu_system().submit(UpdateEnvironmentEntity_View{ environment, camera.get_view() });
 	};
 	blue::Context::input().registerKeyCallback({ a_callback, SDLK_a, SDL_KEYDOWN });
 
-	auto s_callback = [&camera, &environment]()
-	{
-		const float CAMERA_SPEED = 0.5f;
-		camera.cameraPos -= camera.cameraFront * CAMERA_SPEED;
-		blue::Context::gpu_system().submit(UpdateEnvironmentEntity_View{ environment, camera.get_view() });
-	};
-
-	blue::Context::input().registerKeyCallback({ s_callback, SDLK_s, SDL_KEYDOWN });
-
 	auto d_callback = [&camera, &environment]()
 	{
-		const float CAMERA_SPEED = 0.5f;
-		camera.cameraPos += glm::normalize(glm::cross(camera.cameraFront, camera.CAMERA_UP)) * CAMERA_SPEED;
+		camera.go_right(CAMERA_SPEED);
 		blue::Context::gpu_system().submit(UpdateEnvironmentEntity_View{ environment, camera.get_view() });
 	};
 	blue::Context::input().registerKeyCallback({ d_callback, SDLK_d, SDL_KEYDOWN });
 
 	auto mouse_move_callback = [&camera, &environment](double xpos, double ypos)
 	{
-		GLfloat xoffset = xpos - camera.lastX;
-		GLfloat yoffset = camera.lastY - ypos; // Reversed since y-coordinates go from bottom to left
-
-		GLfloat sensitivity = 0.25;    // Change this value to your liking
-		xoffset *= sensitivity;
-		yoffset *= sensitivity;
-
-		camera.yaw += xoffset;
-		camera.pitch += yoffset;
-
-		// Make sure that when pitch is out of bounds, screen doesn't get flipped
-		if (camera.pitch > 89.0f)
-			camera.pitch = 89.0f;
-		if (camera.pitch < -89.0f)
-			camera.pitch = -89.0f;
-
-		glm::vec3 front;
-		front.x = cos(glm::radians(camera.yaw)) * cos(glm::radians(camera.pitch));
-		front.y = sin(glm::radians(camera.pitch));
-		front.z = sin(glm::radians(camera.yaw)) * cos(glm::radians(camera.pitch));
-		camera.cameraFront = glm::normalize(front);
-
+		camera.mouse_rotation(xpos, ypos);
 		blue::Context::gpu_system().submit(UpdateEnvironmentEntity_View{ environment, camera.get_view() });
 	};
 

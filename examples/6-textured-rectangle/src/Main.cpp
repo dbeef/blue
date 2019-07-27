@@ -1,9 +1,8 @@
 #include <blue/Context.hpp>
 #include <blue/Timestep.hpp>
 #include <blue/ShaderUtils.h>
-// TODO: Rename to texture utils.
-#include <blue/ImageUtils.hpp>
-#include <blue/PerspectiveCamera.hpp>
+#include <blue/TextureUtils.hpp>
+#include <blue/camera/PerspectiveCamera.hpp>
 
 #include <atomic>
 
@@ -29,8 +28,8 @@ int main(int argc, char* argv[])
 
 	// Issue the GPU thread with task of compiling shader program:
 
-	auto shader_source = ShaderSource("resources/Triangle.vertex.glsl", "resources/Triangle.fragment.glsl");
-	auto shader_future = blue::Context::gpu_system().submit(CompileShaderEntity{ shader_source.vertex, shader_source.fragment });
+	auto compile_shader_entity = ShaderUtils::make_entity("resources/Triangle.vertex.glsl", "resources/Triangle.fragment.glsl");
+	auto shader_future = blue::Context::gpu_system().submit(compile_shader_entity);
 	shader_future.wait();
 	auto shader = shader_future.get();
 
@@ -92,7 +91,6 @@ int main(int argc, char* argv[])
 	entity.rotation = { 0, 0, 0, 0 };
 	entity.environment = environment_id;
 	entity.texture = texture;
-	// TODO: Set texture to zero in other examples.
 
 	RenderEntityId id = blue::Context::renderer().add(entity);
 

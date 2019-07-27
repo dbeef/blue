@@ -6,9 +6,7 @@
 
 namespace ShaderUtils
 {
-
-	///For loading shaders from filesystem into std::string.
-	std::string parseFile(std::string filename) {
+	std::string read(const std::string& filename) {
 
 		std::string data;
 
@@ -30,15 +28,12 @@ namespace ShaderUtils
 
 		return data;
 	}
-}
 
-ShaderSource::ShaderSource(const std::string vertex_path, const std::string fragment_path)
-{
-	vertex = ShaderUtils::parseFile(vertex_path);
-	fragment = ShaderUtils::parseFile(fragment_path);
-
-	if (vertex.size() == 0 || fragment.size() == 0)
+	CompileShaderEntity make_entity(const std::string vertex_path, const std::string fragment_path)
 	{
-		_valid = false;
+		CompileShaderEntity entity;
+		entity.vertex = ShaderUtils::read(vertex_path);
+		entity.fragment = ShaderUtils::read(fragment_path);
+		return entity;
 	}
 }

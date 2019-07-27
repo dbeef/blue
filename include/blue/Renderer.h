@@ -18,14 +18,14 @@ using ImGuiEntityId = std::uint32_t;
 
 struct RenderEntity
 {
-	ShaderId shader;
-	RenderEntityId id; 
-	VertexArray vertex_array;
-	glm::vec3 position;  
-	glm::quat rotation;  
-	float scale; 
-	UniformBufferId environment; 
-	TextureId texture;
+	ShaderId shader{};
+	RenderEntityId id{};
+	VertexArray vertex_array{};
+	glm::vec3 position{};
+	glm::quat rotation{};
+	float scale{};
+	UniformBufferId environment{};
+	TextureId texture{};
 };
 
 // 64 bytes of size - fills CPU cache line on IA32/IA64 and ARM A-series (most of smartphones).

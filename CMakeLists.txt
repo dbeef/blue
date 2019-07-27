@@ -23,7 +23,7 @@ add_subdirectory(vendor)
 
 add_library(
         blue STATIC
-        src/blue/ImageUtils.cpp
+        src/blue/TextureUtils.cpp
         src/blue/Window.cpp
         src/blue/Logger.cpp
         src/blue/Renderer.cpp
@@ -39,13 +39,14 @@ add_library(
         src/blue/gpu/handlers/CreateEnvironmentHandler.cpp
         src/blue/gpu/GpuCommandSystem.cpp
         src/blue/ShaderUtils.cpp
-        src/blue/OrthographicCamera.cpp
-        src/blue/PerspectiveCamera.cpp
+        src/blue/camera/OrthographicCamera.cpp
+        src/blue/camera/PerspectiveCamera.cpp
+        src/blue/camera/Camera.cpp
         src/blue/gpu/handlers/UpdateEnvironmentHandler.cpp
         src/blue/ModelLoader.cpp
         src/blue/gpu/handlers/SetClearColorHandler.cpp
         src/blue/GpuThread.cpp
-        include/blue/ImageUtils.hpp
+        include/blue/TextureUtils.hpp
         include/blue/GpuThread.hpp
         include/blue/gpu/handlers/SetClearColorHandler.hpp
         include/blue/ModelLoader.h
@@ -69,8 +70,9 @@ add_library(
         include/blue/ResourcesPath.h
         include/blue/InputHandler.h
         include/blue/Window.hpp
-        include/blue/PerspectiveCamera.hpp
-        include/blue/OrthographicCamera.hpp
+        include/blue/camera/PerspectiveCamera.hpp
+        include/blue/camera/OrthographicCamera.hpp
+        include/blue/camera/Camera.hpp
 )
 
 target_include_directories(

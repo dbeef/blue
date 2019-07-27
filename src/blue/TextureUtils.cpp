@@ -1,4 +1,4 @@
-#include "blue/ImageUtils.hpp"
+#include "blue/TextureUtils.hpp"
 #include "blue/ResourcesPath.h"
 #include "blue/Context.hpp"
 #include "stb/image.h"

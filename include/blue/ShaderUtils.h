@@ -1,28 +1,10 @@
 #pragma once
 
+#include "blue/gpu/GpuEntities.hpp"
 #include <string>
 
 namespace ShaderUtils
 {
-	std::string parseFile(std::string filename);
+	std::string read(const std::string& filename);
+	CompileShaderEntity make_entity(const std::string vertex_path, const std::string fragment_path);
 }
-
-class ShaderSource
-{
-public:
-
-	// TODO: Return CompileShaderEntity
-	ShaderSource(const std::string vertex_path, const std::string fragment_path);
-
-	std::string vertex;
-	std::string fragment;
-
-	inline bool valid() 
-	{
-		return _valid;
-	}
-
-private:
-
-	bool _valid = true;
-};
