@@ -5,11 +5,13 @@
 #include "terrain/Tile.hpp"
 #include <mutex>
 
-static const int CHUNK_DIMENSION = 32;
-
 class Map
 {
+	friend class MapIntersectionJob;
+
 public:
+
+	static const int CHUNK_DIMENSION = 32;
 
 	void upload_clickable_vertices();
 	void upload_decoration_vertices();
@@ -24,9 +26,9 @@ private:
 	Vertices decoration_vertices;
 	Indices decoration_indices;
 
-	UniformBufferId environment = 0;
-	PerspectiveCamera camera;
-
-	VertexArray clickable_vertices_id;
-	VertexArray decoration_vertices_id;
+	VertexArray clickable_vertices_vertex_array;
+	VertexArray decoration_vertices_vertex_array;
+	
+	RenderEntityId clickable_vertices_render_entity;
+	RenderEntityId decoration_vertices_render_entity;
 };

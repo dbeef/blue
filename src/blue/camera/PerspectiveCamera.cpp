@@ -57,8 +57,8 @@ void PerspectiveCamera::go_right(float distance)
 
 void PerspectiveCamera::mouse_rotation(double xpos, double ypos)
 {
-	GLfloat xoffset = xpos - _lastX;
-	GLfloat yoffset = _lastY - ypos; // Reversed since y-coordinates go from bottom to left
+	GLfloat xoffset = xpos - static_cast<GLfloat>(blue::Context::window().get_width() / 2.0);
+	GLfloat yoffset = static_cast<GLfloat>(blue::Context::window().get_height() / 2.0) - ypos; // Reversed since y-coordinates go from bottom to left
 
 	GLfloat sensitivity = 0.25;    // Change this value to your liking
 	xoffset *= sensitivity;
@@ -77,4 +77,37 @@ void PerspectiveCamera::mouse_rotation(double xpos, double ypos)
 	_front.y = sin(glm::radians(_pitch));
 	_front.z = sin(glm::radians(_yaw)) * cos(glm::radians(_pitch));
 	_front = glm::normalize(_front);
+
+	_lastX = xpos;
+	_lastY = ypos;
+}
+
+float PerspectiveCamera::get_fov() const
+{
+	return _fov;
+}
+
+glm::vec3 PerspectiveCamera::get_position() const
+{
+	return _position;
+}
+
+glm::vec3 PerspectiveCamera::get_front() const
+{
+	return _front;
+}
+
+glm::vec3 PerspectiveCamera::get_up() const
+{
+	return _HELPER_UP;
+}
+
+GLfloat PerspectiveCamera::get_last_x() const
+{
+	return _lastX;
+}
+
+GLfloat PerspectiveCamera::get_last_y() const
+{
+	return _lastY;
 }

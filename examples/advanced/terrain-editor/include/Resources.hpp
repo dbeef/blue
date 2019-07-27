@@ -1,5 +1,7 @@
 #pragma once
 
+#include "blue/gpu/GpuEntities.hpp"
+
 class Resources
 {
 public:
@@ -15,6 +17,10 @@ public:
 	void load_models();
 
 	void load_textures();
+
+	struct {
+		ShaderId clickable_map_shader;
+	} shaders;
 
 private:
 

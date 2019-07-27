@@ -31,20 +31,15 @@ namespace blue
 
 		inline bool is_cursor_attached() const { return _cursor_attached.load(); }
 
-		inline void attach_cursor()
-		{
-			_cursor_attached.store(false);
-			SDL_SetRelativeMouseMode(SDL_TRUE);
-			SDL_SetWindowGrab(get_window(), SDL_TRUE);
-			SDL_WarpMouseInWindow(get_window(), get_width() / 2, get_height() / 2);
-		}
+		void attach_cursor();
 
-		inline void detach_cursor()
-		{
-			_cursor_attached.store(true);
-			SDL_SetRelativeMouseMode(SDL_FALSE);
-			SDL_SetWindowGrab(get_window(), SDL_TRUE);
-		}
+		void detach_cursor();
+
+		std::uint16_t get_last_x();
+
+		std::uint16_t get_last_y();
+
+		void set_last_xy(std::uint16_t x, std::uint16_t y);
 
 	private:
 
@@ -58,6 +53,8 @@ namespace blue
 		std::string _title = "Blue";
 		std::atomic_uint16_t _width{ 0 };
 		std::atomic_uint16_t _height{ 0 };
+		std::atomic_uint16_t _last_x{ 0 };
+		std::atomic_uint16_t _last_y{ 0 };
 		bool _fullscreen = false;
 	};
 }

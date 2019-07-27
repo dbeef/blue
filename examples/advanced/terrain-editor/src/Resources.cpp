@@ -1,5 +1,7 @@
 #include "Resources.hpp"
 #include "blue/Assertions.h"
+#include "blue/ShaderUtils.h"
+#include "blue/Context.hpp"
 
 Resources* Resources::_instance = nullptr;
 
@@ -24,6 +26,12 @@ void Resources::dispose()
 
 void Resources::load_shaders()
 {
+	{
+		auto compile_shader_entity = ShaderUtils::make_entity("resources/Triangle.vertex.glsl", "resources/Triangle.fragment.glsl");
+		auto shader_future = blue::Context::gpu_system().submit(compile_shader_entity);
+		shader_future.wait();
+		shaders.clickable_map_shader = shader_future.get();
+	}
 }
 
 void Resources::load_models()

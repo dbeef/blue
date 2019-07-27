@@ -47,7 +47,10 @@ void InputHandler::poll()
 			if (blue::Context::window().is_cursor_attached())
 				mouse_callback(event.motion.xrel + xpos, event.motion.yrel + ypos);
 			else
+			{
+				blue::Context::window().set_last_xy(event.motion.x, event.motion.y);
 				mouse_callback(event.motion.x, event.motion.y);
+			}
 		}
 
 		//if (event.type == SDL_QUIT)

@@ -15,8 +15,8 @@ int main(int argc, char* argv[])
 	BLUE_ASSERT(blue::Context::gpu_thread().run());
 	blue::Context::window().detach_cursor();
 
-	Application::init();
 	Resources::init();
+	Application::init();
 
 	Resources::instance().load_shaders();
 	Resources::instance().load_models();

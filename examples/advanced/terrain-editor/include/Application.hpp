@@ -1,6 +1,7 @@
 #pragma once
 
 #include "states/BaseState.hpp"
+#include "terrain/Map.hpp"
 
 #include <atomic>
 #include <memory>
@@ -23,8 +24,18 @@ public:
 
 	bool is_running();
 
+	Map& get_map();
+
+	struct {
+		UniformBufferId environment = 0;
+		PerspectiveCamera camera;
+	} map_environment;
+
 private:
 
+	void register_callbacks();
+
+	std::shared_ptr<Map> _map = std::make_shared<Map>();
 	std::shared_ptr<BaseState> _current_state = nullptr;
 	std::atomic_bool _running{ true };
 	static Application* _instance;

@@ -13,6 +13,7 @@ add_executable(TerrainEditorSample
         src/states/SelectingClickableBlocks.cpp
         src/terrain/Map.cpp
         src/terrain/Tile.cpp
+        src/jobs/MapIntersectionJob.cpp
         include/states/BaseState.hpp
         include/states/Greeting.hpp
         include/states/SelectingClickableBlocks.hpp
@@ -20,6 +21,7 @@ add_executable(TerrainEditorSample
         include/Application.hpp
         include/terrain/Map.hpp
         include/terrain/Tile.hpp
+        include/jobs/MapIntersectionJob.hpp
         )
 
 target_link_libraries(TerrainEditorSample blue -lpthread)

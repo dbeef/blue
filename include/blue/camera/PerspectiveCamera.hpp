@@ -24,6 +24,8 @@ public:
 
 	void set_pos(const glm::vec3&);
 
+	// moving
+
 	void go_forward(float distance);
 
 	void go_backward(float distance);
@@ -33,6 +35,20 @@ public:
 	void go_right(float distance);
 
 	void mouse_rotation(double xpos, double ypos);
+
+	// getters
+
+	float get_fov() const;
+
+	glm::vec3 get_position() const;
+
+	glm::vec3 get_front() const;
+
+	glm::vec3 get_up() const;
+
+	GLfloat get_last_x() const;
+
+	GLfloat get_last_y() const;
 
 private:
 

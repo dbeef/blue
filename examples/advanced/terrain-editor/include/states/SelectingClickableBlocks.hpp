@@ -2,6 +2,7 @@
 
 #include "states/BaseState.hpp"
 #include "blue/Renderer.h"
+#include "jobs/MapIntersectionJob.hpp"
 
 #include <atomic>
 
@@ -16,5 +17,6 @@ public:
 
 private:
 
+	MapIntersectionJob job;
 	ImGuiEntityId _blocks_window = 0;
 };

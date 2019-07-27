@@ -80,7 +80,7 @@ namespace blue
 			blue::Context::logger().info("Failed to create window");
 			return false;
 		}
-		
+
 		// Size may have changed if fullscreen was specified.
 		update_size();
 		blue::Context::logger().info("Created window.");
@@ -109,5 +109,36 @@ namespace blue
 		DebugGlCall(glViewport(0, 0, get_width(), get_height()));
 
 		return true;
+	}
+
+	void Window::attach_cursor()
+	{
+		_cursor_attached.store(true);
+		SDL_SetRelativeMouseMode(SDL_TRUE);
+		SDL_SetWindowGrab(get_window(), SDL_TRUE);
+		SDL_WarpMouseInWindow(get_window(), get_width() / 2, get_height() / 2);
+	}
+
+	void Window::detach_cursor()
+	{
+		_cursor_attached.store(false);
+		SDL_SetRelativeMouseMode(SDL_FALSE);
+		SDL_SetWindowGrab(get_window(), SDL_TRUE);
+	}
+
+	std::uint16_t Window::get_last_x()
+	{
+		return _last_x.load();
+	}
+
+	std::uint16_t Window::get_last_y()
+	{
+		return _last_y.load();
+	}
+
+	void Window::set_last_xy(std::uint16_t x, std::uint16_t y)
+	{
+		_last_x.store(x);
+		_last_y.store(y);
 	}
 }
