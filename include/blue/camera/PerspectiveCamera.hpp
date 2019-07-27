@@ -16,7 +16,7 @@ public:
 		reset();
 	}
 
-	void reset() override;
+	void reset();
 
 	glm::mat4 get_view() override;
 

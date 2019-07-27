@@ -12,8 +12,6 @@ class Camera
 {
 public:
 
-	virtual void reset() = 0;
-
 	virtual glm::mat4 get_view() = 0;
 
 	virtual glm::mat4 get_projection() = 0;

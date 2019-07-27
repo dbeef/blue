@@ -1,10 +1,6 @@
 #include "blue/camera/OrthographicCamera.hpp"
 #include "blue/Context.hpp"
 
-void OrthographicCamera::reset()
-{
-}
-
 glm::mat4 OrthographicCamera::get_view()
 {
 	return glm::identity<glm::mat4>();
