@@ -17,7 +17,7 @@ Application::Application()
 		}
 	);
 
-	blue::Context::gpu_system().submit(SetClearColorEntity{ {0.3f, 0.5f, 0.0f} });
+	blue::Context::gpu_system().submit(SetClearColorEntity{ {0.25f, 0.45f, 0.8f} });
 	_current_state = std::make_shared<Greeting>();
 }
 
@@ -53,6 +53,7 @@ void Application::handle_input()
 	if (next_state)
 	{
 		_current_state = next_state;
+		_current_state->on_entry();
 	}
 }
 

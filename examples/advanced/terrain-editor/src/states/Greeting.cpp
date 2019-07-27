@@ -35,3 +35,7 @@ std::shared_ptr<BaseState> Greeting::update()
 		return nullptr;
 	}
 }
+
+void Greeting::on_entry()
+{
+}
