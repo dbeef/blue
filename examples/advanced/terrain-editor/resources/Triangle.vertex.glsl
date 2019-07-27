@@ -17,10 +17,12 @@ layout (std140) uniform Matrices
 };
 
 flat out lowp vec3 ColorRGB;
+out vec3 vertex;
 
 void main()
 {
         gl_Position = projection * view * model * vec4(position, 1.0f);
         ColorRGB = color;
+        vertex = position;
 }
 
