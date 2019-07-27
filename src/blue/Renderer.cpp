@@ -69,9 +69,11 @@ void Renderer::draw_render_entities()
 			glUniform1i(loc, 0);
 		}
 
-		glm::mat4 RotationMatrix = glm::toMat4(entity.rotation);
-		glm::mat4 ScaleMatrix = glm::scale(glm::mat4(1.0f), glm::vec3(entity.scale));
-		glm::mat4 model = glm::translate(glm::mat4(1.f), entity.position) * RotationMatrix * ScaleMatrix;
+		const glm::mat4 RotationMatrix = glm::toMat4(entity.rotation);
+		const glm::mat4 ScaleMatrix = glm::scale(glm::identity<glm::mat4>(), glm::vec3(entity.scale));
+		const glm::mat4 TranslationMatrix = glm::translate(glm::identity<glm::mat4>(), entity.position);
+
+		const glm::mat4 model = TranslationMatrix * RotationMatrix * ScaleMatrix;
 		glUniformMatrix4fv(uniform_locations.modelLoc, 1, GL_FALSE, glm::value_ptr(model));
 
 		if (vao.ibo)

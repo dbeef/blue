@@ -2,13 +2,12 @@
 #include <blue/Timestep.hpp>
 #include <blue/ShaderUtils.h>
 #include <blue/TextureUtils.hpp>
-#include <blue/camera/PerspectiveCamera.hpp>
+#include <blue/camera/OrthographicCamera.hpp>
 
 #include <atomic>
 
 int main(int argc, char* argv[])
 {
-
 	blue::Context::init();
 	blue::Context::window().create(800, 600);
 	blue::Context::gpu_thread().run();
@@ -37,10 +36,10 @@ int main(int argc, char* argv[])
 
 	Vertices vertices =
 	{
-		/* Vertex pos */ -1.0, -1.0, 0.0f, /* Tex coord */ 0.0f, 0.0f,
-		/* Vertex pos */ -1.0, 1.0, 0.0f,  /* Tex coord */ 0.0f, 1.0f,
-		/* Vertex pos */ 1.0, 1.0, 0.0f,   /* Tex coord */ 1.0f, 1.0f,
-		/* Vertex pos */ 1.0, -1.0, 0.0f,  /* Tex coord */ 1.0f, 0.0f,
+		/* Vertex pos */ -1.0, -1.0, /* Tex coord */ 0.0f, 0.0f,
+		/* Vertex pos */ -1.0, 1.0,  /* Tex coord */ 0.0f, 1.0f,
+		/* Vertex pos */ 1.0, 1.0,   /* Tex coord */ 1.0f, 1.0f,
+		/* Vertex pos */ 1.0, -1.0,  /* Tex coord */ 1.0f, 0.0f,
 	};
 
 	Indices indices =
@@ -50,7 +49,7 @@ int main(int argc, char* argv[])
 
 	Attributes attributes =
 	{
-		{ ShaderAttribute::Type::VEC3, ShaderAttribute::Purpose::VERTEX_POSITION},
+		{ ShaderAttribute::Type::VEC2, ShaderAttribute::Purpose::VERTEX_POSITION},
 		{ ShaderAttribute::Type::VEC2, ShaderAttribute::Purpose::TEXTURE_COORDINATE}
 	};
 
@@ -66,10 +65,7 @@ int main(int argc, char* argv[])
 
 	// Upload camera's matrices
 
-	PerspectiveCamera camera;
-	camera.cameraPos.x = 0.0f;
-	camera.cameraPos.y = 0.0f;
-	camera.cameraPos.z = 10.0f;
+	OrthographicCamera camera;
 
 	blue::Context::gpu_system().submit(UpdateEnvironmentEntity_Projection{ environment_id, camera.get_projection() });
 	blue::Context::gpu_system().submit(UpdateEnvironmentEntity_View{ environment_id, camera.get_view() });
@@ -84,11 +80,11 @@ int main(int argc, char* argv[])
 	// Submit render command consisting of compiled shader, uploaded mesh and following geometry properties:
 
 	RenderEntity entity;
-	entity.position = { 0, 0, -2.5f };
+	entity.position = { blue::Context::window().get_width() / 2, blue::Context::window().get_height() / 2, 0.0f };
 	entity.shader = shader;
 	entity.vertex_array = vertex_array;
-	entity.scale = 2.0f;
-	entity.rotation = { 0, 0, 0, 0 };
+	entity.scale = 100.0f;
+	entity.rotation = glm::identity<glm::quat>();
 	entity.environment = environment_id;
 	entity.texture = texture;
 

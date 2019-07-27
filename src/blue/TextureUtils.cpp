@@ -9,7 +9,8 @@
 
 CreateTextureEntity ImageUtils::read(const std::string& filepath)
 {
-	stbi_set_flip_vertically_on_load(true);
+	// FIXME: No need for flipping when rendering orthographically, but needed when using perspective projection.
+	stbi_set_flip_vertically_on_load(false);
 
 	auto data = std::make_shared<std::vector<char>>();
 	auto absolute_path = paths::getResourcesPath() + filepath;
