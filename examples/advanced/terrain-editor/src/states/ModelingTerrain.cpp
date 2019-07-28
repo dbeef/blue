@@ -33,7 +33,7 @@ std::shared_ptr<BaseState> ModelingTerrain::update()
 		
 		// Ascend points in radius R from xy point:
 		
-		float R = 0.25f;
+		float R = 0.15f;
 		Application::instance().get_map().ascend_points(x, y, R);
 
 		// Dispose and reupload:

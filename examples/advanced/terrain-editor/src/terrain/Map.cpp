@@ -5,6 +5,7 @@
 #include "Resources.hpp"
 #include "Application.hpp"
 
+#include <glm/gtx/normal.hpp>
 #include "glm/geometric.hpp"
 
 void Map::upload_clickable_vertices()
@@ -38,15 +39,15 @@ void Map::upload_clickable_vertices()
 
 	auto attributes = Tile::get_attributes();
 
-	auto vertex_array_future = blue::Context::gpu_system().submit(CreateMeshEntity{ clickable_vertices, clickable_indices, attributes, tile_index * 6});
+	auto vertex_array_future = blue::Context::gpu_system().submit(CreateMeshEntity{ clickable_vertices, clickable_indices, attributes, tile_index * 6 });
 	vertex_array_future.wait();
 
 	VertexArray clickable_vertices_vertex_array = vertex_array_future.get();
 
 	// Submit render command consisting of compiled shader, uploaded mesh and following geometry properties:
 
-	RenderEntity entity; 
-	entity.position = { 0, 0, 0};
+	RenderEntity entity;
+	entity.position = { 0, 0, 0 };
 	entity.shader = Resources::instance().shaders.clickable_map_shader;
 	entity.vertex_array = clickable_vertices_vertex_array;
 	entity.scale = 1.0f;
@@ -150,18 +151,111 @@ void Map::upload_decoration()
 
 void Map::ascend_points(float x, float y, float R)
 {
-	for (std::size_t index = 0; index < decoration_vertices.size(); index+=6)
+	// Iterate over every 2 triangles
+	for (std::size_t index = 0; index < decoration_vertices.size(); index += (9 * 4))
 	{
 		// TODO: Check if this vertex is adjacent to clickable tile, if so, ignore it
-		// to avoid voids in terrain.
+		// to avoid voids in terrain. 
 
-		float& v_x = decoration_vertices[index + 0];
-		float& v_y = decoration_vertices[index + 1];
-		float& v_z = decoration_vertices[index + 2];
+		bool visited[6] = { false };
 
-		if (glm::distance(glm::vec3{ v_x, v_y, v_z }, glm::vec3{ x, 0, y }) <= R)
+		// First triangle indexes:  0, 1, 2
 		{
-			v_y += 0.25f;
+			glm::vec3 p_1 = { decoration_vertices[index + 0 + 0] , decoration_vertices[index + 0 + 1],decoration_vertices[index + 0 + 2] };
+			glm::vec3 p_2 = { decoration_vertices[index + 9 + 0] , decoration_vertices[index + 9 + 1],decoration_vertices[index + 9 + 2] };
+			glm::vec3 p_3 = { decoration_vertices[index + 18 + 0] , decoration_vertices[index + 18 + 1],decoration_vertices[index + 18 + 2] };
+
+			if (glm::distance(glm::vec3{ p_1.x, 0, p_1.z }, glm::vec3{ x, 0, y }) <= R)
+			{
+				p_1.y += 0.25f;
+				visited[0] = true;
+			}
+			
+			if (glm::distance(glm::vec3{ p_2.x, 0, p_2.z }, glm::vec3{ x, 0, y }) <= R)
+			{
+				p_2.y += 0.25f;
+				visited[1] = true;
+			}
+			
+			if (glm::distance(glm::vec3{ p_3.x, 0, p_3.z }, glm::vec3{ x, 0, y }) <= R)
+			{
+				p_3.y += 0.25f;
+				visited[2] = true;
+			}
+
+			const auto normal = glm::triangleNormal(p_1, p_2, p_3);
+
+			decoration_vertices[index + 0 + 0] = p_1.x;
+			decoration_vertices[index + 0 + 1] = p_1.y;
+			decoration_vertices[index + 0 + 2] = p_1.z;
+
+			decoration_vertices[index + 0 + 3] = normal.x;
+			decoration_vertices[index + 0 + 4] = normal.y;
+			decoration_vertices[index + 0 + 5] = normal.z;
+
+			decoration_vertices[index + 9 + 0] = p_2.x;
+			decoration_vertices[index + 9 + 1] = p_2.y;
+			decoration_vertices[index + 9 + 2] = p_2.z;
+
+			decoration_vertices[index + 9 + 3] = normal.x;
+			decoration_vertices[index + 9 + 4] = normal.y;
+			decoration_vertices[index + 9 + 5] = normal.z;
+
+			decoration_vertices[index + 18 + 0] = p_3.x;
+			decoration_vertices[index + 18 + 1] = p_3.y;
+			decoration_vertices[index + 18 + 2] = p_3.z;
+
+			decoration_vertices[index + 18 + 3] = normal.x;
+			decoration_vertices[index + 18 + 4] = normal.y;
+			decoration_vertices[index + 18 + 5] = normal.z;
 		}
+		// Second traingle indexes: 2, 3, 0
+		{
+			glm::vec3 p_1 = { decoration_vertices[index + 18 + 0] , decoration_vertices[index + 18 + 1],decoration_vertices[index + 18 + 2] };
+			glm::vec3 p_2 = { decoration_vertices[index + 27 + 0] , decoration_vertices[index + 27 + 1],decoration_vertices[index + 27 + 2] };
+			glm::vec3 p_3 = { decoration_vertices[index + 0  + 0] , decoration_vertices[index + 0  + 1],decoration_vertices[index + 0  + 2] };
+
+			if (!visited[2] && glm::distance(glm::vec3{ p_1.x, 0, p_1.z }, glm::vec3{ x, 0, y }) <= R)
+			{
+				p_1.y += 0.25f;
+			}
+
+			if (glm::distance(glm::vec3{ p_2.x, 0, p_2.z }, glm::vec3{ x, 0, y }) <= R)
+			{
+				p_2.y += 0.25f;
+			}
+
+			if (!visited[0] && glm::distance(glm::vec3{ p_3.x, 0, p_3.z }, glm::vec3{ x, 0, y }) <= R)
+			{
+				p_3.y += 0.25f;
+			}
+
+			const auto normal = glm::triangleNormal(p_1, p_2, p_3);
+
+			decoration_vertices[index + 18 + 0] = p_1.x;
+			decoration_vertices[index + 18 + 1] = p_1.y;
+			decoration_vertices[index + 18 + 2] = p_1.z;
+
+			decoration_vertices[index + 18 + 3] = normal.x;
+			decoration_vertices[index + 18 + 4] = normal.y;
+			decoration_vertices[index + 18 + 5] = normal.z;
+			
+			decoration_vertices[index + 27 + 0] = p_2.x;
+			decoration_vertices[index + 27 + 1] = p_2.y;
+			decoration_vertices[index + 27 + 2] = p_2.z;
+
+			decoration_vertices[index + 27 + 3] = normal.x;
+			decoration_vertices[index + 27 + 4] = normal.y;
+			decoration_vertices[index + 27 + 5] = normal.z;
+
+			decoration_vertices[index + 0 + 0] = p_3.x;
+			decoration_vertices[index + 0 + 1] = p_3.y;
+			decoration_vertices[index + 0 + 2] = p_3.z;
+
+			decoration_vertices[index + 0 + 3] = normal.x;
+			decoration_vertices[index + 0 + 4] = normal.y;
+			decoration_vertices[index + 0 + 5] = normal.z;
+		}
+
 	}
 }
