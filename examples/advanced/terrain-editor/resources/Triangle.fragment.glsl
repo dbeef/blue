@@ -24,7 +24,7 @@ void main()
   vec2 coord = vertex.xz;
 
   // Compute anti-aliased world-space grid lines
-  vec2 grid = abs(fract(coord - 0.5) - 0.5) / fwidth(coord);
+  vec2 grid = abs(fract(coord - 0.5f) - 0.5f) / fwidth(coord);
   float line = min(grid.x, grid.y);
 
   // Just visualize the grid lines directly

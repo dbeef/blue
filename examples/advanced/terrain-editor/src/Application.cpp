@@ -93,7 +93,7 @@ void Application::register_callbacks()
 	};
 	blue::Context::input().registerKeyCallback({ w_callback, SDLK_w, SDL_KEYDOWN });
 	
-	auto t_callback = [this]()
+	auto mouse_middle_callback = [this]()
 	{
 		if (blue::Context::window().is_cursor_attached())
 		{
@@ -104,7 +104,16 @@ void Application::register_callbacks()
 			blue::Context::window().attach_cursor();
 		}
 	};
-	blue::Context::input().registerMouseKeyCallback({ t_callback, SDL_BUTTON_MIDDLE, SDL_MOUSEBUTTONDOWN });
+	blue::Context::input().registerMouseKeyCallback({ mouse_middle_callback, SDL_BUTTON_MIDDLE, SDL_MOUSEBUTTONDOWN });
+
+	auto mouse_left_callback = [this]()
+	{
+		if (!blue::Context::window().is_cursor_attached())
+		{
+			Application::instance().input.clicked.store(true);
+		}
+	};
+	blue::Context::input().registerMouseKeyCallback({ mouse_left_callback, SDL_BUTTON_LEFT, SDL_MOUSEBUTTONDOWN });
 
 	auto s_callback = [this]()
 	{

@@ -17,7 +17,7 @@ namespace
 		glm::vec3 tile_position
 	) {
 		glm::vec3 tile_max(1.0f, 0.01f, 1.0f);       // Maximum X,Y,Z coords. Often tile_max*-1 if your mesh is centered, but it's not always the case.
-		glm::vec3 tile_min(-1.0f, -0.01f, -1.0f);       // Minimum X,Y,Z coords of the mesh when not transformed at all.
+		glm::vec3 tile_min(0.0f, -0.01f, 0.0f);       // Minimum X,Y,Z coords of the mesh when not transformed at all.
 
 		// Transformation applied to the mesh (which will thus be also applied to its bounding box)
 		glm::mat4 ModelMatrix = glm::translate(glm::mat4(1.f), tile_position);
@@ -49,7 +49,7 @@ namespace
 					t1 = t2;
 					t2 = w; // swap t1 and t2
 				}
-				
+
 				// tMax is the nearest "far" intersection (amongst the X,Y and Z planes pairs)
 				if (t2 < tMax)
 					tMax = t2;
@@ -182,12 +182,12 @@ void MapIntersectionJob::intersection_loop()
 		{
 			std::unique_lock<std::mutex> lock(map.tiles_access);
 
-			for (uint32_t tile_x = 0; tile_x < Map::CHUNK_DIMENSION; tile_x++) {
-				for (uint32_t tile_y = 0; tile_y < Map::CHUNK_DIMENSION; tile_y++) {
+			for (uint32_t tile_y = 0; tile_y < Map::CHUNK_DIMENSION; tile_y++) {
+				for (uint32_t tile_x = 0; tile_x < Map::CHUNK_DIMENSION; tile_x++) {
 
 					float intersec_distance;
 					bool result = TestRayOBBIntersection(camera.get_position(), direction, intersec_distance, { tile_x, 0.0f, tile_y });
-					
+
 					if (result) {
 						if (intersec_distance < closest_distance) {
 							closest_distance = intersec_distance;
@@ -199,9 +199,10 @@ void MapIntersectionJob::intersection_loop()
 			}
 		}
 
-		if (best_result_tile_x >= 0)
+		if (best_result_tile_x >= 0 && Application::instance().input.clicked.load())
 		{
 			blue::Context::logger().info("Intersection at: {} {}", best_result_tile_x, best_result_tile_y);
+			Application::instance().input.clicked.store(false);
 		}
 
 		timestep.mark_end();

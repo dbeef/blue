@@ -31,6 +31,10 @@ public:
 		PerspectiveCamera camera;
 	} map_environment;
 
+	struct {
+		std::atomic_bool clicked{ false };
+	} input;
+
 private:
 
 	void register_callbacks();
