@@ -23,10 +23,23 @@ SelectingClickableBlocks::~SelectingClickableBlocks()
 {
 	blue::Context::renderer().remove_imgui_entity({ _blocks_window });
 	job.shutdown();
+	Application::instance().get_map().dispose_current_map_on_gpu(); // TODO: Also remove vertex arrays
 }
 
 std::shared_ptr<BaseState> SelectingClickableBlocks::update()
 {
+	if (Application::instance().input.intersection.load())
+	{
+		const auto& x = Application::instance().input.intersection_x;
+		const auto& y = Application::instance().input.intersection_y;
+
+		Application::instance().get_map().toggle_tile(x, y);
+		Application::instance().get_map().dispose_current_map_on_gpu(); // TODO: Also remove vertex arrays
+		Application::instance().get_map().upload_clickable_vertices();
+		Application::instance().get_map().upload_decoration_vertices();
+		 
+		Application::instance().input.intersection.store(false);
+	}
 	return nullptr;
 }
 
@@ -34,6 +47,7 @@ void SelectingClickableBlocks::on_entry()
 {
 	// Create map
 	Application::instance().get_map().upload_clickable_vertices();
+	Application::instance().get_map().upload_decoration_vertices();
 	// Run intersection test job
 	job.start();
 }

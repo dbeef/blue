@@ -151,7 +151,11 @@ void MapIntersectionJob::intersection_loop()
 	while (_running.load())
 	{
 		timestep.mark_start();
-		if (blue::Context::window().is_cursor_attached()) continue;
+		if (blue::Context::window().is_cursor_attached() || Application::instance().input.intersection.load())
+		{
+			timestep.mark_end();
+			timestep.delay();
+		}
 
 		glm::vec3 direction;
 		auto& map = Application::instance().get_map();
@@ -182,8 +186,8 @@ void MapIntersectionJob::intersection_loop()
 		{
 			std::unique_lock<std::mutex> lock(map.tiles_access);
 
-			for (uint32_t tile_y = 0; tile_y < Map::CHUNK_DIMENSION; tile_y++) {
-				for (uint32_t tile_x = 0; tile_x < Map::CHUNK_DIMENSION; tile_x++) {
+			for (uint32_t tile_x = 0; tile_x < Map::CHUNK_DIMENSION; tile_x++) {
+				for (uint32_t tile_y = 0; tile_y < Map::CHUNK_DIMENSION; tile_y++) {
 
 					float intersec_distance;
 					bool result = TestRayOBBIntersection(camera.get_position(), direction, intersec_distance, { tile_x, 0.0f, tile_y });
@@ -202,8 +206,12 @@ void MapIntersectionJob::intersection_loop()
 		if (best_result_tile_x >= 0 && Application::instance().input.clicked.load())
 		{
 			blue::Context::logger().info("Intersection at: {} {}", best_result_tile_x, best_result_tile_y);
-			Application::instance().input.clicked.store(false);
+			Application::instance().input.intersection.store(true);
+			Application::instance().input.intersection_x.store(best_result_tile_x);
+			Application::instance().input.intersection_y.store(best_result_tile_y);
 		}
+
+		Application::instance().input.clicked.store(false);
 
 		timestep.mark_end();
 		timestep.delay();

@@ -16,19 +16,15 @@ public:
 	void upload_clickable_vertices();
 	void upload_decoration_vertices();
 
+	void toggle_tile(std::uint16_t x, std::uint16_t y);
+	void dispose_current_map_on_gpu();
+
 private:
 
+	
 	std::mutex tiles_access;
 	Tile tiles[CHUNK_DIMENSION][CHUNK_DIMENSION];
 
-	Vertices clickable_vertices;
-	Indices clickable_indices;
-	Vertices decoration_vertices;
-	Indices decoration_indices;
-
-	VertexArray clickable_vertices_vertex_array;
-	VertexArray decoration_vertices_vertex_array;
-	
 	RenderEntityId clickable_vertices_render_entity;
 	RenderEntityId decoration_vertices_render_entity;
 };

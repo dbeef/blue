@@ -1,13 +1,13 @@
 #include "terrain/Tile.hpp"
 
-Vertices Tile::get_vertices_translated(float x_pos, float y_pos)
+Vertices Tile::get_vertices_translated(float x_pos, float y_pos, const glm::vec3& color)
 {
 	Vertices vertices =
 	{
-		/* Vertex pos */  0.0f + x_pos, 0.0f,  0.0f + y_pos, /* Color */ 0.1f, 0.7f, 0.25f,
-		/* Vertex pos */  0.0f + x_pos, 0.0f,  1.0f + y_pos, /* Color */ 0.1f, 0.7f, 0.25f,
-		/* Vertex pos */  1.0f + x_pos, 0.0f,  1.0f + y_pos, /* Color */ 0.1f, 0.7f, 0.25f,
-		/* Vertex pos */  1.0f + x_pos, 0.0f,  0.0f + y_pos, /* Color */ 0.1f, 0.7f, 0.25f,
+		/* Vertex pos */  0.0f + x_pos, 0.0f,  0.0f + y_pos, /* Color */ color.x, color.y, color.z,
+		/* Vertex pos */  0.0f + x_pos, 0.0f,  1.0f + y_pos, /* Color */ color.x, color.y, color.z,
+		/* Vertex pos */  1.0f + x_pos, 0.0f,  1.0f + y_pos, /* Color */ color.x, color.y, color.z,
+		/* Vertex pos */  1.0f + x_pos, 0.0f,  0.0f + y_pos, /* Color */ color.x, color.y, color.z,
 	};
 
 	return vertices;

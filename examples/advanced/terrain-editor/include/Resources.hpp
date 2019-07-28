@@ -20,6 +20,7 @@ public:
 
 	struct {
 		ShaderId clickable_map_shader;
+		ShaderId decoration_map_shader;
 	} shaders;
 
 private:
