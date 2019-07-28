@@ -14,6 +14,16 @@ public:
 	{
 		ELEVATION = 0,
 		VERTEX_PAINT = 1,
+		ADDING_MODELS = 2,
+		VERTEX_PAINT_SHUFFLE = 3,
+	};
+
+	enum class Model : int
+	{
+		PINE_TREE = 0,
+		TANK = 1,
+		HURDLE = 2,
+		WHEAT = 3,
 	};
 
 	ModelingTerrain();
@@ -23,9 +33,11 @@ public:
 
 private:
 
-	float _radius = 0;
+	float _radius = 0.2f;
+	float _model_scale = 1.0f;
 	float _paint[3];
 	Mode _mode = Mode::ELEVATION;
+	Model _model = Model::PINE_TREE;
 	MapIntersectionJob job;
 	ImGuiEntityId _window = 0;
 };

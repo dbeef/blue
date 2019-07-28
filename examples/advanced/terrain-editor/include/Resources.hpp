@@ -21,7 +21,15 @@ public:
 	struct {
 		ShaderId clickable_map_shader;
 		ShaderId decoration_map_shader;
+		ShaderId model_shader;
 	} shaders;
+	
+	struct {
+		VertexArray pine_tree;
+		VertexArray tank;
+		VertexArray hurdle;
+		VertexArray wheat;
+	} models;
 
 private:
 

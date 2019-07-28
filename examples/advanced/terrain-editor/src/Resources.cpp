@@ -1,6 +1,7 @@
 #include "Resources.hpp"
 #include "blue/Assertions.h"
 #include "blue/ShaderUtils.h"
+#include "blue/ModelLoader.h"
 #include "blue/Context.hpp"
 
 Resources* Resources::_instance = nullptr;
@@ -38,10 +39,59 @@ void Resources::load_shaders()
 		shader_future.wait();
 		shaders.decoration_map_shader = shader_future.get();
 	}
+	{
+		auto compile_shader_entity = ShaderUtils::make_entity("resources/Model.vertex.glsl", "resources/Model.fragment.glsl");
+		auto shader_future = blue::Context::gpu_system().submit(compile_shader_entity);
+		shader_future.wait();
+		shaders.model_shader = shader_future.get();
+	}
 }
 
 void Resources::load_models()
 {
+	Attributes attributes =
+	{
+		{ ShaderAttribute::Type::VEC3, ShaderAttribute::Purpose::VERTEX_POSITION},
+		{ ShaderAttribute::Type::VEC3, ShaderAttribute::Purpose::COLOR},
+		{ ShaderAttribute::Type::VEC3, ShaderAttribute::Purpose::NORMAL}
+	};
+
+	{
+		auto scene_ptr = models::load_scene("resources/PineTree.fbx");
+		unsigned int vertex_counter = 0;
+		auto vertices = models::parse_scene(scene_ptr, attributes, vertex_counter);
+
+		auto vertex_array_future = blue::Context::gpu_system().submit(CreateMeshEntity{ vertices, {}, attributes, vertex_counter });
+		vertex_array_future.wait();
+		models.pine_tree = vertex_array_future.get();
+	}
+	{
+		auto scene_ptr = models::load_scene("resources/Tank.fbx");
+		unsigned int vertex_counter = 0;
+		auto vertices = models::parse_scene(scene_ptr, attributes, vertex_counter);
+
+		auto vertex_array_future = blue::Context::gpu_system().submit(CreateMeshEntity{ vertices, {}, attributes, vertex_counter });
+		vertex_array_future.wait();
+		models.tank = vertex_array_future.get();
+	}
+	{
+		auto scene_ptr = models::load_scene("resources/Hurdle.fbx");
+		unsigned int vertex_counter = 0;
+		auto vertices = models::parse_scene(scene_ptr, attributes, vertex_counter);
+
+		auto vertex_array_future = blue::Context::gpu_system().submit(CreateMeshEntity{ vertices, {}, attributes, vertex_counter });
+		vertex_array_future.wait();
+		models.hurdle = vertex_array_future.get();
+	}
+	{
+		auto scene_ptr = models::load_scene("resources/Wheat.fbx");
+		unsigned int vertex_counter = 0;
+		auto vertices = models::parse_scene(scene_ptr, attributes, vertex_counter);
+
+		auto vertex_array_future = blue::Context::gpu_system().submit(CreateMeshEntity{ vertices, {}, attributes, vertex_counter });
+		vertex_array_future.wait();
+		models.wheat = vertex_array_future.get();
+	}
 }
 
 void Resources::load_textures()

@@ -2,6 +2,7 @@
 #include "imgui/imgui.h"
 #include "blue/Context.hpp"
 #include "Application.hpp"
+#include "Resources.hpp"
 
 ModelingTerrain::ModelingTerrain()
 {
@@ -16,15 +17,34 @@ ModelingTerrain::ModelingTerrain()
 		ImGui::RadioButton("Elevation", reinterpret_cast<int*>(&_mode), 0);
 		ImGui::SameLine();
 		ImGui::RadioButton("Vertex paint", reinterpret_cast<int*>(&_mode), 1);
+		ImGui::SameLine();
+		ImGui::RadioButton("Adding models", reinterpret_cast<int*>(&_mode), 2);
+		ImGui::SameLine();
+		ImGui::RadioButton("Vertex paint shuffle", reinterpret_cast<int*>(&_mode), 3);
 
-		ImGui::SliderFloat("Radius", &_radius, 0.01f, 32.0f);
+		if (_mode == Mode::VERTEX_PAINT || _mode == Mode::ELEVATION || _mode == Mode::VERTEX_PAINT_SHUFFLE)
+		{
+			ImGui::SliderFloat("Radius", &_radius, 0.01f, 32.0f);
+		}
 
 		ImGui::End();
 
-		ImGui::Begin("Vertex paint");
-		ImGui::ColorPicker3("", _paint);
+		if (_mode == Mode::VERTEX_PAINT)
+		{
+			ImGui::Begin("Vertex paint");
+			ImGui::ColorPicker3("", _paint);
+			ImGui::End();
+		}
 
-		ImGui::End();
+		else if (_mode == Mode::ADDING_MODELS)
+		{
+			ImGui::Begin("Models list");
+			const char* listbox_items[] = { "Pine tree", "Tank", "Hurdle", "Wheat" };
+			ImGui::ListBox("", reinterpret_cast<int*>(&_model), listbox_items, IM_ARRAYSIZE(listbox_items), 4);
+			ImGui::SliderFloat("Model scale", &_model_scale, 0.01f, 5.0f);
+			ImGui::End();
+		}
+
 		});
 }
 
@@ -58,13 +78,76 @@ std::shared_ptr<BaseState> ModelingTerrain::update()
 		{
 			// Color points in radius R from xy point:
 			float R = 5.25f;
-			Application::instance().get_map().color_points(x, y, _radius, {_paint[0], _paint[1], _paint[2]});
+			Application::instance().get_map().color_points(x, y, _radius, { _paint[0], _paint[1], _paint[2] });
+		}
+		else if (_mode == Mode::VERTEX_PAINT_SHUFFLE)
+		{
+			// Color points in radius R from xy point:
+			float R = 5.25f;
+			Application::instance().get_map().shuffle_color_points(x, y, _radius);
+		}
+		else if (_mode == Mode::ADDING_MODELS)
+		{
+			switch (_model)
+			{
+			case(Model::PINE_TREE):
+			{
+				RenderEntity entity;
+				entity.position = { static_cast<float>(x), 0, static_cast<float>(y) };
+				entity.shader = Resources::instance().shaders.model_shader;
+				entity.vertex_array = Resources::instance().models.pine_tree;
+				entity.scale = _model_scale;
+				entity.rotation = { 0, 0, 0, 0 };
+				entity.environment = Application::instance().map_environment.environment;
+
+				entity.id = blue::Context::renderer().add(entity);
+				break;
+			}
+			case(Model::TANK):
+			{
+				RenderEntity entity;
+				entity.position = { static_cast<float>(x), 0, static_cast<float>(y) };
+				entity.shader = Resources::instance().shaders.model_shader;
+				entity.vertex_array = Resources::instance().models.tank;
+				entity.scale = _model_scale;
+				entity.rotation = { 0, 0, 0, 0 };
+				entity.environment = Application::instance().map_environment.environment;
+
+				entity.id = blue::Context::renderer().add(entity);
+				break;
+			}
+			case(Model::HURDLE):
+			{
+				RenderEntity entity;
+				entity.position = { static_cast<float>(x), 0, static_cast<float>(y) };
+				entity.shader = Resources::instance().shaders.model_shader;
+				entity.vertex_array = Resources::instance().models.hurdle;
+				entity.scale = _model_scale;
+				entity.rotation = { 0, 0, 0, 0 };
+				entity.environment = Application::instance().map_environment.environment;
+
+				entity.id = blue::Context::renderer().add(entity);
+				break;
+			}
+			case(Model::WHEAT):
+			{
+				RenderEntity entity;
+				entity.position = { static_cast<float>(x), 0, static_cast<float>(y) };
+				entity.shader = Resources::instance().shaders.model_shader;
+				entity.vertex_array = Resources::instance().models.wheat;
+				entity.scale = _model_scale;
+				entity.rotation = { 0, 0, 0, 0 };
+				entity.environment = Application::instance().map_environment.environment;
+
+				entity.id = blue::Context::renderer().add(entity);
+				break;
+			}
+			}
 		}
 
 		// Dispose and reupload:
 		Application::instance().get_map().dispose_current_decoration_on_gpus();
 		Application::instance().get_map().upload_decoration();
-
 		Application::instance().input.intersection.store(false);
 	}
 

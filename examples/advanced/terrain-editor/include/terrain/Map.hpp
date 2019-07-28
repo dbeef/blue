@@ -23,6 +23,7 @@ public:
 
 	void elevate_points(float x, float y, float R, float elevation);
 	void color_points(float x, float y, float R, const glm::vec3& color);
+	void shuffle_color_points(float x, float y, float R);
 
 private:
 

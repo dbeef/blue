@@ -53,7 +53,7 @@ std::shared_ptr<BaseState> SelectingClickableBlocks::update()
 		return std::make_shared<ModelingTerrain>();
 	}
 
-	return nullptr;
+	return nullptr; 
 }
 
 void SelectingClickableBlocks::on_entry()

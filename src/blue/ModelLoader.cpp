@@ -5,6 +5,8 @@
 #include <assimp/cimport.h>
 #include <assimp/postprocess.h>
 
+// TODO: Rename to ModelUtils
+
 // TODO: Refactor this as it's a frankenstein from assimp's C example
 
 #define aisgl_min(x, y) (x<y?x:y)

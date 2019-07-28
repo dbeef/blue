@@ -170,13 +170,13 @@ void Map::elevate_points(float x, float y, float R, float elevation)
 				p_1.y += elevation;
 				visited[0] = true;
 			}
-			
+
 			if (glm::distance(glm::vec3{ p_2.x, 0, p_2.z }, glm::vec3{ x, 0, y }) <= R)
 			{
 				p_2.y += elevation;
 				visited[1] = true;
 			}
-			
+
 			if (glm::distance(glm::vec3{ p_3.x, 0, p_3.z }, glm::vec3{ x, 0, y }) <= R)
 			{
 				p_3.y += elevation;
@@ -213,7 +213,7 @@ void Map::elevate_points(float x, float y, float R, float elevation)
 		{
 			glm::vec3 p_1 = { decoration_vertices[index + 18 + 0] , decoration_vertices[index + 18 + 1],decoration_vertices[index + 18 + 2] };
 			glm::vec3 p_2 = { decoration_vertices[index + 27 + 0] , decoration_vertices[index + 27 + 1],decoration_vertices[index + 27 + 2] };
-			glm::vec3 p_3 = { decoration_vertices[index + 0  + 0] , decoration_vertices[index + 0  + 1],decoration_vertices[index + 0  + 2] };
+			glm::vec3 p_3 = { decoration_vertices[index + 0 + 0] , decoration_vertices[index + 0 + 1],decoration_vertices[index + 0 + 2] };
 
 			if (!visited[2] && glm::distance(glm::vec3{ p_1.x, 0, p_1.z }, glm::vec3{ x, 0, y }) <= R)
 			{
@@ -239,7 +239,7 @@ void Map::elevate_points(float x, float y, float R, float elevation)
 			decoration_vertices[index + 18 + 3] = normal.x;
 			decoration_vertices[index + 18 + 4] = normal.y;
 			decoration_vertices[index + 18 + 5] = normal.z;
-			
+
 			decoration_vertices[index + 27 + 0] = p_2.x;
 			decoration_vertices[index + 27 + 1] = p_2.y;
 			decoration_vertices[index + 27 + 2] = p_2.z;
@@ -260,6 +260,11 @@ void Map::elevate_points(float x, float y, float R, float elevation)
 	}
 }
 
+void Map::shuffle_color_points(float x, float y, float R)
+{
+	// TODO: Implement
+}
+
 void Map::color_points(float x, float y, float R, const glm::vec3& color)
 {
 	// Iterate over every 2 triangles
@@ -274,22 +279,19 @@ void Map::color_points(float x, float y, float R, const glm::vec3& color)
 			glm::vec3 p_2 = { decoration_vertices[index + 9 + 0] , decoration_vertices[index + 9 + 1],decoration_vertices[index + 9 + 2] };
 			glm::vec3 p_3 = { decoration_vertices[index + 18 + 0] , decoration_vertices[index + 18 + 1],decoration_vertices[index + 18 + 2] };
 
-			if (glm::distance(glm::vec3{ p_1.x, 0, p_1.z }, glm::vec3{ x, 0, y }) <= R)
+			if (glm::distance(glm::vec3{ p_1.x, 0, p_1.z }, glm::vec3{ x, 0, y }) <= R
+				|| glm::distance(glm::vec3{ p_2.x, 0, p_2.z }, glm::vec3{ x, 0, y }) <= R
+				|| glm::distance(glm::vec3{ p_3.x, 0, p_3.z }, glm::vec3{ x, 0, y }) <= R
+				)
 			{
 				decoration_vertices[index + 0 + 6] = color.x;
 				decoration_vertices[index + 0 + 7] = color.y;
 				decoration_vertices[index + 0 + 8] = color.z;
-			}
-			
-			if (glm::distance(glm::vec3{ p_2.x, 0, p_2.z }, glm::vec3{ x, 0, y }) <= R)
-			{
+
 				decoration_vertices[index + 9 + 6] = color.x;
 				decoration_vertices[index + 9 + 7] = color.y;
 				decoration_vertices[index + 9 + 8] = color.z;
-			}
-			
-			if (glm::distance(glm::vec3{ p_3.x, 0, p_3.z }, glm::vec3{ x, 0, y }) <= R)
-			{
+
 				decoration_vertices[index + 18 + 6] = color.x;
 				decoration_vertices[index + 18 + 7] = color.y;
 				decoration_vertices[index + 18 + 8] = color.z;
@@ -299,30 +301,25 @@ void Map::color_points(float x, float y, float R, const glm::vec3& color)
 		{
 			glm::vec3 p_1 = { decoration_vertices[index + 18 + 0] , decoration_vertices[index + 18 + 1],decoration_vertices[index + 18 + 2] };
 			glm::vec3 p_2 = { decoration_vertices[index + 27 + 0] , decoration_vertices[index + 27 + 1],decoration_vertices[index + 27 + 2] };
-			glm::vec3 p_3 = { decoration_vertices[index + 0  + 0] , decoration_vertices[index + 0  + 1],decoration_vertices[index + 0  + 2] };
+			glm::vec3 p_3 = { decoration_vertices[index + 0 + 0] , decoration_vertices[index + 0 + 1],decoration_vertices[index + 0 + 2] };
 
-			if (glm::distance(glm::vec3{ p_1.x, 0, p_1.z }, glm::vec3{ x, 0, y }) <= R)
+			if (glm::distance(glm::vec3{ p_1.x, 0, p_1.z }, glm::vec3{ x, 0, y }) <= R ||
+				glm::distance(glm::vec3{ p_2.x, 0, p_2.z }, glm::vec3{ x, 0, y }) <= R ||
+				glm::distance(glm::vec3{ p_3.x, 0, p_3.z }, glm::vec3{ x, 0, y }) <= R
+				)
 			{
 				decoration_vertices[index + 18 + 6] = color.x;
 				decoration_vertices[index + 18 + 7] = color.y;
 				decoration_vertices[index + 18 + 8] = color.z;
-			}
 
-			if (glm::distance(glm::vec3{ p_2.x, 0, p_2.z }, glm::vec3{ x, 0, y }) <= R)
-			{
 				decoration_vertices[index + 27 + 6] = color.x;
 				decoration_vertices[index + 27 + 7] = color.y;
 				decoration_vertices[index + 27 + 8] = color.z;
 
-			}
-
-			if (glm::distance(glm::vec3{ p_3.x, 0, p_3.z }, glm::vec3{ x, 0, y }) <= R)
-			{
 				decoration_vertices[index + 0 + 6] = color.x;
 				decoration_vertices[index + 0 + 7] = color.y;
 				decoration_vertices[index + 0 + 8] = color.z;
 			}
 		}
-
 	}
 }
