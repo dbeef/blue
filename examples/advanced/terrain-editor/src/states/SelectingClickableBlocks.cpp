@@ -1,4 +1,5 @@
 #include "states/SelectingClickableBlocks.hpp"
+#include "states/ModelingTerrain.hpp"
 #include "Application.hpp"
 #include "blue/Context.hpp"
 #include "imgui/imgui.h"
@@ -14,6 +15,12 @@ SelectingClickableBlocks::SelectingClickableBlocks()
 			ImGui::TextColored(ImVec4(1, 0, 0, 1), "Cursor attached, press middle mouse button to detach.");
 		else
 			ImGui::TextColored(ImVec4(0, 1, 1, 1), "Cursor detached, press middle mouse button to attach.");
+
+		bool new_level = ImGui::Button("I'm done, take me to the modeling step");
+		if (new_level)
+		{
+			_new_level.store(true);
+		}
 
 		ImGui::End();
 		});
@@ -40,6 +47,12 @@ std::shared_ptr<BaseState> SelectingClickableBlocks::update()
 		 
 		Application::instance().input.intersection.store(false);
 	}
+	
+	if (_new_level.load())
+	{
+		return std::make_shared<ModelingTerrain>();
+	}
+
 	return nullptr;
 }
 

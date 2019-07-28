@@ -6,18 +6,18 @@
 
 #include <atomic>
 
-class SelectingClickableBlocks : public BaseState
+class ModelingTerrain : public BaseState
 {
 public:
 
-	SelectingClickableBlocks();
-	~SelectingClickableBlocks();
+	ModelingTerrain();
+	~ModelingTerrain();
 	std::shared_ptr<BaseState> update() override;
 	void on_entry() override;
 
 private:
 
-	std::atomic_bool _new_level{ false };
-	MapIntersectionJob job;
-	ImGuiEntityId _blocks_window = 0;
+	//std::atomic_bool _new_level{ false };
+	//MapIntersectionJob job;
+	ImGuiEntityId _window = 0;
 };

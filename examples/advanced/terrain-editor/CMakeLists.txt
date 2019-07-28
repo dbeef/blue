@@ -10,6 +10,7 @@ add_executable(TerrainEditorSample
         src/Resources.cpp
         src/states/BaseState.cpp
         src/states/Greeting.cpp
+        src/states/ModelingTerrain.cpp
         src/states/SelectingClickableBlocks.cpp
         src/terrain/Map.cpp
         src/terrain/Tile.cpp
@@ -17,6 +18,7 @@ add_executable(TerrainEditorSample
         include/states/BaseState.hpp
         include/states/Greeting.hpp
         include/states/SelectingClickableBlocks.hpp
+        include/states/ModelingTerrain.hpp
         include/Resources.hpp
         include/Application.hpp
         include/terrain/Map.hpp
