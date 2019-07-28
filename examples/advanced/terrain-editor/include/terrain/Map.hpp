@@ -21,7 +21,8 @@ public:
 	void dispose_current_decoration_on_gpus();
 	void upload_decoration();
 
-	void ascend_points(float x, float y, float R);
+	void elevate_points(float x, float y, float R, float elevation);
+	void color_points(float x, float y, float R, const glm::vec3& color);
 
 private:
 

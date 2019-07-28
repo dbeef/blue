@@ -12,7 +12,7 @@ void Map::upload_clickable_vertices()
 {
 	std::unique_lock<std::mutex> lock(tiles_access);
 	std::uint32_t tile_index = 0;
-	const glm::vec3 clickable_color = { 0.2f, 0.8f, 0.5f };
+	const glm::vec3 clickable_color = { 0.2f, 0.7f, 0.2f };
 
 	Vertices clickable_vertices;
 	Indices clickable_indices;
@@ -149,7 +149,7 @@ void Map::upload_decoration()
 	decoration_vertices_render_entity = blue::Context::renderer().add(entity);
 }
 
-void Map::ascend_points(float x, float y, float R)
+void Map::elevate_points(float x, float y, float R, float elevation)
 {
 	// Iterate over every 2 triangles
 	for (std::size_t index = 0; index < decoration_vertices.size(); index += (9 * 4))
@@ -167,19 +167,19 @@ void Map::ascend_points(float x, float y, float R)
 
 			if (glm::distance(glm::vec3{ p_1.x, 0, p_1.z }, glm::vec3{ x, 0, y }) <= R)
 			{
-				p_1.y += 0.25f;
+				p_1.y += elevation;
 				visited[0] = true;
 			}
 			
 			if (glm::distance(glm::vec3{ p_2.x, 0, p_2.z }, glm::vec3{ x, 0, y }) <= R)
 			{
-				p_2.y += 0.25f;
+				p_2.y += elevation;
 				visited[1] = true;
 			}
 			
 			if (glm::distance(glm::vec3{ p_3.x, 0, p_3.z }, glm::vec3{ x, 0, y }) <= R)
 			{
-				p_3.y += 0.25f;
+				p_3.y += elevation;
 				visited[2] = true;
 			}
 
@@ -217,17 +217,17 @@ void Map::ascend_points(float x, float y, float R)
 
 			if (!visited[2] && glm::distance(glm::vec3{ p_1.x, 0, p_1.z }, glm::vec3{ x, 0, y }) <= R)
 			{
-				p_1.y += 0.25f;
+				p_1.y += elevation;
 			}
 
 			if (glm::distance(glm::vec3{ p_2.x, 0, p_2.z }, glm::vec3{ x, 0, y }) <= R)
 			{
-				p_2.y += 0.25f;
+				p_2.y += elevation;
 			}
 
 			if (!visited[0] && glm::distance(glm::vec3{ p_3.x, 0, p_3.z }, glm::vec3{ x, 0, y }) <= R)
 			{
-				p_3.y += 0.25f;
+				p_3.y += elevation;
 			}
 
 			const auto normal = glm::triangleNormal(p_1, p_2, p_3);
@@ -255,6 +255,73 @@ void Map::ascend_points(float x, float y, float R)
 			decoration_vertices[index + 0 + 3] = normal.x;
 			decoration_vertices[index + 0 + 4] = normal.y;
 			decoration_vertices[index + 0 + 5] = normal.z;
+		}
+
+	}
+}
+
+void Map::color_points(float x, float y, float R, const glm::vec3& color)
+{
+	// Iterate over every 2 triangles
+	for (std::size_t index = 0; index < decoration_vertices.size(); index += (9 * 4))
+	{
+		// TODO: Check if this vertex is adjacent to clickable tile, if so, ignore it
+		// to avoid voids in terrain. 
+
+		// First triangle indexes:  0, 1, 2
+		{
+			glm::vec3 p_1 = { decoration_vertices[index + 0 + 0] , decoration_vertices[index + 0 + 1],decoration_vertices[index + 0 + 2] };
+			glm::vec3 p_2 = { decoration_vertices[index + 9 + 0] , decoration_vertices[index + 9 + 1],decoration_vertices[index + 9 + 2] };
+			glm::vec3 p_3 = { decoration_vertices[index + 18 + 0] , decoration_vertices[index + 18 + 1],decoration_vertices[index + 18 + 2] };
+
+			if (glm::distance(glm::vec3{ p_1.x, 0, p_1.z }, glm::vec3{ x, 0, y }) <= R)
+			{
+				decoration_vertices[index + 0 + 6] = color.x;
+				decoration_vertices[index + 0 + 7] = color.y;
+				decoration_vertices[index + 0 + 8] = color.z;
+			}
+			
+			if (glm::distance(glm::vec3{ p_2.x, 0, p_2.z }, glm::vec3{ x, 0, y }) <= R)
+			{
+				decoration_vertices[index + 9 + 6] = color.x;
+				decoration_vertices[index + 9 + 7] = color.y;
+				decoration_vertices[index + 9 + 8] = color.z;
+			}
+			
+			if (glm::distance(glm::vec3{ p_3.x, 0, p_3.z }, glm::vec3{ x, 0, y }) <= R)
+			{
+				decoration_vertices[index + 18 + 6] = color.x;
+				decoration_vertices[index + 18 + 7] = color.y;
+				decoration_vertices[index + 18 + 8] = color.z;
+			}
+		}
+		// Second traingle indexes: 2, 3, 0
+		{
+			glm::vec3 p_1 = { decoration_vertices[index + 18 + 0] , decoration_vertices[index + 18 + 1],decoration_vertices[index + 18 + 2] };
+			glm::vec3 p_2 = { decoration_vertices[index + 27 + 0] , decoration_vertices[index + 27 + 1],decoration_vertices[index + 27 + 2] };
+			glm::vec3 p_3 = { decoration_vertices[index + 0  + 0] , decoration_vertices[index + 0  + 1],decoration_vertices[index + 0  + 2] };
+
+			if (glm::distance(glm::vec3{ p_1.x, 0, p_1.z }, glm::vec3{ x, 0, y }) <= R)
+			{
+				decoration_vertices[index + 18 + 6] = color.x;
+				decoration_vertices[index + 18 + 7] = color.y;
+				decoration_vertices[index + 18 + 8] = color.z;
+			}
+
+			if (glm::distance(glm::vec3{ p_2.x, 0, p_2.z }, glm::vec3{ x, 0, y }) <= R)
+			{
+				decoration_vertices[index + 27 + 6] = color.x;
+				decoration_vertices[index + 27 + 7] = color.y;
+				decoration_vertices[index + 27 + 8] = color.z;
+
+			}
+
+			if (glm::distance(glm::vec3{ p_3.x, 0, p_3.z }, glm::vec3{ x, 0, y }) <= R)
+			{
+				decoration_vertices[index + 0 + 6] = color.x;
+				decoration_vertices[index + 0 + 7] = color.y;
+				decoration_vertices[index + 0 + 8] = color.z;
+			}
 		}
 
 	}

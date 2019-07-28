@@ -13,6 +13,17 @@ ModelingTerrain::ModelingTerrain()
 		else
 			ImGui::TextColored(ImVec4(0, 1, 1, 1), "Cursor detached, press middle mouse button to attach.");
 
+		ImGui::RadioButton("Elevation", reinterpret_cast<int*>(&_mode), 0);
+		ImGui::SameLine();
+		ImGui::RadioButton("Vertex paint", reinterpret_cast<int*>(&_mode), 1);
+
+		ImGui::SliderFloat("Radius", &_radius, 0.01f, 32.0f);
+
+		ImGui::End();
+
+		ImGui::Begin("Vertex paint");
+		ImGui::ColorPicker3("", _paint);
+
 		ImGui::End();
 		});
 }
@@ -30,11 +41,25 @@ std::shared_ptr<BaseState> ModelingTerrain::update()
 	{
 		const auto& x = Application::instance().input.intersection_point_x;
 		const auto& y = Application::instance().input.intersection_point_y;
-		
-		// Ascend points in radius R from xy point:
-		
-		float R = 0.15f;
-		Application::instance().get_map().ascend_points(x, y, R);
+
+		if (_mode == Mode::ELEVATION)
+		{
+			// Ascend points in radius R from xy point:
+			if (Application::instance().input.clicked_button.load() == SDL_BUTTON_LEFT)
+			{
+				Application::instance().get_map().elevate_points(x, y, _radius, 0.25f);
+			}
+			else
+			{
+				Application::instance().get_map().elevate_points(x, y, _radius, -0.25f);
+			}
+		}
+		else if (_mode == Mode::VERTEX_PAINT)
+		{
+			// Color points in radius R from xy point:
+			float R = 5.25f;
+			Application::instance().get_map().color_points(x, y, _radius, {_paint[0], _paint[1], _paint[2]});
+		}
 
 		// Dispose and reupload:
 		Application::instance().get_map().dispose_current_decoration_on_gpus();

@@ -111,9 +111,20 @@ void Application::register_callbacks()
 		if (!blue::Context::window().is_cursor_attached())
 		{
 			Application::instance().input.clicked.store(true);
+			Application::instance().input.clicked_button.store(SDL_BUTTON_LEFT);
 		}
 	};
 	blue::Context::input().registerMouseKeyCallback({ mouse_left_callback, SDL_BUTTON_LEFT, SDL_MOUSEBUTTONDOWN });
+	
+	auto mouse_right_callback = [this]()
+	{
+		if (!blue::Context::window().is_cursor_attached())
+		{
+			Application::instance().input.clicked.store(true);
+			Application::instance().input.clicked_button.store(SDL_BUTTON_RIGHT);
+		}
+	};
+	blue::Context::input().registerMouseKeyCallback({ mouse_right_callback, SDL_BUTTON_RIGHT, SDL_MOUSEBUTTONDOWN });
 
 	auto s_callback = [this]()
 	{

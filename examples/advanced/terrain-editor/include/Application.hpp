@@ -33,6 +33,7 @@ public:
 
 	struct {
 		std::atomic_bool clicked{ false };
+		std::atomic_int clicked_button { 0 };
 		std::atomic_bool intersection {false};
 		std::atomic_uint16_t intersection_tile_x {0};
 		std::atomic_uint16_t intersection_tile_y {0};
