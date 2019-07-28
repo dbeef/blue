@@ -10,9 +10,11 @@
 
 void Map::upload_clickable_vertices()
 {
+
+	// randomize color a bit
+	std::srand(std::time(nullptr)); // use current time as seed for random generator
 	std::unique_lock<std::mutex> lock(tiles_access);
-	std::uint32_t tile_index = 0;
-	const glm::vec3 clickable_color = { 0.2f, 0.7f, 0.2f };
+	std::uint32_t tile_index = 0;	
 
 	Vertices clickable_vertices;
 	Indices clickable_indices;
@@ -25,6 +27,13 @@ void Map::upload_clickable_vertices()
 			{
 				continue;
 			}
+
+
+			glm::vec3 clickable_color = { 0.2f, 0.7f, 0.2f };
+			int random_variable = 1 + std::rand() / ((RAND_MAX + 1u) / 6);  // Note: 1+rand()%6 is biased
+			float color_delta = 1.0f / random_variable;
+			clickable_color.y += color_delta;
+
 			for (const auto& vertex : Tile::get_vertices_translated(static_cast<float>(x), static_cast<float>(y), clickable_color))
 			{
 				clickable_vertices.push_back(vertex);
