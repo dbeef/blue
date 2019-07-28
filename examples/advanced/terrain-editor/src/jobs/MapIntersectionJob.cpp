@@ -207,8 +207,13 @@ void MapIntersectionJob::intersection_loop()
 		{
 			blue::Context::logger().info("Intersection at: {} {}", best_result_tile_x, best_result_tile_y);
 			Application::instance().input.intersection.store(true);
-			Application::instance().input.intersection_x.store(best_result_tile_x);
-			Application::instance().input.intersection_y.store(best_result_tile_y);
+			Application::instance().input.intersection_tile_x.store(best_result_tile_x);
+			Application::instance().input.intersection_tile_y.store(best_result_tile_y);
+			
+			glm::vec3 intersection_point = camera.get_position() + (direction * closest_distance);
+
+			Application::instance().input.intersection_point_x.store(intersection_point.x);
+			Application::instance().input.intersection_point_y.store(intersection_point.z);
 		}
 
 		Application::instance().input.clicked.store(false);

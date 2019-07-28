@@ -34,8 +34,11 @@ public:
 	struct {
 		std::atomic_bool clicked{ false };
 		std::atomic_bool intersection {false};
-		std::atomic_uint16_t intersection_x {0};
-		std::atomic_uint16_t intersection_y {0};
+		std::atomic_uint16_t intersection_tile_x {0};
+		std::atomic_uint16_t intersection_tile_y {0};
+		// It's assumed that y = 0 on intersection point.
+		std::atomic_uint16_t intersection_point_x {0};
+		std::atomic_uint16_t intersection_point_y {0};
 	} input;
 
 private:

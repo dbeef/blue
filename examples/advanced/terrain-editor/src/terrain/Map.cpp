@@ -5,6 +5,8 @@
 #include "Resources.hpp"
 #include "Application.hpp"
 
+#include "glm/geometric.hpp"
+
 void Map::upload_clickable_vertices()
 {
 	std::unique_lock<std::mutex> lock(tiles_access);
@@ -57,12 +59,12 @@ void Map::upload_clickable_vertices()
 
 void Map::upload_decoration_vertices()
 {
+	decoration_vertices.clear();
+	decoration_indices.clear();
+
 	std::unique_lock<std::mutex> lock(tiles_access);
 	std::uint32_t tile_index = 0;
 	const glm::vec3 decoration_color = { 0.5f, 0.8f, 0.5f };
-
-	Vertices decoration_vertices;
-	Indices decoration_indices;
 
 	for (std::size_t x = 0; x < CHUNK_DIMENSION; x++)
 	{
@@ -88,6 +90,8 @@ void Map::upload_decoration_vertices()
 	auto vertex_array_future = blue::Context::gpu_system().submit(CreateMeshEntity{ decoration_vertices, decoration_indices, attributes, tile_index * 6 });
 	vertex_array_future.wait();
 	VertexArray decoration_vertices_vertex_array = vertex_array_future.get();
+
+	decoration_tiles = tile_index;
 
 	// Submit render command consisting of compiled shader, uploaded mesh and following geometry properties:
 
@@ -115,4 +119,49 @@ void Map::dispose_current_map_on_gpu()
 	blue::Context::renderer().remove_render_entity(decoration_vertices_render_entity);
 	clickable_vertices_render_entity = 0;
 	decoration_vertices_render_entity = 0;
+}
+
+void Map::dispose_current_decoration_on_gpus()
+{
+	blue::Context::renderer().remove_render_entity(decoration_vertices_render_entity);
+	decoration_vertices_render_entity = 0;
+}
+
+void Map::upload_decoration()
+{
+	auto attributes = Tile::get_attributes();
+	auto vertex_array_future = blue::Context::gpu_system().submit(CreateMeshEntity{ decoration_vertices, decoration_indices, attributes, decoration_tiles * 6 });
+	vertex_array_future.wait();
+	VertexArray decoration_vertices_vertex_array = vertex_array_future.get();
+
+	// Submit render command consisting of compiled shader, uploaded mesh and following geometry properties:
+
+	RenderEntity entity;
+	entity.position = { 0, 0, 0 };
+	entity.shader = Resources::instance().shaders.decoration_map_shader;
+	entity.vertex_array = decoration_vertices_vertex_array;
+	entity.scale = 1.0f;
+	entity.rotation = glm::identity<glm::quat>();
+	entity.environment = Application::instance().map_environment.environment;
+	entity.texture = 0;
+
+	decoration_vertices_render_entity = blue::Context::renderer().add(entity);
+}
+
+void Map::ascend_points(float x, float y, float R)
+{
+	for (std::size_t index = 0; index < decoration_vertices.size(); index+=6)
+	{
+		// TODO: Check if this vertex is adjacent to clickable tile, if so, ignore it
+		// to avoid voids in terrain.
+
+		float& v_x = decoration_vertices[index + 0];
+		float& v_y = decoration_vertices[index + 1];
+		float& v_z = decoration_vertices[index + 2];
+
+		if (glm::distance(glm::vec3{ v_x, v_y, v_z }, glm::vec3{ x, 0, y }) <= R)
+		{
+			v_y += 0.25f;
+		}
+	}
 }
