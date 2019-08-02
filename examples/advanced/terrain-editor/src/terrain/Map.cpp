@@ -28,13 +28,22 @@ void Map::upload_clickable_vertices()
 				continue;
 			}
 
-
-			glm::vec3 clickable_color = { 0.2f, 0.7f, 0.2f };
-			int random_variable = 1 + std::rand() / ((RAND_MAX + 1u) / 6);  // Note: 1+rand()%6 is biased
+			glm::vec3 clickable_color_1 = { 0.2f, 0.7f, 0.2f };
+			glm::vec3 clickable_color_2 = { 0.2f, 0.7f, 0.2f };
+			int random_variable = 10 + std::rand() / ((RAND_MAX + 1u) / 16);  // Note: 1+rand()%6 is biased
 			float color_delta = 1.0f / random_variable;
-			clickable_color.y += color_delta;
+			if (random_variable % 2)
+			{
+				clickable_color_1.y += color_delta;
+				clickable_color_2.y -= color_delta;
+			}
+			else
+			{
+				clickable_color_1.y -= color_delta;
+				clickable_color_2.y += color_delta;
+			}
 
-			for (const auto& vertex : Tile::get_vertices_translated(static_cast<float>(x), static_cast<float>(y), clickable_color))
+			for (const auto& vertex : Tile::get_vertices_translated(static_cast<float>(x), static_cast<float>(y), clickable_color_1, clickable_color_2))
 			{
 				clickable_vertices.push_back(vertex);
 			}
@@ -84,7 +93,23 @@ void Map::upload_decoration_vertices()
 			{
 				continue;
 			}
-			for (const auto& vertex : Tile::get_vertices_translated(static_cast<float>(x), static_cast<float>(y), decoration_color))
+
+			glm::vec3 clickable_color_1 = { 0.2f, 0.7f, 0.2f };
+			glm::vec3 clickable_color_2 = { 0.2f, 0.7f, 0.2f };
+			int random_variable = 10 + std::rand() / ((RAND_MAX + 1u) / 16);  // Note: 1+rand()%6 is biased
+			float color_delta = 1.0f / random_variable;
+			if (random_variable % 2)
+			{
+				clickable_color_1.y += color_delta;
+				clickable_color_2.y -= color_delta;
+			}
+			else
+			{
+				clickable_color_1.y -= color_delta;
+				clickable_color_2.y += color_delta;
+			}
+
+			for (const auto& vertex : Tile::get_vertices_translated(static_cast<float>(x), static_cast<float>(y), clickable_color_1, clickable_color_2))
 			{
 				decoration_vertices.push_back(vertex);
 			}
