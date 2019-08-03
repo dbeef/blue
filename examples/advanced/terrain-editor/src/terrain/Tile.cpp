@@ -36,9 +36,9 @@ Attributes Tile::get_attributes()
 {
 	Attributes attributes =
 	{
-		{ ShaderAttribute::Type::VEC3, ShaderAttribute::Purpose::VERTEX_POSITION},
-		{ ShaderAttribute::Type::VEC3, ShaderAttribute::Purpose::NORMAL},
-		{ ShaderAttribute::Type::VEC3, ShaderAttribute::Purpose::COLOR}
+		{ ShaderAttribute::Type::VEC3, ShaderAttribute::Purpose::VERTEX_POSITION, ShaderAttribute::Buffer::VERTEX},
+		{ ShaderAttribute::Type::VEC3, ShaderAttribute::Purpose::NORMAL, ShaderAttribute::Buffer::VERTEX},
+		{ ShaderAttribute::Type::VEC3, ShaderAttribute::Purpose::COLOR, ShaderAttribute::Buffer::VERTEX}
 	};
 	return attributes;
 }

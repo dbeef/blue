@@ -76,19 +76,22 @@ void Renderer::draw_render_entities()
 		const glm::mat4 model = TranslationMatrix * RotationMatrix * ScaleMatrix;
 		glUniformMatrix4fv(uniform_locations.modelLoc, 1, GL_FALSE, glm::value_ptr(model));
 
-		if (vao.ibo)
+		DebugGlCall(glBindVertexArray(vao.vao));
+
+		if (vao.number_of_instances)
 		{
-			DebugGlCall(glBindVertexArray(vao.vao));
+			// Instanced rendering
+			DebugGlCall(glDrawArraysInstanced(GL_TRIANGLES, 0, vao.vertices_count, vao.number_of_instances));
+		}
+		else if (vao.ibo)
+		{
+			// Rendering with custom index buffer
 			DebugGlCall(glDrawElements(GL_TRIANGLES, vao.vertices_count, GL_UNSIGNED_INT, 0));
-			DebugGlCall(glBindVertexArray(0));
 		}
 		else
 		{
-			// glDrawArrays does not utilize index buffers (it uses consecutive numbers starting from 0 to fill its index buffer),
-			// you still need to know what's the size of vertices.
-			DebugGlCall(glBindVertexArray(vao.vao));
+			// Rendering using automatic index buffer, which is consecutive numbers starting from 0.
 			DebugGlCall(glDrawArrays(GL_TRIANGLES, 0, vao.vertices_count));
-			DebugGlCall(glBindVertexArray(0));
 		}
 	}
 }

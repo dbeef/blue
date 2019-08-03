@@ -15,22 +15,49 @@ namespace
 		}
 	}
 
-	void set_vertex_buffer_layout(const std::vector<ShaderAttribute>& attributes) 
+	void set_vertex_buffer_layout(const std::vector<ShaderAttribute>& attributes, VertexBufferId vertex_buffer, IndexBufferId index_buffer) 
 	{
-		int total_size = 0;
+		int vertex_total_size = 0;
+		int index_total_size = 0;
 		for (const auto& attrib : attributes)
 		{
-			total_size += attrib.getSize();
+			if (attrib._buffer == ShaderAttribute::Buffer::VERTEX)
+			{
+				vertex_total_size += attrib.getSize();
+			}
+			else
+			{
+				index_total_size += attrib.getSize();
+			}
 		}
 
 		int index = 0;
-		int offset = 0;
+		int vertex_buffer_offset = 0;
+		int index_buffer_offset = 0;
+
 		for (const auto& attrib : attributes)
 		{
-			DebugGlCall(glVertexAttribPointer(index, attrib.getNumOfComponents(), GL_FLOAT, GL_FALSE, total_size, (GLvoid*)offset));
 			DebugGlCall(glEnableVertexAttribArray(index));
+
+			if (attrib._buffer == ShaderAttribute::Buffer::VERTEX)
+			{
+				DebugGlCall(glBindBuffer(GL_ARRAY_BUFFER, vertex_buffer));
+				DebugGlCall(glVertexAttribPointer(index, attrib.getNumOfComponents(), GL_FLOAT, GL_FALSE, vertex_total_size, (GLvoid*)vertex_buffer_offset));
+				
+				vertex_buffer_offset += attrib.getSize();
+			}
+			else
+			{
+				DebugGlCall(glBindBuffer(GL_ARRAY_BUFFER, index_buffer));
+				DebugGlCall(glVertexAttribPointer(index, attrib.getNumOfComponents(), GL_FLOAT, GL_FALSE, index_total_size, (GLvoid*)index_buffer_offset));
+				
+				// Set one instance of this attribute per vertex:
+				DebugGlCall(glVertexAttribDivisor(index, 1));
+
+				index_buffer_offset += attrib.getSize();
+			}
+			
 			index++;
-			offset += attrib.getSize();
 		}
 	}
 
@@ -47,7 +74,7 @@ namespace
 		DebugGlCall(glBindBuffer(GL_ARRAY_BUFFER, vertex_buffer));
 		DebugGlCall(glBufferData(GL_ARRAY_BUFFER, sizeof(VertexType) * entity.vertices.size(), entity.vertices.data(), GL_STATIC_DRAW));
 
-		set_vertex_buffer_layout(entity.attributes);
+		set_vertex_buffer_layout(entity.attributes, vertex_buffer, 0);
 		
 		glBindVertexArray(0);
 
@@ -66,13 +93,25 @@ namespace
 		DebugGlCall(glGenVertexArrays(1, &vertex_array));
 		DebugGlCall(glBindVertexArray(vertex_array));
 
-		DebugGlCall(glBindBuffer(GL_ARRAY_BUFFER, vertex_buffer));
-		DebugGlCall(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, index_buffer));
+		if (entity.number_of_instances)
+		{
+			// Use same type of buffer.
+			DebugGlCall(glBindBuffer(GL_ARRAY_BUFFER, vertex_buffer));
+			DebugGlCall(glBufferData(GL_ARRAY_BUFFER, sizeof(VertexType) * entity.vertices.size(), entity.vertices.data(), GL_STATIC_DRAW));
 
-		DebugGlCall(glBufferData(GL_ARRAY_BUFFER, sizeof(VertexType) * entity.vertices.size(), entity.vertices.data(), GL_STATIC_DRAW));
-		DebugGlCall(glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(IndexType) * entity.indices.size(), entity.indices.data(), GL_STATIC_DRAW));
+			DebugGlCall(glBindBuffer(GL_ARRAY_BUFFER, index_buffer));
+			DebugGlCall(glBufferData(GL_ARRAY_BUFFER, sizeof(IndexType) * entity.indices.size(), entity.indices.data(), GL_STATIC_DRAW));
+		}
+		else
+		{
+			DebugGlCall(glBindBuffer(GL_ARRAY_BUFFER, vertex_buffer));
+			DebugGlCall(glBufferData(GL_ARRAY_BUFFER, sizeof(VertexType) * entity.vertices.size(), entity.vertices.data(), GL_STATIC_DRAW));
 
-		set_vertex_buffer_layout(entity.attributes);
+			DebugGlCall(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, index_buffer));
+			DebugGlCall(glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(IndexType) * entity.indices.size(), entity.indices.data(), GL_STATIC_DRAW));
+		}
+
+		set_vertex_buffer_layout(entity.attributes, vertex_buffer, index_buffer);
 
 		glBindVertexArray(0);
 
@@ -94,6 +133,7 @@ void handle(std::pair<std::promise<VertexArray>, CreateMeshEntity>& pair)
 	else
 	{
 		VertexArray vao = handle(entity);
+		vao.number_of_instances = entity.number_of_instances;
 		promise.set_value(vao);
 		log_status(vao);
 	}

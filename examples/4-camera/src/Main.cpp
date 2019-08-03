@@ -39,9 +39,9 @@ int main(int argc, char* argv[])
 
 	Attributes attributes =
 	{
-		{ ShaderAttribute::Type::VEC3, ShaderAttribute::Purpose::VERTEX_POSITION},
-		{ ShaderAttribute::Type::VEC3, ShaderAttribute::Purpose::COLOR},
-		{ ShaderAttribute::Type::VEC3, ShaderAttribute::Purpose::NORMAL}
+		{ ShaderAttribute::Type::VEC3, ShaderAttribute::Purpose::VERTEX_POSITION, ShaderAttribute::Buffer::VERTEX},
+		{ ShaderAttribute::Type::VEC3, ShaderAttribute::Purpose::COLOR, ShaderAttribute::Buffer::VERTEX},
+		{ ShaderAttribute::Type::VEC3, ShaderAttribute::Purpose::NORMAL, ShaderAttribute::Buffer::VERTEX}
 	};
 
 	// Simple model I created, that utilizes vertex painting.

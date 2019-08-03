@@ -1,32 +1,26 @@
 #include <blue/Context.hpp>
 #include <blue/Timestep.hpp>
 #include <blue/ShaderUtils.h>
-#include <blue/ModelLoader.h>
 #include <blue/camera/PerspectiveCamera.hpp>
 
-#include <cmath>
 #include <atomic>
 
-int main(int argc, char* argv[]) 
+int main(int argc, char* argv[])
 {
+
 	blue::Context::init();
 	blue::Context::window().create(800, 600);
+	blue::Context::gpu_thread().run();
 
 	// Register ESC key callback: 
-	std::atomic_bool running {true};
+	std::atomic_bool running{ true };
 
 	blue::Context::input().registerKeyCallback({
-		[&running]()
-		{
-			// FIXME: For some reason this fires up randomly.
-			running = false;
-		},
+		[&running]() { running = false; },
 			SDLK_ESCAPE,
 			SDL_KEYDOWN
 		}
 	);
-
-	blue::Context::gpu_thread().run();
 
 	// Now render thread is running and waiting for commands to process,
 	// leaving this thread only for CPU logics. 
@@ -40,19 +34,30 @@ int main(int argc, char* argv[])
 
 	// Issue the GPU thread with task of uploading mesh:
 
+	std::uint32_t instances = 100;
+	Indices instance_buffer;
+	for (std::uint32_t i = 0; i < instances; i++)
+	{
+		auto pos = glm::vec3{ static_cast<float>(i) / 10 };
+		instance_buffer.push_back(pos.x);
+		instance_buffer.push_back(pos.y);
+		instance_buffer.push_back(0);
+	}
+
+	Vertices vertices =
+	{
+		-1.0f, -1.0f, 0.0f, // left - position
+		1.0f, -1.0f, 0.0f,  // right - position
+		0.0f,  1.0f, 0.0f,  // up - position
+	};
+
 	Attributes attributes =
 	{
 		{ ShaderAttribute::Type::VEC3, ShaderAttribute::Purpose::VERTEX_POSITION, ShaderAttribute::Buffer::VERTEX},
-		{ ShaderAttribute::Type::VEC3, ShaderAttribute::Purpose::COLOR, ShaderAttribute::Buffer::VERTEX},
-		{ ShaderAttribute::Type::VEC3, ShaderAttribute::Purpose::NORMAL, ShaderAttribute::Buffer::VERTEX}
+		{ ShaderAttribute::Type::VEC3, ShaderAttribute::Purpose::TRANSLATION, ShaderAttribute::Buffer::INDEX},
 	};
 
-	// Simple model I created, that utilizes vertex painting.
-	auto scene_ptr = models::load_scene("resources/PineTree.fbx");
-	unsigned int vertex_counter = 0;
-	auto vertices = models::parse_scene(scene_ptr, attributes, vertex_counter);
-
-	auto vertex_array_future = blue::Context::gpu_system().submit(CreateMeshEntity{ vertices, {}, attributes, vertex_counter});
+	auto vertex_array_future = blue::Context::gpu_system().submit(CreateMeshEntity{ vertices, instance_buffer, attributes, 3, instances });
 	vertex_array_future.wait();
 	auto vertex_array = vertex_array_future.get();
 
@@ -60,24 +65,26 @@ int main(int argc, char* argv[])
 
 	auto environment_future = blue::Context::gpu_system().submit(CreateEnvironmentEntity{});
 	environment_future.wait();
-	auto environment = environment_future.get();
+	auto environment_id = environment_future.get();
+
+	// Upload camera's matrices
 
 	PerspectiveCamera camera;
 
-	blue::Context::gpu_system().submit(UpdateEnvironmentEntity_Projection{ environment, camera.get_projection() });
-	blue::Context::gpu_system().submit(UpdateEnvironmentEntity_View{ environment, camera.get_view() });
+	blue::Context::gpu_system().submit(UpdateEnvironmentEntity_Projection{ environment_id, camera.get_projection() });
+	blue::Context::gpu_system().submit(UpdateEnvironmentEntity_View{ environment_id, camera.get_view() });
 
-	// Submit render command consisting of compiled shader and uploaded mesh
+	// Submit render command consisting of compiled shader, uploaded mesh and following geometry properties:
 
 	RenderEntity entity;
 	entity.position = { 0, 0, -2.5f };
 	entity.shader = shader;
 	entity.vertex_array = vertex_array;
-	entity.scale = 0.5f;
-	entity.rotation = { 0, 0, 0, 0 };
-	entity.environment = environment;
+	entity.scale = 2.0f;
+	entity.rotation = { 1.0f, 1.0f, 0, 0 };
+	entity.environment = environment_id;
 
-	entity.id = blue::Context::renderer().add(entity);
+	RenderEntityId id = blue::Context::renderer().add(entity);
 
 	// Start logics loop with timestep limited to 30 times per second:
 	Timestep timestep(30);
@@ -85,12 +92,6 @@ int main(int argc, char* argv[])
 	while (running)
 	{
 		timestep.mark_start();
-
-		static glm::vec3 euler(0, 1.0f, 0);
-		euler.y += 0.02f;
-		entity.rotation = glm::quat(euler);
-		blue::Context::renderer().update(entity);
-
 		blue::Context::input().poll();
 		timestep.mark_end();
 		timestep.delay();

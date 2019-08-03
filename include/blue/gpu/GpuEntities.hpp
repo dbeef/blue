@@ -23,9 +23,17 @@ struct ShaderAttribute
 		TEXTURE_COORDINATE,
 		COLOR,
 		NORMAL,
+		OTHER,
+		TRANSLATION,
 	};
 
-	ShaderAttribute(Type type, const Purpose& purpose) : _type(type), _purpose(purpose) {}
+	enum class Buffer
+	{
+		VERTEX,
+		INDEX
+	};
+
+	ShaderAttribute(Type type, const Purpose& purpose, const Buffer& buffer) : _type(type), _purpose(purpose), _buffer(buffer) {}
 
 	std::size_t getNumOfComponents() const
 	{
@@ -46,6 +54,7 @@ struct ShaderAttribute
 
 	const Type _type;
 	const Purpose _purpose;
+	const Buffer _buffer;
 };
 
 using VertexType = float;
@@ -70,10 +79,12 @@ struct Environment
 
 struct VertexArray
 {
-	VertexArrayId vao; // 4 bytes
-	VertexBufferId vbo; // 4 bytes
-	IndexBufferId ibo; // 4 bytes
-	std::uint32_t vertices_count; // 4 bytes
+	VertexArrayId vao; 
+	VertexBufferId vbo;
+	IndexBufferId ibo; 
+	std::uint32_t vertices_count{}; 
+	// Zeroed if instanced rendering is not used:
+	std::uint32_t number_of_instances{};
 };
 
 struct CompileShaderEntity
@@ -87,7 +98,9 @@ struct CreateMeshEntity
 	const Vertices& vertices;
 	const Indices& indices;
 	const Attributes& attributes;
-	const std::uint32_t indices_count;
+	const std::uint32_t indices_count{};
+	// Zeroed if instanced rendering is not used.
+	std::uint32_t number_of_instances{};
 };
 
 struct CreateTextureEntity

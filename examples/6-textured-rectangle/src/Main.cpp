@@ -49,8 +49,8 @@ int main(int argc, char* argv[])
 
 	Attributes attributes =
 	{
-		{ ShaderAttribute::Type::VEC2, ShaderAttribute::Purpose::VERTEX_POSITION},
-		{ ShaderAttribute::Type::VEC2, ShaderAttribute::Purpose::TEXTURE_COORDINATE}
+		{ ShaderAttribute::Type::VEC2, ShaderAttribute::Purpose::VERTEX_POSITION, ShaderAttribute::Buffer::VERTEX},
+		{ ShaderAttribute::Type::VEC2, ShaderAttribute::Purpose::TEXTURE_COORDINATE, ShaderAttribute::Buffer::VERTEX}
 	};
 
 	auto vertex_array_future = blue::Context::gpu_system().submit(CreateMeshEntity{ vertices, indices, attributes, 6 });
