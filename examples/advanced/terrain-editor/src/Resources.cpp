@@ -92,6 +92,60 @@ void Resources::load_models()
 		vertex_array_future.wait();
 		models.wheat = vertex_array_future.get();
 	}
+	{
+		auto scene_ptr = models::load_scene("resources/Boulder.fbx");
+		unsigned int vertex_counter = 0;
+		auto vertices = models::parse_scene(scene_ptr, attributes, vertex_counter);
+
+		auto vertex_array_future = blue::Context::gpu_system().submit(CreateMeshEntity{ vertices, {}, attributes, vertex_counter });
+		vertex_array_future.wait();
+		models.boulder = vertex_array_future.get();
+	}
+	{
+		auto scene_ptr = models::load_scene("resources/SmallBoulder.fbx");
+		unsigned int vertex_counter = 0;
+		auto vertices = models::parse_scene(scene_ptr, attributes, vertex_counter);
+
+		auto vertex_array_future = blue::Context::gpu_system().submit(CreateMeshEntity{ vertices, {}, attributes, vertex_counter });
+		vertex_array_future.wait();
+		models.small_boulder = vertex_array_future.get();
+	}
+	{
+		auto scene_ptr = models::load_scene("resources/Grass.fbx");
+		unsigned int vertex_counter = 0;
+		auto vertices = models::parse_scene(scene_ptr, attributes, vertex_counter);
+
+		auto vertex_array_future = blue::Context::gpu_system().submit(CreateMeshEntity{ vertices, {}, attributes, vertex_counter });
+		vertex_array_future.wait();
+		models.grass = vertex_array_future.get();
+	}
+	{
+		auto scene_ptr = models::load_scene("resources/Pylon.fbx");
+		unsigned int vertex_counter = 0;
+		auto vertices = models::parse_scene(scene_ptr, attributes, vertex_counter);
+
+		auto vertex_array_future = blue::Context::gpu_system().submit(CreateMeshEntity{ vertices, {}, attributes, vertex_counter });
+		vertex_array_future.wait();
+		models.pylon = vertex_array_future.get();
+	}
+	{
+		auto scene_ptr = models::load_scene("resources/Bush.fbx");
+		unsigned int vertex_counter = 0;
+		auto vertices = models::parse_scene(scene_ptr, attributes, vertex_counter);
+
+		auto vertex_array_future = blue::Context::gpu_system().submit(CreateMeshEntity{ vertices, {}, attributes, vertex_counter });
+		vertex_array_future.wait();
+		models.bush = vertex_array_future.get();
+	}
+	{
+		auto scene_ptr = models::load_scene("resources/CutTree.fbx");
+		unsigned int vertex_counter = 0;
+		auto vertices = models::parse_scene(scene_ptr, attributes, vertex_counter);
+
+		auto vertex_array_future = blue::Context::gpu_system().submit(CreateMeshEntity{ vertices, {}, attributes, vertex_counter });
+		vertex_array_future.wait();
+		models.cut_tree = vertex_array_future.get();
+	}
 }
 
 void Resources::load_textures()

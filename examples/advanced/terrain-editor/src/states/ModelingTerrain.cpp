@@ -39,7 +39,7 @@ ModelingTerrain::ModelingTerrain()
 		else if (_mode == Mode::ADDING_MODELS)
 		{
 			ImGui::Begin("Models list");
-			const char* listbox_items[] = { "Pine tree", "Tank", "Hurdle", "Wheat" };
+			const char* listbox_items[] = { "Pine tree", "Tank", "Hurdle", "Wheat", "Boulder", "Small Boulder", "Grass", "Pylon", "Bush", "Cut tree" };
 			ImGui::ListBox("", reinterpret_cast<int*>(&_model), listbox_items, IM_ARRAYSIZE(listbox_items), 4);
 			ImGui::SliderFloat("Model scale", &_model_scale, 0.01f, 5.0f);
 			ImGui::End();
@@ -96,7 +96,7 @@ std::shared_ptr<BaseState> ModelingTerrain::update()
 				entity.position = { static_cast<float>(x), 0, static_cast<float>(y) };
 				entity.shader = Resources::instance().shaders.model_shader;
 				entity.vertex_array = Resources::instance().models.pine_tree;
-				entity.scale = _model_scale;
+				entity.scale = 0.294f;
 				entity.rotation = { 0, 0, 0, 0 };
 				entity.environment = Application::instance().map_environment.environment;
 
@@ -122,7 +122,7 @@ std::shared_ptr<BaseState> ModelingTerrain::update()
 				entity.position = { static_cast<float>(x), 0, static_cast<float>(y) };
 				entity.shader = Resources::instance().shaders.model_shader;
 				entity.vertex_array = Resources::instance().models.hurdle;
-				entity.scale = _model_scale;
+				entity.scale = 0.139f;
 				entity.rotation = { 0, 0, 0, 0 };
 				entity.environment = Application::instance().map_environment.environment;
 
@@ -136,6 +136,84 @@ std::shared_ptr<BaseState> ModelingTerrain::update()
 				entity.shader = Resources::instance().shaders.model_shader;
 				entity.vertex_array = Resources::instance().models.wheat;
 				entity.scale = _model_scale;
+				entity.rotation = { 0, 0, 0, 0 };
+				entity.environment = Application::instance().map_environment.environment;
+
+				entity.id = blue::Context::renderer().add(entity);
+				break;
+			}
+			case(Model::BOULDER):
+			{
+				RenderEntity entity;
+				entity.position = { static_cast<float>(x), 0, static_cast<float>(y) };
+				entity.shader = Resources::instance().shaders.model_shader;
+				entity.vertex_array = Resources::instance().models.boulder;
+				entity.scale = 0.372f;
+				entity.rotation = { 0, 0, 0, 0 };
+				entity.environment = Application::instance().map_environment.environment;
+
+				entity.id = blue::Context::renderer().add(entity);
+				break;
+			}
+			case(Model::SMALL_BOULDER):
+			{
+				RenderEntity entity;
+				entity.position = { static_cast<float>(x), 0, static_cast<float>(y) };
+				entity.shader = Resources::instance().shaders.model_shader;
+				entity.vertex_array = Resources::instance().models.small_boulder;
+				entity.scale = 0.200f;
+				entity.rotation = { 0, 0, 0, 0 };
+				entity.environment = Application::instance().map_environment.environment;
+
+				entity.id = blue::Context::renderer().add(entity);
+				break;
+			}
+			case(Model::GRASS):
+			{
+				RenderEntity entity;
+				entity.position = { static_cast<float>(x), 0, static_cast<float>(y) };
+				entity.shader = Resources::instance().shaders.model_shader;
+				entity.vertex_array = Resources::instance().models.grass;
+				entity.scale = 0.185f;
+				entity.rotation = { 0, 0, 0, 0 };
+				entity.environment = Application::instance().map_environment.environment;
+
+				entity.id = blue::Context::renderer().add(entity);
+				break;
+			}
+			case(Model::PYLON):
+			{
+				RenderEntity entity;
+				entity.position = { static_cast<float>(x), 0, static_cast<float>(y) };
+				entity.shader = Resources::instance().shaders.model_shader;
+				entity.vertex_array = Resources::instance().models.pylon;
+				entity.scale = 0.25f;
+				entity.rotation = { 0, 0, 0, 0 };
+				entity.environment = Application::instance().map_environment.environment;
+
+				entity.id = blue::Context::renderer().add(entity);
+				break;
+			}
+			case(Model::BUSH):
+			{
+				RenderEntity entity;
+				entity.position = { static_cast<float>(x), 0, static_cast<float>(y) };
+				entity.shader = Resources::instance().shaders.model_shader;
+				entity.vertex_array = Resources::instance().models.bush;
+				entity.scale = 0.55f;
+				entity.rotation = { 0, 0, 0, 0 };
+				entity.environment = Application::instance().map_environment.environment;
+
+				entity.id = blue::Context::renderer().add(entity);
+				break;
+			}
+			case(Model::CUT_TREE):
+			{
+				RenderEntity entity;
+				entity.position = { static_cast<float>(x), 0, static_cast<float>(y) };
+				entity.shader = Resources::instance().shaders.model_shader;
+				entity.vertex_array = Resources::instance().models.cut_tree;
+				entity.scale = 0.180f;
 				entity.rotation = { 0, 0, 0, 0 };
 				entity.environment = Application::instance().map_environment.environment;
 

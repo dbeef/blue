@@ -24,6 +24,12 @@ public:
 		TANK = 1,
 		HURDLE = 2,
 		WHEAT = 3,
+		BOULDER = 4,
+		SMALL_BOULDER = 5,
+		GRASS = 6,
+		PYLON = 7,
+		BUSH = 8,
+		CUT_TREE = 9,
 	};
 
 	ModelingTerrain();

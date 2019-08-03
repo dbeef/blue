@@ -29,6 +29,12 @@ public:
 		VertexArray tank;
 		VertexArray hurdle;
 		VertexArray wheat;
+		VertexArray boulder;
+		VertexArray small_boulder;
+		VertexArray grass;
+		VertexArray pylon;
+		VertexArray bush;
+		VertexArray cut_tree;
 	} models;
 
 private:

@@ -307,6 +307,31 @@ void Map::color_points(float x, float y, float R, const glm::vec3& color)
 		// TODO: Check if this vertex is adjacent to clickable tile, if so, ignore it
 		// to avoid voids in terrain. 
 
+		glm::vec3 clickable_color_1 = color;
+		glm::vec3 clickable_color_2 = color;
+		int random_variable = 10 + std::rand() / ((RAND_MAX + 1u) / 16);  // Note: 1+rand()%6 is biased
+		float color_delta = 1.0f / random_variable;
+		if (random_variable % 2)
+		{
+			clickable_color_1.x += color_delta;
+			clickable_color_1.y += color_delta;
+			clickable_color_1.z += color_delta;
+
+			clickable_color_2.x -= color_delta;
+			clickable_color_2.y -= color_delta;
+			clickable_color_2.z -= color_delta;
+		}
+		else
+		{
+			clickable_color_1.x -= color_delta;
+			clickable_color_1.y -= color_delta;
+			clickable_color_1.z -= color_delta;
+
+			clickable_color_2.x += color_delta;
+			clickable_color_2.y += color_delta;
+			clickable_color_2.z += color_delta;
+		}
+
 		// First triangle indexes:  0, 1, 2
 		{
 			glm::vec3 p_1 = { decoration_vertices[index + 0 + 0] , decoration_vertices[index + 0 + 1],decoration_vertices[index + 0 + 2] };
@@ -318,17 +343,17 @@ void Map::color_points(float x, float y, float R, const glm::vec3& color)
 				|| glm::distance(glm::vec3{ p_3.x, 0, p_3.z }, glm::vec3{ x, 0, y }) <= R
 				)
 			{
-				decoration_vertices[index + 0 + 6] = color.x;
-				decoration_vertices[index + 0 + 7] = color.y;
-				decoration_vertices[index + 0 + 8] = color.z;
+				decoration_vertices[index + 0 + 6] = clickable_color_1.x;
+				decoration_vertices[index + 0 + 7] = clickable_color_1.y;
+				decoration_vertices[index + 0 + 8] = clickable_color_1.z;
 
-				decoration_vertices[index + 9 + 6] = color.x;
-				decoration_vertices[index + 9 + 7] = color.y;
-				decoration_vertices[index + 9 + 8] = color.z;
+				decoration_vertices[index + 9 + 6] = clickable_color_2.x;
+				decoration_vertices[index + 9 + 7] = clickable_color_2.y;
+				decoration_vertices[index + 9 + 8] = clickable_color_2.z;
 
-				decoration_vertices[index + 18 + 6] = color.x;
-				decoration_vertices[index + 18 + 7] = color.y;
-				decoration_vertices[index + 18 + 8] = color.z;
+				decoration_vertices[index + 18 + 6] = clickable_color_2.x;
+				decoration_vertices[index + 18 + 7] = clickable_color_2.y;
+				decoration_vertices[index + 18 + 8] = clickable_color_2.z;
 			}
 		}
 		// Second traingle indexes: 2, 3, 0
@@ -342,17 +367,17 @@ void Map::color_points(float x, float y, float R, const glm::vec3& color)
 				glm::distance(glm::vec3{ p_3.x, 0, p_3.z }, glm::vec3{ x, 0, y }) <= R
 				)
 			{
-				decoration_vertices[index + 18 + 6] = color.x;
-				decoration_vertices[index + 18 + 7] = color.y;
-				decoration_vertices[index + 18 + 8] = color.z;
+				decoration_vertices[index + 18 + 6] = clickable_color_2.x;
+				decoration_vertices[index + 18 + 7] = clickable_color_2.y;
+				decoration_vertices[index + 18 + 8] = clickable_color_2.z;
 
-				decoration_vertices[index + 27 + 6] = color.x;
-				decoration_vertices[index + 27 + 7] = color.y;
-				decoration_vertices[index + 27 + 8] = color.z;
+				decoration_vertices[index + 27 + 6] = clickable_color_2.x;
+				decoration_vertices[index + 27 + 7] = clickable_color_2.y;
+				decoration_vertices[index + 27 + 8] = clickable_color_2.z;
 
-				decoration_vertices[index + 0 + 6] = color.x;
-				decoration_vertices[index + 0 + 7] = color.y;
-				decoration_vertices[index + 0 + 8] = color.z;
+				decoration_vertices[index + 0 + 6] = clickable_color_1.x;
+				decoration_vertices[index + 0 + 7] = clickable_color_1.y;
+				decoration_vertices[index + 0 + 8] = clickable_color_1.z;
 			}
 		}
 	}
