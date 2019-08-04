@@ -39,7 +39,7 @@ ModelingTerrain::ModelingTerrain()
 		else if (_mode == Mode::ADDING_MODELS)
 		{
 			ImGui::Begin("Models list");
-			const char* listbox_items[] = { "Pine tree", "Tank", "Hurdle", "Wheat", "Boulder", "Small Boulder", "Grass", "Pylon", "Bush", "Cut tree" };
+			const char* listbox_items[] = { "Pine tree", "Tank", "Hurdle", "Wheat", "Boulder", "Small Boulder", "Grass", "Pylon", "Bush", "Cut tree", "Track", "Bridge" };
 			ImGui::ListBox("", reinterpret_cast<int*>(&_model), listbox_items, IM_ARRAYSIZE(listbox_items), 4);
 			ImGui::SliderFloat("Model scale", &_model_scale, 0.01f, 5.0f);
 			ImGui::End();
@@ -214,6 +214,32 @@ std::shared_ptr<BaseState> ModelingTerrain::update()
 				entity.shader = Resources::instance().shaders.model_shader;
 				entity.vertex_array = Resources::instance().models.cut_tree;
 				entity.scale = 0.180f;
+				entity.rotation = { 0, 0, 0, 0 };
+				entity.environment = Application::instance().map_environment.environment;
+
+				entity.id = blue::Context::renderer().add(entity);
+				break;
+			}
+			case(Model::TRACK):
+			{
+				RenderEntity entity;
+				entity.position = { static_cast<float>(x), 0, static_cast<float>(y) };
+				entity.shader = Resources::instance().shaders.model_shader;
+				entity.vertex_array = Resources::instance().models.track;
+				entity.scale = 0.180f;
+				entity.rotation = { 0, 0, 0, 0 };
+				entity.environment = Application::instance().map_environment.environment;
+
+				entity.id = blue::Context::renderer().add(entity);
+				break;
+			}
+			case(Model::BRIDGE):
+			{
+				RenderEntity entity;
+				entity.position = { static_cast<float>(x), 0, static_cast<float>(y) };
+				entity.shader = Resources::instance().shaders.model_shader;
+				entity.vertex_array = Resources::instance().models.bridge;
+				entity.scale = 0.35f;
 				entity.rotation = { 0, 0, 0, 0 };
 				entity.environment = Application::instance().map_environment.environment;
 

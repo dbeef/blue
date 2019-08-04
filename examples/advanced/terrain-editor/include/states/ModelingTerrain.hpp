@@ -30,6 +30,8 @@ public:
 		PYLON = 7,
 		BUSH = 8,
 		CUT_TREE = 9,
+		TRACK = 10,
+		BRIDGE = 11,
 	};
 
 	ModelingTerrain();

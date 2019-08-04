@@ -146,6 +146,24 @@ void Resources::load_models()
 		vertex_array_future.wait();
 		models.cut_tree = vertex_array_future.get();
 	}
+	{
+		auto scene_ptr = models::load_scene("resources/Track.fbx");
+		unsigned int vertex_counter = 0;
+		auto vertices = models::parse_scene(scene_ptr, attributes, vertex_counter);
+
+		auto vertex_array_future = blue::Context::gpu_system().submit(CreateMeshEntity{ vertices, {}, attributes, vertex_counter });
+		vertex_array_future.wait();
+		models.track = vertex_array_future.get();
+	}
+	{
+		auto scene_ptr = models::load_scene("resources/Bridge.fbx");
+		unsigned int vertex_counter = 0;
+		auto vertices = models::parse_scene(scene_ptr, attributes, vertex_counter);
+
+		auto vertex_array_future = blue::Context::gpu_system().submit(CreateMeshEntity{ vertices, {}, attributes, vertex_counter });
+		vertex_array_future.wait();
+		models.bridge = vertex_array_future.get();
+	}
 }
 
 void Resources::load_textures()

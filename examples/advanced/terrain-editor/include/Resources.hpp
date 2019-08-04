@@ -35,6 +35,8 @@ public:
 		VertexArray pylon;
 		VertexArray bush;
 		VertexArray cut_tree;
+		VertexArray track;
+		VertexArray bridge;
 	} models;
 
 private:
