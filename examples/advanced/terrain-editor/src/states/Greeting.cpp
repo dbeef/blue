@@ -1,6 +1,8 @@
 #include "states/Greeting.hpp"
 #include "states/SelectingClickableBlocks.hpp"
+#include "states/ModelingTerrain.hpp"
 #include "blue/Context.hpp"
+#include "Application.hpp"
 #include "imgui/imgui.h"
 
 Greeting::Greeting()
@@ -13,6 +15,11 @@ Greeting::Greeting()
 		if (new_level)
 		{
 			_new_level.store(true);
+		}
+		
+		if (load_level)
+		{
+			_load_level.store(true);
 		}
 
 		ImGui::End();
@@ -29,6 +36,11 @@ std::shared_ptr<BaseState> Greeting::update()
 	if (_new_level.load())
 	{
 		return std::make_shared<SelectingClickableBlocks>();
+	}
+	else if (_load_level.load())
+	{
+		Application::instance().get_map().import_from_file("map.bin");
+		return std::make_shared<ModelingTerrain>(true);
 	}
 	else
 	{

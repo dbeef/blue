@@ -4,7 +4,7 @@
 #include "Application.hpp"
 #include "Resources.hpp"
 
-ModelingTerrain::ModelingTerrain()
+ModelingTerrain::ModelingTerrain(const bool map_imported) : _map_imported(map_imported)
 {
 	_window = blue::Context::renderer().add([this]() {
 		ImGui::Begin("Blue: Terrain editor [Modeling terrain]");
@@ -13,6 +13,12 @@ ModelingTerrain::ModelingTerrain()
 			ImGui::TextColored(ImVec4(1, 0, 0, 1), "Cursor attached, press middle mouse button to detach.");
 		else
 			ImGui::TextColored(ImVec4(0, 1, 1, 1), "Cursor detached, press middle mouse button to attach.");
+
+		bool export_map = ImGui::Button("Save to file");
+		if (export_map)
+		{
+			Application::instance().get_map().export_to_file("map.bin");
+		}
 
 		ImGui::RadioButton("Elevation", reinterpret_cast<int*>(&_mode), 0);
 		ImGui::SameLine();
@@ -51,7 +57,7 @@ ModelingTerrain::ModelingTerrain()
 				ImGui::SliderFloat("Rotation X", &last_entity.euler.x, 0.00f, 3.0f);
 				ImGui::SliderFloat("Rotation Y", &last_entity.euler.y, 0.00f, 3.0f);
 				ImGui::SliderFloat("Rotation Z", &last_entity.euler.z, 0.00f, 3.0f);
-				
+
 				ImGui::InputFloat("Position X", &last_entity.position.x, 0.01f, 32.0f, "%.3f");
 				ImGui::InputFloat("Position Y", &last_entity.position.y, 0.01f, 32.0f, "%.3f");
 				ImGui::InputFloat("Position Z", &last_entity.position.z, 0.01f, 32.0f, "%.3f");
@@ -291,7 +297,14 @@ void ModelingTerrain::on_entry()
 {
 	// Create map
 	Application::instance().get_map().upload_clickable_vertices();
-	Application::instance().get_map().upload_decoration_vertices();
+	if (_map_imported)
+	{
+		Application::instance().get_map().upload_decoration();
+	}
+	else
+	{
+		Application::instance().get_map().upload_decoration_vertices();
+	}
 	// Run intersection test job
 	job.start();
 }

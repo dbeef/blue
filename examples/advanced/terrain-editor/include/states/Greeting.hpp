@@ -17,5 +17,6 @@ public:
 private:
 
 	std::atomic_bool _new_level{ false };
+	std::atomic_bool _load_level{ false };
 	ImGuiEntityId _greeting_window = 0;
 };

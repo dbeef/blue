@@ -33,12 +33,23 @@ public:
 		BRIDGE = 10,
 	};
 
-	ModelingTerrain();
+	ModelingTerrain(const bool map_imported);
 	~ModelingTerrain();
 	std::shared_ptr<BaseState> update() override;
 	void on_entry() override;
 
 private:
+
+	
+	struct ModelEntry
+	{
+		RenderEntityId id;
+		Model model;
+		glm::vec3 position;
+		glm::vec3 euler;
+	};
+	std::vector<ModelEntry> entries;
+
 
 	struct
 	{
@@ -56,4 +67,6 @@ private:
 	Model _model = Model::PINE_TREE;
 	MapIntersectionJob job;
 	ImGuiEntityId _window = 0;
+
+	const bool _map_imported;
 };

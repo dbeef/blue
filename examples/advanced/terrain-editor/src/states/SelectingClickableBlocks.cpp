@@ -50,7 +50,7 @@ std::shared_ptr<BaseState> SelectingClickableBlocks::update()
 	
 	if (_new_level.load())
 	{
-		return std::make_shared<ModelingTerrain>();
+		return std::make_shared<ModelingTerrain>(false);
 	}
 
 	return nullptr; 

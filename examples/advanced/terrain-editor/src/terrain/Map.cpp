@@ -5,16 +5,94 @@
 #include "Resources.hpp"
 #include "Application.hpp"
 
+#include <fstream>
+
 #include <glm/gtx/normal.hpp>
 #include "glm/geometric.hpp"
 
+
+void Map::shuffle_color_points(float x, float y, float R)
+{
+	// TODO: Implement
+}
+
+void Map::import_from_file(const std::string& filename)
+{
+	std::fstream in(filename, std::fstream::binary | std::fstream::in);
+
+	if (!in.is_open())
+	{
+		blue::Context::logger().error("Failed to open file: {} for reading map", filename);
+		return;
+	}
+
+	std::size_t number_of_non_clickable = 0;
+
+	for (std::size_t x = 0; x < CHUNK_DIMENSION; x++)
+	{
+		for (std::size_t y = 0; y < CHUNK_DIMENSION; y++)
+		{
+			in.read(reinterpret_cast<char*>(&tiles[x][y].clickable), sizeof(bool));
+			if (!tiles[x][y].clickable)
+			{
+				number_of_non_clickable++;
+			}
+		}
+	}
+
+	std::size_t number_of_vertices = number_of_non_clickable * Tile::get_vertices_translated(0, 0, { 0, 0,0 }, { 0, 0, 0 }).size();
+	decoration_vertices.resize(number_of_vertices);
+
+	for (std::size_t index = 0; index < decoration_vertices.size(); index++)
+	{
+		in.read(reinterpret_cast<char*>(&decoration_vertices[index]), sizeof(float));
+	}
+
+	for (std::size_t index = 0; index < number_of_non_clickable; index++)
+	{
+		for (const auto& index : Tile::get_indices(index))
+		{
+			decoration_indices.push_back(index);
+		}
+	}
+
+	decoration_tiles = number_of_non_clickable;
+	in.close();
+}
+
+void Map::export_to_file(const std::string& filename)
+{
+	std::fstream out(filename, std::fstream::binary | std::fstream::out);
+
+	if (!out.is_open())
+	{
+		blue::Context::logger().error("Failed to open file: {} for saving map", filename);
+		return;
+	}
+
+	for (std::size_t x = 0; x < CHUNK_DIMENSION; x++)
+	{
+		for (std::size_t y = 0; y < CHUNK_DIMENSION; y++)
+		{
+			out.write(reinterpret_cast<char*>(&tiles[x][y].clickable), sizeof(bool));
+		}
+	}
+
+	for (std::size_t index = 0; index < decoration_vertices.size(); index++)
+	{
+		out.write(reinterpret_cast<char*>(&decoration_vertices[index]), sizeof(float));
+	}
+
+	out.close();
+}
+
+
 void Map::upload_clickable_vertices()
 {
-
 	// randomize color a bit
 	std::srand(std::time(nullptr)); // use current time as seed for random generator
 	std::unique_lock<std::mutex> lock(tiles_access);
-	std::uint32_t tile_index = 0;	
+	std::uint32_t tile_index = 0;
 
 	Vertices clickable_vertices;
 	Indices clickable_indices;
@@ -296,11 +374,6 @@ void Map::elevate_points(float x, float y, float R, float elevation)
 		}
 
 	}
-}
-
-void Map::shuffle_color_points(float x, float y, float R)
-{
-	// TODO: Implement
 }
 
 void Map::color_points(float x, float y, float R, const glm::vec3& color)

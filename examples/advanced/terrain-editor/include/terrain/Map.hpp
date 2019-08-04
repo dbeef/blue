@@ -25,6 +25,9 @@ public:
 	void color_points(float x, float y, float R, const glm::vec3& color);
 	void shuffle_color_points(float x, float y, float R);
 
+	void import_from_file(const std::string& filename);
+	void export_to_file(const std::string& filename);
+
 private:
 
 	std::uint32_t decoration_tiles = 0;
