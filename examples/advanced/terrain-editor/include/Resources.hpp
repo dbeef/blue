@@ -26,7 +26,6 @@ public:
 	
 	struct {
 		VertexArray pine_tree;
-		VertexArray tank;
 		VertexArray hurdle;
 		VertexArray wheat;
 		VertexArray boulder;

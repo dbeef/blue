@@ -39,10 +39,34 @@ ModelingTerrain::ModelingTerrain()
 		else if (_mode == Mode::ADDING_MODELS)
 		{
 			ImGui::Begin("Models list");
-			const char* listbox_items[] = { "Pine tree", "Tank", "Hurdle", "Wheat", "Boulder", "Small Boulder", "Grass", "Pylon", "Bush", "Cut tree", "Track", "Bridge" };
+			const char* listbox_items[] = { "Pine tree", "Hurdle", "Wheat", "Boulder", "Small Boulder", "Grass", "Pylon", "Bush", "Cut tree", "Track", "Bridge" };
 			ImGui::ListBox("", reinterpret_cast<int*>(&_model), listbox_items, IM_ARRAYSIZE(listbox_items), 4);
 			ImGui::SliderFloat("Model scale", &_model_scale, 0.01f, 5.0f);
 			ImGui::End();
+
+			if (last_entity.entity.id)
+			{
+				ImGui::Begin("Last entity parameters:");
+
+				ImGui::SliderFloat("Rotation X", &last_entity.euler.x, 0.00f, 3.0f);
+				ImGui::SliderFloat("Rotation Y", &last_entity.euler.y, 0.00f, 3.0f);
+				ImGui::SliderFloat("Rotation Z", &last_entity.euler.z, 0.00f, 3.0f);
+				
+				ImGui::InputFloat("Position X", &last_entity.position.x, 0.01f, 32.0f, "%.3f");
+				ImGui::InputFloat("Position Y", &last_entity.position.y, 0.01f, 32.0f, "%.3f");
+				ImGui::InputFloat("Position Z", &last_entity.position.z, 0.01f, 32.0f, "%.3f");
+
+				bool updated = ImGui::Button("Update");
+
+				if (updated)
+				{
+					last_entity.entity.rotation = glm::quat(last_entity.euler);
+					last_entity.entity.position = last_entity.position;
+					updated_model.store(true);
+				}
+
+				ImGui::End();
+			}
 		}
 
 		});
@@ -57,6 +81,12 @@ ModelingTerrain::~ModelingTerrain()
 
 std::shared_ptr<BaseState> ModelingTerrain::update()
 {
+	if (updated_model)
+	{
+		blue::Context::renderer().update(last_entity.entity);
+		updated_model.store(false);
+	}
+
 	if (Application::instance().input.intersection.load())
 	{
 		const auto& x = Application::instance().input.intersection_point_x;
@@ -92,158 +122,157 @@ std::shared_ptr<BaseState> ModelingTerrain::update()
 			{
 			case(Model::PINE_TREE):
 			{
-				RenderEntity entity;
-				entity.position = { static_cast<float>(x), 0, static_cast<float>(y) };
-				entity.shader = Resources::instance().shaders.model_shader;
-				entity.vertex_array = Resources::instance().models.pine_tree;
-				entity.scale = 0.294f;
-				entity.rotation = { 0, 0, 0, 0 };
-				entity.environment = Application::instance().map_environment.environment;
+				last_entity.entity.position = { static_cast<float>(x), 0, static_cast<float>(y) };
+				last_entity.entity.shader = Resources::instance().shaders.model_shader;
+				last_entity.entity.vertex_array = Resources::instance().models.pine_tree;
+				last_entity.entity.scale = 0.294f;
+				last_entity.entity.rotation = { 0, 0, 0, 0 };
+				last_entity.entity.environment = Application::instance().map_environment.environment;
 
-				entity.id = blue::Context::renderer().add(entity);
-				break;
-			}
-			case(Model::TANK):
-			{
-				RenderEntity entity;
-				entity.position = { static_cast<float>(x), 0, static_cast<float>(y) };
-				entity.shader = Resources::instance().shaders.model_shader;
-				entity.vertex_array = Resources::instance().models.tank;
-				entity.scale = _model_scale;
-				entity.rotation = { 0, 0, 0, 0 };
-				entity.environment = Application::instance().map_environment.environment;
+				last_entity.entity.id = blue::Context::renderer().add(last_entity.entity);
 
-				entity.id = blue::Context::renderer().add(entity);
+				last_entity.position = { static_cast<float>(x), 0, static_cast<float>(y) };
+
 				break;
 			}
 			case(Model::HURDLE):
 			{
-				RenderEntity entity;
-				entity.position = { static_cast<float>(x), 0, static_cast<float>(y) };
-				entity.shader = Resources::instance().shaders.model_shader;
-				entity.vertex_array = Resources::instance().models.hurdle;
-				entity.scale = 0.139f;
-				entity.rotation = { 0, 0, 0, 0 };
-				entity.environment = Application::instance().map_environment.environment;
+				last_entity.entity.position = { static_cast<float>(x), 0, static_cast<float>(y) };
+				last_entity.entity.shader = Resources::instance().shaders.model_shader;
+				last_entity.entity.vertex_array = Resources::instance().models.hurdle;
+				last_entity.entity.scale = 0.139f;
+				last_entity.entity.rotation = { 0, 0, 0, 0 };
+				last_entity.entity.environment = Application::instance().map_environment.environment;
 
-				entity.id = blue::Context::renderer().add(entity);
+				last_entity.entity.id = blue::Context::renderer().add(last_entity.entity);
+
+				last_entity.position = { static_cast<float>(x), 0, static_cast<float>(y) };
 				break;
 			}
 			case(Model::WHEAT):
 			{
-				RenderEntity entity;
-				entity.position = { static_cast<float>(x), 0, static_cast<float>(y) };
-				entity.shader = Resources::instance().shaders.model_shader;
-				entity.vertex_array = Resources::instance().models.wheat;
-				entity.scale = _model_scale;
-				entity.rotation = { 0, 0, 0, 0 };
-				entity.environment = Application::instance().map_environment.environment;
+				last_entity.entity.position = { static_cast<float>(x), 0, static_cast<float>(y) };
+				last_entity.entity.shader = Resources::instance().shaders.model_shader;
+				last_entity.entity.vertex_array = Resources::instance().models.wheat;
+				last_entity.entity.scale = _model_scale;
+				last_entity.entity.rotation = { 0, 0, 0, 0 };
+				last_entity.entity.environment = Application::instance().map_environment.environment;
 
-				entity.id = blue::Context::renderer().add(entity);
+				last_entity.entity.id = blue::Context::renderer().add(last_entity.entity);
+
+				last_entity.position = { static_cast<float>(x), 0, static_cast<float>(y) };
 				break;
 			}
 			case(Model::BOULDER):
 			{
-				RenderEntity entity;
-				entity.position = { static_cast<float>(x), 0, static_cast<float>(y) };
-				entity.shader = Resources::instance().shaders.model_shader;
-				entity.vertex_array = Resources::instance().models.boulder;
-				entity.scale = 0.372f;
-				entity.rotation = { 0, 0, 0, 0 };
-				entity.environment = Application::instance().map_environment.environment;
+				last_entity.entity.position = { static_cast<float>(x), 0, static_cast<float>(y) };
+				last_entity.entity.shader = Resources::instance().shaders.model_shader;
+				last_entity.entity.vertex_array = Resources::instance().models.boulder;
+				last_entity.entity.scale = 0.372f;
+				last_entity.entity.rotation = { 0, 0, 0, 0 };
+				last_entity.entity.environment = Application::instance().map_environment.environment;
 
-				entity.id = blue::Context::renderer().add(entity);
+				last_entity.entity.id = blue::Context::renderer().add(last_entity.entity);
+
+				last_entity.position = { static_cast<float>(x), 0, static_cast<float>(y) };
 				break;
 			}
 			case(Model::SMALL_BOULDER):
 			{
-				RenderEntity entity;
-				entity.position = { static_cast<float>(x), 0, static_cast<float>(y) };
-				entity.shader = Resources::instance().shaders.model_shader;
-				entity.vertex_array = Resources::instance().models.small_boulder;
-				entity.scale = 0.200f;
-				entity.rotation = { 0, 0, 0, 0 };
-				entity.environment = Application::instance().map_environment.environment;
+				last_entity.entity.position = { static_cast<float>(x), 0, static_cast<float>(y) };
+				last_entity.entity.shader = Resources::instance().shaders.model_shader;
+				last_entity.entity.vertex_array = Resources::instance().models.small_boulder;
+				last_entity.entity.scale = 0.200f;
+				last_entity.entity.rotation = { 0, 0, 0, 0 };
+				last_entity.entity.environment = Application::instance().map_environment.environment;
 
-				entity.id = blue::Context::renderer().add(entity);
+				last_entity.entity.id = blue::Context::renderer().add(last_entity.entity);
+
+				last_entity.position = { static_cast<float>(x), 0, static_cast<float>(y) };
 				break;
 			}
 			case(Model::GRASS):
 			{
-				RenderEntity entity;
-				entity.position = { static_cast<float>(x), 0, static_cast<float>(y) };
-				entity.shader = Resources::instance().shaders.model_shader;
-				entity.vertex_array = Resources::instance().models.grass;
-				entity.scale = 0.185f;
-				entity.rotation = { 0, 0, 0, 0 };
-				entity.environment = Application::instance().map_environment.environment;
+				last_entity.entity.position = { static_cast<float>(x), 0, static_cast<float>(y) };
+				last_entity.entity.shader = Resources::instance().shaders.model_shader;
+				last_entity.entity.vertex_array = Resources::instance().models.grass;
+				last_entity.entity.scale = 0.185f;
+				last_entity.entity.rotation = { 0, 0, 0, 0 };
+				last_entity.entity.environment = Application::instance().map_environment.environment;
 
-				entity.id = blue::Context::renderer().add(entity);
+				last_entity.entity.id = blue::Context::renderer().add(last_entity.entity);
+
+				last_entity.position = { static_cast<float>(x), 0, static_cast<float>(y) };
 				break;
 			}
 			case(Model::PYLON):
 			{
-				RenderEntity entity;
-				entity.position = { static_cast<float>(x), 0, static_cast<float>(y) };
-				entity.shader = Resources::instance().shaders.model_shader;
-				entity.vertex_array = Resources::instance().models.pylon;
-				entity.scale = 0.25f;
-				entity.rotation = { 0, 0, 0, 0 };
-				entity.environment = Application::instance().map_environment.environment;
+				last_entity.entity.position = { static_cast<float>(x), 0, static_cast<float>(y) };
+				last_entity.entity.shader = Resources::instance().shaders.model_shader;
+				last_entity.entity.vertex_array = Resources::instance().models.pylon;
+				last_entity.entity.scale = 0.25f;
+				last_entity.entity.rotation = { 0, 0, 0, 0 };
+				last_entity.entity.environment = Application::instance().map_environment.environment;
 
-				entity.id = blue::Context::renderer().add(entity);
+				last_entity.entity.id = blue::Context::renderer().add(last_entity.entity);
+
+				last_entity.position = { static_cast<float>(x), 0, static_cast<float>(y) };
 				break;
 			}
 			case(Model::BUSH):
 			{
-				RenderEntity entity;
-				entity.position = { static_cast<float>(x), 0, static_cast<float>(y) };
-				entity.shader = Resources::instance().shaders.model_shader;
-				entity.vertex_array = Resources::instance().models.bush;
-				entity.scale = 0.55f;
-				entity.rotation = { 0, 0, 0, 0 };
-				entity.environment = Application::instance().map_environment.environment;
+				last_entity.entity.position = { static_cast<float>(x), 0, static_cast<float>(y) };
+				last_entity.entity.shader = Resources::instance().shaders.model_shader;
+				last_entity.entity.vertex_array = Resources::instance().models.bush;
+				last_entity.entity.scale = 0.55f;
+				last_entity.entity.rotation = { 0, 0, 0, 0 };
+				last_entity.entity.environment = Application::instance().map_environment.environment;
 
-				entity.id = blue::Context::renderer().add(entity);
+				last_entity.entity.id = blue::Context::renderer().add(last_entity.entity);
+
+				last_entity.position = { static_cast<float>(x), 0, static_cast<float>(y) };
 				break;
 			}
 			case(Model::CUT_TREE):
 			{
-				RenderEntity entity;
-				entity.position = { static_cast<float>(x), 0, static_cast<float>(y) };
-				entity.shader = Resources::instance().shaders.model_shader;
-				entity.vertex_array = Resources::instance().models.cut_tree;
-				entity.scale = 0.180f;
-				entity.rotation = { 0, 0, 0, 0 };
-				entity.environment = Application::instance().map_environment.environment;
+				last_entity.entity.position = { static_cast<float>(x), 0, static_cast<float>(y) };
+				last_entity.entity.shader = Resources::instance().shaders.model_shader;
+				last_entity.entity.vertex_array = Resources::instance().models.cut_tree;
+				last_entity.entity.scale = 0.180f;
+				last_entity.entity.rotation = { 0, 0, 0, 0 };
+				last_entity.entity.environment = Application::instance().map_environment.environment;
 
-				entity.id = blue::Context::renderer().add(entity);
+				last_entity.entity.id = blue::Context::renderer().add(last_entity.entity);
+
+				last_entity.position = { static_cast<float>(x), 0, static_cast<float>(y) };
 				break;
 			}
 			case(Model::TRACK):
 			{
-				RenderEntity entity;
-				entity.position = { static_cast<float>(x), 0, static_cast<float>(y) };
-				entity.shader = Resources::instance().shaders.model_shader;
-				entity.vertex_array = Resources::instance().models.track;
-				entity.scale = 0.180f;
-				entity.rotation = { 0, 0, 0, 0 };
-				entity.environment = Application::instance().map_environment.environment;
+				last_entity.entity.position = { static_cast<float>(x), 0, static_cast<float>(y) };
+				last_entity.entity.shader = Resources::instance().shaders.model_shader;
+				last_entity.entity.vertex_array = Resources::instance().models.track;
+				last_entity.entity.scale = 0.180f;
+				last_entity.entity.rotation = { 0, 0, 0, 0 };
+				last_entity.entity.environment = Application::instance().map_environment.environment;
 
-				entity.id = blue::Context::renderer().add(entity);
+				last_entity.entity.id = blue::Context::renderer().add(last_entity.entity);
+
+				last_entity.position = { static_cast<float>(x), 0, static_cast<float>(y) };
 				break;
 			}
 			case(Model::BRIDGE):
 			{
-				RenderEntity entity;
-				entity.position = { static_cast<float>(x), 0, static_cast<float>(y) };
-				entity.shader = Resources::instance().shaders.model_shader;
-				entity.vertex_array = Resources::instance().models.bridge;
-				entity.scale = 0.35f;
-				entity.rotation = { 0, 0, 0, 0 };
-				entity.environment = Application::instance().map_environment.environment;
+				last_entity.entity.position = { static_cast<float>(x), 0, static_cast<float>(y) };
+				last_entity.entity.shader = Resources::instance().shaders.model_shader;
+				last_entity.entity.vertex_array = Resources::instance().models.bridge;
+				last_entity.entity.scale = 0.35f;
+				last_entity.entity.rotation = { 0, 0, 0, 0 };
+				last_entity.entity.environment = Application::instance().map_environment.environment;
 
-				entity.id = blue::Context::renderer().add(entity);
+				last_entity.entity.id = blue::Context::renderer().add(last_entity.entity);
+
+				last_entity.position = { static_cast<float>(x), 0, static_cast<float>(y) };
 				break;
 			}
 			}

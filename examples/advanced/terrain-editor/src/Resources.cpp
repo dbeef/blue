@@ -66,15 +66,6 @@ void Resources::load_models()
 		models.pine_tree = vertex_array_future.get();
 	}
 	{
-		auto scene_ptr = models::load_scene("resources/Tank.fbx");
-		unsigned int vertex_counter = 0;
-		auto vertices = models::parse_scene(scene_ptr, attributes, vertex_counter);
-
-		auto vertex_array_future = blue::Context::gpu_system().submit(CreateMeshEntity{ vertices, {}, attributes, vertex_counter });
-		vertex_array_future.wait();
-		models.tank = vertex_array_future.get();
-	}
-	{
 		auto scene_ptr = models::load_scene("resources/Hurdle.fbx");
 		unsigned int vertex_counter = 0;
 		auto vertices = models::parse_scene(scene_ptr, attributes, vertex_counter);

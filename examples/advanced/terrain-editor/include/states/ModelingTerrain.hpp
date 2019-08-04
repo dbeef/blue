@@ -21,17 +21,16 @@ public:
 	enum class Model : int
 	{
 		PINE_TREE = 0,
-		TANK = 1,
-		HURDLE = 2,
-		WHEAT = 3,
-		BOULDER = 4,
-		SMALL_BOULDER = 5,
-		GRASS = 6,
-		PYLON = 7,
-		BUSH = 8,
-		CUT_TREE = 9,
-		TRACK = 10,
-		BRIDGE = 11,
+		HURDLE = 1,
+		WHEAT = 2,
+		BOULDER = 3,
+		SMALL_BOULDER = 4,
+		GRASS = 5,
+		PYLON = 6,
+		BUSH = 7,
+		CUT_TREE = 8,
+		TRACK = 9,
+		BRIDGE = 10,
 	};
 
 	ModelingTerrain();
@@ -40,6 +39,15 @@ public:
 	void on_entry() override;
 
 private:
+
+	struct
+	{
+		RenderEntity entity;
+		glm::vec3 euler = {0, 0, 0};
+		glm::vec3 position = {0, 0, 0};
+	} last_entity;
+
+	std::atomic_bool updated_model{false};
 
 	float _radius = 0.2f;
 	float _model_scale = 1.0f;
