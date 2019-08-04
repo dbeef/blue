@@ -181,7 +181,7 @@ void Map::upload_decoration_vertices()
 			float color_delta = 1.0f / random_variable;
 			if (random_variable % 2)
 			{
-				clickable_color_1.y += color_delta;
+				clickable_color_1.y +=  color_delta;
 				clickable_color_2.y -= color_delta;
 			}
 			else

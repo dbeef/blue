@@ -1,5 +1,4 @@
-#include "Application.hpp"
-#include "states/Greeting.hpp"
+#include "Game.hpp"
 
 #include "blue/Assertions.h"
 #include "blue/Context.hpp"
@@ -9,13 +8,12 @@
 
 const float CAMERA_SPEED = 0.25f;
 
-Application* Application::_instance = nullptr;
+Game* Game::_instance = nullptr;
 
-Application::Application()
+Game::Game()
 {
 	auto& map_environment = Resources::instance().map_environment;
-
-	Resources::instance().map_environment.camera.set_pos({ 10, 10, 10 });
+	Resources::instance().map_environment.camera.set_pos({ 16, 10, 16 });
 
 	// Create map_environment
 
@@ -31,59 +29,51 @@ Application::Application()
 	register_callbacks();
 
 	blue::Context::gpu_system().submit(SetClearColorEntity{ {0.25f, 0.45f, 0.8f} });
-	_current_state = std::make_shared<Greeting>();
 }
 
-Application& Application::instance()
+Game& Game::instance()
 {
 	BLUE_ASSERT(_instance);
 	return *_instance;
 }
 
-void Application::init()
+void Game::init()
 {
 	BLUE_ASSERT(!_instance);
-	_instance = new Application();
+	_instance = new Game();
 }
 
-void Application::dispose()
+void Game::dispose()
 {
 	BLUE_ASSERT(_instance);
 	delete _instance;
 	_instance = nullptr;
 }
 
-void Application::shutdown()
+void Game::shutdown()
 {
 	_running.store(false);
 }
 
-void Application::handle_input()
+void Game::handle_input()
 {
 	blue::Context::input().poll();
-
-	auto next_state = _current_state->update();
-	if (next_state)
-	{
-		_current_state = next_state;
-		_current_state->on_entry();
-	}
 }
 
-bool Application::is_running()
+bool Game::is_running()
 {
 	return _running.load();
 }
 
-Map& Application::get_map()
+Map& Game::get_map()
 {
 	return *_map.get();
 }
 
-void Application::register_callbacks()
+void Game::register_callbacks()
 {
 	blue::Context::input().registerKeyCallback({
-			[]() { Application::instance().shutdown(); },
+			[]() { Game::instance().shutdown(); },
 			SDLK_ESCAPE,
 			SDL_KEYDOWN
 		}
@@ -97,7 +87,7 @@ void Application::register_callbacks()
 		blue::Context::gpu_system().submit(UpdateEnvironmentEntity_CameraPos{ map_environment.environment, map_environment.camera.get_position() });
 	};
 	blue::Context::input().registerKeyCallback({ w_callback, SDLK_w, SDL_KEYDOWN });
-	
+
 	auto mouse_middle_callback = [this](double x, double y)
 	{
 		if (blue::Context::window().is_cursor_attached())
@@ -111,25 +101,23 @@ void Application::register_callbacks()
 	};
 	blue::Context::input().registerMouseKeyCallback({ mouse_middle_callback, SDL_BUTTON_MIDDLE, SDL_MOUSEBUTTONDOWN });
 
-	auto mouse_left_callback = [this](double x, double y)
+	auto mouse_left_press_callback = [this](double xpos, double ypos)
 	{
-		if (!blue::Context::window().is_cursor_attached())
-		{
-			Application::instance().input.clicked.store(true);
-			Application::instance().input.clicked_button.store(SDL_BUTTON_LEFT);
-		}
+		blue::Context::logger().info("Press on: {} {}", xpos, ypos);
+		Game::instance().input.last_x = xpos;
+		Game::instance().input.last_y = ypos;
+		Game::instance().input.gesture.store(true);
 	};
-	blue::Context::input().registerMouseKeyCallback({ mouse_left_callback, SDL_BUTTON_LEFT, SDL_MOUSEBUTTONDOWN });
-	
-	auto mouse_right_callback = [this](double x, double y)
+	blue::Context::input().registerMouseKeyCallback({ mouse_left_press_callback, SDL_BUTTON_LEFT, SDL_MOUSEBUTTONDOWN });
+
+	auto mouse_left_release_callback = [this](double xpos, double ypos)
 	{
-		if (!blue::Context::window().is_cursor_attached())
-		{
-			Application::instance().input.clicked.store(true);
-			Application::instance().input.clicked_button.store(SDL_BUTTON_RIGHT);
-		}
+		blue::Context::logger().info("Release on: {} {}", xpos, ypos);
+		Game::instance().input.last_x = xpos;
+		Game::instance().input.last_y = ypos;
+		Game::instance().input.gesture.store(false);
 	};
-	blue::Context::input().registerMouseKeyCallback({ mouse_right_callback, SDL_BUTTON_RIGHT, SDL_MOUSEBUTTONDOWN });
+	blue::Context::input().registerMouseKeyCallback({ mouse_left_release_callback, SDL_BUTTON_LEFT, SDL_MOUSEBUTTONUP });
 
 	auto s_callback = [this]()
 	{
@@ -163,12 +151,34 @@ void Application::register_callbacks()
 		auto& map_environment = Resources::instance().map_environment;
 
 		if (blue::Context::window().is_cursor_attached())
-		{ 
+		{
 			map_environment.camera.mouse_rotation(xpos, ypos);
 		}
 
 		blue::Context::gpu_system().submit(UpdateEnvironmentEntity_View{ map_environment.environment, map_environment.camera.get_view() });
 		blue::Context::gpu_system().submit(UpdateEnvironmentEntity_CameraPos{ map_environment.environment, map_environment.camera.get_position() });
+
+		if (Game::instance().input.gesture.load())
+		{
+			glm::vec2 origin = { Game::instance().input.last_x.load() , Game::instance().input.last_y.load() };
+			glm::vec2 target = { xpos, ypos };
+			glm::vec2 delta = glm::normalize(origin - target);
+			
+			auto pos = map_environment.camera.get_position();
+			pos.x += 0.2f * delta.x;
+			pos.z += 0.2f * delta.y;
+			map_environment.camera.set_pos(pos);
+
+			blue::Context::gpu_system().submit(UpdateEnvironmentEntity_View{ map_environment.environment, map_environment.camera.get_view() });
+			blue::Context::gpu_system().submit(UpdateEnvironmentEntity_CameraPos{ map_environment.environment, map_environment.camera.get_position() });
+
+			blue::Context::logger().info("Delta: {} {}", delta.x, delta.y);
+
+			Game::instance().input.last_x = xpos;
+			Game::instance().input.last_y = ypos;
+		}
+
+		const auto& camera = Resources::instance().map_environment.camera;
 	};
 	blue::Context::input().registerMouseMoveCallback(mouse_move_callback);
 }

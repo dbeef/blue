@@ -10,6 +10,23 @@ void PerspectiveCamera::set_pos(const glm::vec3& pos)
 	_position = pos;
 }
 
+void PerspectiveCamera::set_rotation(const glm::vec3& euler)
+{
+	_yaw += euler.x;
+	_pitch += euler.y;
+
+	// Make sure that when pitch is out of bounds, screen doesn't get flipped
+	if (_pitch > 89.0f)
+		_pitch = 89.0f;
+	if (_pitch < -89.0f)
+		_pitch = -89.0f;
+
+	_front.x = cos(glm::radians(_yaw)) * cos(glm::radians(_pitch));
+	_front.y = sin(glm::radians(_pitch));
+	_front.z = sin(glm::radians(_yaw)) * cos(glm::radians(_pitch));
+	_front = glm::normalize(_front);
+}
+
 glm::mat4 PerspectiveCamera::get_view()
 {
 	return glm::lookAt(_position, _position + _front, _CAMERA_UP);
@@ -80,6 +97,22 @@ void PerspectiveCamera::mouse_rotation(double xpos, double ypos)
 
 	_lastX = xpos;
 	_lastY = ypos;
+}
+
+float PerspectiveCamera::get_roll() const
+{
+	// Always zero.
+	return 0;
+}
+
+float PerspectiveCamera::get_pitch() const
+{
+	return _pitch;
+}
+
+float PerspectiveCamera::get_yaw() const
+{
+	return _yaw;
 }
 
 float PerspectiveCamera::get_fov() const

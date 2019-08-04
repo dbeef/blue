@@ -39,8 +39,7 @@ void InputHandler::poll()
 		}
 		}
 
-
-		mouse_button_callback(event.button.button, event.type);
+		mouse_button_callback(event.button.button, event.type, event.motion.x, event.motion.y);
 
 		if (event.type == SDL_EventType::SDL_MOUSEMOTION)
 		{
@@ -61,11 +60,11 @@ void InputHandler::poll()
 	}
 }
 
-void InputHandler::mouse_button_callback(int key, int action)
+void InputHandler::mouse_button_callback(int key, int action, double x, double y)
 {
 	for (auto& callback : mouseButtonCommands)
 		if (key == callback.key_type && action == callback.action)
-			callback.callback();
+			callback.callback(x, y);
 }
 
 void InputHandler::mouse_callback(double xpos, double ypos)

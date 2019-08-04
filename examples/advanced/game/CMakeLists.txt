@@ -6,6 +6,8 @@ project(GameSample)
 
 add_executable(GameSample
         src/Main.cpp
+        src/Game.cpp
+        include/Game.hpp
         )
 
 target_link_libraries(GameSample SDL2::SDL2main blue GameCommons -lpthread)

@@ -24,6 +24,8 @@ public:
 
 	void set_pos(const glm::vec3&);
 
+	void set_rotation(const glm::vec3& euler);
+
 	// moving
 
 	void go_forward(float distance);
@@ -37,6 +39,12 @@ public:
 	void mouse_rotation(double xpos, double ypos);
 
 	// getters
+
+	float get_roll() const;
+
+	float get_pitch() const;
+
+	float get_yaw() const;
 
 	float get_fov() const;
 
@@ -62,11 +70,11 @@ private:
 	glm::vec3 _position = glm::vec3(0.0f, 0.0f, 10.0f);
 	glm::vec3 _front = glm::vec3(0.0f, 0.0f, -1.0f);
 
-	const glm::vec3 _HELPER_CAMERA_TARGET = glm::vec3(0.0f, 0.0f, 0.0f);
-	const glm::vec3 _HELPER_CAMERA_DIRECTION = glm::normalize(_position - _HELPER_CAMERA_TARGET);
-	const glm::vec3 _HELPER_UP = glm::vec3(0.0f, 1.0f, 0.0f);
-	const glm::vec3 _CAMERA_RIGHT = glm::normalize(glm::cross(_HELPER_UP, _HELPER_CAMERA_DIRECTION));
-	const glm::vec3 _CAMERA_UP = glm::cross(_HELPER_CAMERA_DIRECTION, _CAMERA_RIGHT);
+	glm::vec3 _HELPER_CAMERA_TARGET = glm::vec3(0.0f, 0.0f, 0.0f);
+	glm::vec3 _HELPER_CAMERA_DIRECTION = glm::normalize(_position - _HELPER_CAMERA_TARGET);
+	glm::vec3 _HELPER_UP = glm::vec3(0.0f, 1.0f, 0.0f);
+	glm::vec3 _CAMERA_RIGHT = glm::normalize(glm::cross(_HELPER_UP, _HELPER_CAMERA_DIRECTION));
+	glm::vec3 _CAMERA_UP = glm::cross(_HELPER_CAMERA_DIRECTION, _CAMERA_RIGHT);
 
 	const float _near = 0.1f;
 	const float _far = 500.0f;

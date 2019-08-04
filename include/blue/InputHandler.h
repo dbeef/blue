@@ -23,6 +23,13 @@ struct KeyCallback
 	int action;
 };
 
+struct MouseKeyCallback
+{
+	std::function<void(double x, double y)> callback;
+	int key_type;
+	int action;
+};
+
 // TODO: Rename this class to "Input".
 class InputHandler {
 
@@ -42,9 +49,9 @@ public:
 		keyboardKeyCommands.emplace_back(callback);
 	}
 	
-	inline void registerMouseKeyCallback(const KeyCallback& callback)
+	inline void registerMouseKeyCallback(const MouseKeyCallback& callback)
 	{
-		auto iterator = std::remove_if(mouseButtonCommands.begin(), mouseButtonCommands.end(), [callback](const KeyCallback& list_callback) -> bool {
+		auto iterator = std::remove_if(mouseButtonCommands.begin(), mouseButtonCommands.end(), [callback](const MouseKeyCallback& list_callback) -> bool {
 			return callback.key_type == list_callback.key_type && callback.action == list_callback.action;
 			});
 
@@ -67,9 +74,9 @@ public:
 
 	void keyboard_callback(int key, int action);
 
-	void mouse_button_callback(int key, int action);
+	void mouse_button_callback(int key, int action, double x, double y);
 
-	std::vector<KeyCallback> mouseButtonCommands;
+	std::vector<MouseKeyCallback> mouseButtonCommands;
 	std::vector<KeyCallback> keyboardKeyCommands;
 	std::vector<MouseCallback> mouseCommands;
 };
