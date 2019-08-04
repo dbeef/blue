@@ -27,6 +27,11 @@ public:
 	Map& get_map();
 
 	struct {
+		UniformBufferId environment = 0;
+		PerspectiveCamera camera;
+	} map_environment;
+
+	struct {
 		std::atomic_bool clicked{ false };
 		std::atomic_int clicked_button { 0 };
 		std::atomic_bool intersection {false};

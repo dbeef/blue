@@ -8,7 +8,7 @@ add_executable(ModelLoadingSample
         src/Main.cpp
         )
 
-target_link_libraries(ModelLoadingSample blue -lpthread)
+target_link_libraries(ModelLoadingSample blue SDL2::SDL2main -lpthread)
 target_include_directories(ModelLoadingSample PRIVATE include)
 
 add_custom_command(TARGET ModelLoadingSample PRE_BUILD

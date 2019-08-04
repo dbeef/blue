@@ -3,7 +3,6 @@
 #include "blue/camera/PerspectiveCamera.hpp"
 #include "blue/ShaderUtils.h"
 #include "Resources.hpp"
-#include "Application.hpp"
 
 #include <fstream>
 
@@ -148,7 +147,7 @@ void Map::upload_clickable_vertices()
 	entity.vertex_array = clickable_vertices_vertex_array;
 	entity.scale = 1.0f;
 	entity.rotation = glm::identity<glm::quat>();
-	entity.environment = Application::instance().map_environment.environment;
+	entity.environment = Resources::instance().map_environment.environment;
 	entity.texture = 0;
 
 	clickable_vertices_render_entity = blue::Context::renderer().add(entity);
@@ -218,7 +217,7 @@ void Map::upload_decoration_vertices()
 	entity.vertex_array = decoration_vertices_vertex_array;
 	entity.scale = 1.0f;
 	entity.rotation = glm::identity<glm::quat>();
-	entity.environment = Application::instance().map_environment.environment;
+	entity.environment = Resources::instance().map_environment.environment;
 	entity.texture = 0;
 
 	decoration_vertices_render_entity = blue::Context::renderer().add(entity);
@@ -259,7 +258,7 @@ void Map::upload_decoration()
 	entity.vertex_array = decoration_vertices_vertex_array;
 	entity.scale = 1.0f;
 	entity.rotation = glm::identity<glm::quat>();
-	entity.environment = Application::instance().map_environment.environment;
+	entity.environment = Resources::instance().map_environment.environment;
 	entity.texture = 0;
 
 	decoration_vertices_render_entity = blue::Context::renderer().add(entity);

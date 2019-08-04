@@ -8,7 +8,7 @@ add_executable(InstancingSample
         src/Main.cpp
         )
 
-target_link_libraries(InstancingSample blue -lpthread)
+target_link_libraries(InstancingSample blue SDL2::SDL2main -lpthread)
 target_include_directories(InstancingSample PRIVATE include)
 
 add_custom_command(TARGET InstancingSample PRE_BUILD

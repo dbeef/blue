@@ -8,7 +8,7 @@ add_executable(CameraSample
         src/Main.cpp
         )
 
-target_link_libraries(CameraSample blue -lpthread)
+target_link_libraries(CameraSample blue SDL2::SDL2main -lpthread)
 target_include_directories(CameraSample PRIVATE include)
 
 add_custom_command(TARGET CameraSample PRE_BUILD

@@ -1,6 +1,7 @@
 #include "jobs/MapIntersectionJob.hpp"
 #include "blue/Timestep.hpp"
 #include "Application.hpp"
+#include "Resources.hpp"
 #include "blue/camera/PerspectiveCamera.hpp"
 #include <limits>
 
@@ -159,7 +160,7 @@ void MapIntersectionJob::intersection_loop()
 
 		glm::vec3 direction;
 		auto& map = Application::instance().get_map();
-		const auto& camera = Application::instance().map_environment.camera;
+		const auto& camera = Resources::instance().map_environment.camera;
 
 		glm::mat4 projection_matrix = glm::perspective(
 			glm::radians(camera.get_fov()),

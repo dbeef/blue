@@ -8,7 +8,7 @@ add_executable(ClearColorSample
         src/Main.cpp
         )
 
-target_link_libraries(ClearColorSample blue -lpthread)
+target_link_libraries(ClearColorSample blue SDL2::SDL2main -lpthread)
 target_include_directories(ClearColorSample PRIVATE include)
 
 install(TARGETS ClearColorSample DESTINATION bin)

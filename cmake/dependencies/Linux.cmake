@@ -10,7 +10,6 @@ macro(blue_find_dependencies_linux)
     find_package(Assimp REQUIRED)
 
     target_link_libraries(Dependencies INTERFACE
-            SDL2::SDL2main
             SDL2::SDL2-static
             glm
             glad

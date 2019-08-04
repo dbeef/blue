@@ -8,7 +8,7 @@ add_executable(TriangleSample
         src/Main.cpp
         )
 
-target_link_libraries(TriangleSample blue -lpthread)
+target_link_libraries(TriangleSample blue SDL2::SDL2main -lpthread)
 target_include_directories(TriangleSample PRIVATE include)
 
 add_custom_command(TARGET TriangleSample PRE_BUILD

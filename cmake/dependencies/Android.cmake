@@ -8,7 +8,6 @@ macro(blue_find_dependencies_android)
 
     target_link_libraries(
             Dependencies INTERFACE
-            SDL2::SDL2main
             SDL2::SDL2-static
             glm
             glad

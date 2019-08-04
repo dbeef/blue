@@ -8,7 +8,7 @@ add_executable(TexturedRectangleSample
         src/Main.cpp
         )
 
-target_link_libraries(TexturedRectangleSample blue -lpthread)
+target_link_libraries(TexturedRectangleSample blue SDL2::SDL2main -lpthread)
 target_include_directories(TexturedRectangleSample PRIVATE include)
 
 add_custom_command(TARGET TexturedRectangleSample PRE_BUILD

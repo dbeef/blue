@@ -124,6 +124,8 @@ std::shared_ptr<BaseState> ModelingTerrain::update()
 		}
 		else if (_mode == Mode::ADDING_MODELS)
 		{
+			auto& map_environment = Resources::instance().map_environment;
+
 			switch (_model)
 			{
 			case(Model::PINE_TREE):
@@ -133,7 +135,7 @@ std::shared_ptr<BaseState> ModelingTerrain::update()
 				last_entity.entity.vertex_array = Resources::instance().models.pine_tree;
 				last_entity.entity.scale = 0.294f;
 				last_entity.entity.rotation = { 0, 0, 0, 0 };
-				last_entity.entity.environment = Application::instance().map_environment.environment;
+				last_entity.entity.environment = map_environment.environment;
 
 				last_entity.entity.id = blue::Context::renderer().add(last_entity.entity);
 
@@ -148,7 +150,7 @@ std::shared_ptr<BaseState> ModelingTerrain::update()
 				last_entity.entity.vertex_array = Resources::instance().models.hurdle;
 				last_entity.entity.scale = 0.139f;
 				last_entity.entity.rotation = { 0, 0, 0, 0 };
-				last_entity.entity.environment = Application::instance().map_environment.environment;
+				last_entity.entity.environment = map_environment.environment;
 
 				last_entity.entity.id = blue::Context::renderer().add(last_entity.entity);
 
@@ -162,7 +164,7 @@ std::shared_ptr<BaseState> ModelingTerrain::update()
 				last_entity.entity.vertex_array = Resources::instance().models.wheat;
 				last_entity.entity.scale = _model_scale;
 				last_entity.entity.rotation = { 0, 0, 0, 0 };
-				last_entity.entity.environment = Application::instance().map_environment.environment;
+				last_entity.entity.environment = map_environment.environment;
 
 				last_entity.entity.id = blue::Context::renderer().add(last_entity.entity);
 
@@ -176,7 +178,7 @@ std::shared_ptr<BaseState> ModelingTerrain::update()
 				last_entity.entity.vertex_array = Resources::instance().models.boulder;
 				last_entity.entity.scale = 0.372f;
 				last_entity.entity.rotation = { 0, 0, 0, 0 };
-				last_entity.entity.environment = Application::instance().map_environment.environment;
+				last_entity.entity.environment = map_environment.environment;
 
 				last_entity.entity.id = blue::Context::renderer().add(last_entity.entity);
 
@@ -190,7 +192,7 @@ std::shared_ptr<BaseState> ModelingTerrain::update()
 				last_entity.entity.vertex_array = Resources::instance().models.small_boulder;
 				last_entity.entity.scale = 0.200f;
 				last_entity.entity.rotation = { 0, 0, 0, 0 };
-				last_entity.entity.environment = Application::instance().map_environment.environment;
+				last_entity.entity.environment = map_environment.environment;
 
 				last_entity.entity.id = blue::Context::renderer().add(last_entity.entity);
 
@@ -204,7 +206,7 @@ std::shared_ptr<BaseState> ModelingTerrain::update()
 				last_entity.entity.vertex_array = Resources::instance().models.grass;
 				last_entity.entity.scale = 0.185f;
 				last_entity.entity.rotation = { 0, 0, 0, 0 };
-				last_entity.entity.environment = Application::instance().map_environment.environment;
+				last_entity.entity.environment = map_environment.environment;
 
 				last_entity.entity.id = blue::Context::renderer().add(last_entity.entity);
 
@@ -218,7 +220,7 @@ std::shared_ptr<BaseState> ModelingTerrain::update()
 				last_entity.entity.vertex_array = Resources::instance().models.pylon;
 				last_entity.entity.scale = 0.25f;
 				last_entity.entity.rotation = { 0, 0, 0, 0 };
-				last_entity.entity.environment = Application::instance().map_environment.environment;
+				last_entity.entity.environment = map_environment.environment;
 
 				last_entity.entity.id = blue::Context::renderer().add(last_entity.entity);
 
@@ -232,7 +234,7 @@ std::shared_ptr<BaseState> ModelingTerrain::update()
 				last_entity.entity.vertex_array = Resources::instance().models.bush;
 				last_entity.entity.scale = 0.55f;
 				last_entity.entity.rotation = { 0, 0, 0, 0 };
-				last_entity.entity.environment = Application::instance().map_environment.environment;
+				last_entity.entity.environment = map_environment.environment;
 
 				last_entity.entity.id = blue::Context::renderer().add(last_entity.entity);
 
@@ -246,7 +248,7 @@ std::shared_ptr<BaseState> ModelingTerrain::update()
 				last_entity.entity.vertex_array = Resources::instance().models.cut_tree;
 				last_entity.entity.scale = 0.180f;
 				last_entity.entity.rotation = { 0, 0, 0, 0 };
-				last_entity.entity.environment = Application::instance().map_environment.environment;
+				last_entity.entity.environment = map_environment.environment;
 
 				last_entity.entity.id = blue::Context::renderer().add(last_entity.entity);
 
@@ -260,7 +262,7 @@ std::shared_ptr<BaseState> ModelingTerrain::update()
 				last_entity.entity.vertex_array = Resources::instance().models.track;
 				last_entity.entity.scale = 0.180f;
 				last_entity.entity.rotation = { 0, 0, 0, 0 };
-				last_entity.entity.environment = Application::instance().map_environment.environment;
+				last_entity.entity.environment = map_environment.environment;
 
 				last_entity.entity.id = blue::Context::renderer().add(last_entity.entity);
 
@@ -274,7 +276,7 @@ std::shared_ptr<BaseState> ModelingTerrain::update()
 				last_entity.entity.vertex_array = Resources::instance().models.bridge;
 				last_entity.entity.scale = 0.35f;
 				last_entity.entity.rotation = { 0, 0, 0, 0 };
-				last_entity.entity.environment = Application::instance().map_environment.environment;
+				last_entity.entity.environment = map_environment.environment;
 
 				last_entity.entity.id = blue::Context::renderer().add(last_entity.entity);
 

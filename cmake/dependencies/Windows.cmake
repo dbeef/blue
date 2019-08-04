@@ -12,7 +12,6 @@ macro(blue_find_dependencies_windows)
     message(STATUS "[BLUE] Assimp library path: ${ASSIMP_LIB}")
 
     target_link_libraries(Dependencies INTERFACE
-            SDL2::SDL2main
             SDL2::SDL2-static
             glm
             glad

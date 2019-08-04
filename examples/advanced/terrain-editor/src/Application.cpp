@@ -5,6 +5,7 @@
 #include "blue/Context.hpp"
 
 #include "imgui/imgui.h"
+#include "Resources.hpp"
 
 const float CAMERA_SPEED = 0.25f;
 
@@ -12,7 +13,9 @@ Application* Application::_instance = nullptr;
 
 Application::Application()
 {
-	map_environment.camera.set_pos({ 10, 10, 10 });
+	auto& map_environment = Resources::instance().map_environment;
+
+	Resources::instance().map_environment.camera.set_pos({ 10, 10, 10 });
 
 	// Create map_environment
 
@@ -88,6 +91,7 @@ void Application::register_callbacks()
 
 	auto w_callback = [this]()
 	{
+		auto& map_environment = Resources::instance().map_environment;
 		map_environment.camera.go_forward(CAMERA_SPEED);
 		blue::Context::gpu_system().submit(UpdateEnvironmentEntity_View{ map_environment.environment, map_environment.camera.get_view() });
 		blue::Context::gpu_system().submit(UpdateEnvironmentEntity_CameraPos{ map_environment.environment, map_environment.camera.get_position() });
@@ -129,6 +133,7 @@ void Application::register_callbacks()
 
 	auto s_callback = [this]()
 	{
+		auto& map_environment = Resources::instance().map_environment;
 		map_environment.camera.go_backward(CAMERA_SPEED);
 		blue::Context::gpu_system().submit(UpdateEnvironmentEntity_View{ map_environment.environment, map_environment.camera.get_view() });
 		blue::Context::gpu_system().submit(UpdateEnvironmentEntity_CameraPos{ map_environment.environment, map_environment.camera.get_position() });
@@ -137,6 +142,7 @@ void Application::register_callbacks()
 
 	auto a_callback = [this]()
 	{
+		auto& map_environment = Resources::instance().map_environment;
 		map_environment.camera.go_left(CAMERA_SPEED);
 		blue::Context::gpu_system().submit(UpdateEnvironmentEntity_View{ map_environment.environment, map_environment.camera.get_view() });
 		blue::Context::gpu_system().submit(UpdateEnvironmentEntity_CameraPos{ map_environment.environment, map_environment.camera.get_position() });
@@ -145,6 +151,7 @@ void Application::register_callbacks()
 
 	auto d_callback = [this]()
 	{
+		auto& map_environment = Resources::instance().map_environment;
 		map_environment.camera.go_right(CAMERA_SPEED);
 		blue::Context::gpu_system().submit(UpdateEnvironmentEntity_View{ map_environment.environment, map_environment.camera.get_view() });
 		blue::Context::gpu_system().submit(UpdateEnvironmentEntity_CameraPos{ map_environment.environment, map_environment.camera.get_position() });
@@ -153,6 +160,8 @@ void Application::register_callbacks()
 
 	auto mouse_move_callback = [this](double xpos, double ypos)
 	{
+		auto& map_environment = Resources::instance().map_environment;
+
 		if (blue::Context::window().is_cursor_attached())
 		{ 
 			map_environment.camera.mouse_rotation(xpos, ypos);

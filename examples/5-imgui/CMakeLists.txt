@@ -8,7 +8,7 @@ add_executable(ImguiSample
         src/Main.cpp
         )
 
-target_link_libraries(ImguiSample blue -lpthread)
+target_link_libraries(ImguiSample blue SDL2::SDL2main -lpthread)
 target_include_directories(ImguiSample PRIVATE include)
 
 install(TARGETS ImguiSample DESTINATION bin)
