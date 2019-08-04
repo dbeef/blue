@@ -83,7 +83,7 @@ void Map::upload_decoration_vertices()
 
 	std::unique_lock<std::mutex> lock(tiles_access);
 	std::uint32_t tile_index = 0;
-	const glm::vec3 decoration_color = { 0.5f, 0.8f, 0.5f };
+
 
 	for (std::size_t x = 0; x < CHUNK_DIMENSION; x++)
 	{
@@ -96,6 +96,10 @@ void Map::upload_decoration_vertices()
 
 			glm::vec3 clickable_color_1 = { 0.2f, 0.7f, 0.2f };
 			glm::vec3 clickable_color_2 = { 0.2f, 0.7f, 0.2f };
+
+			clickable_color_1 *= 0.83f;
+			clickable_color_2 *= 0.83f;
+
 			int random_variable = 10 + std::rand() / ((RAND_MAX + 1u) / 16);  // Note: 1+rand()%6 is biased
 			float color_delta = 1.0f / random_variable;
 			if (random_variable % 2)
