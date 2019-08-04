@@ -35,12 +35,13 @@ int main(int argc, char* argv[])
 	// Issue the GPU thread with task of uploading mesh:
 
 	std::uint32_t instances = 100;
-	Indices instance_buffer;
+	Instances instance_buffer;
 	for (std::uint32_t i = 0; i < instances; i++)
 	{
 		auto pos = glm::vec3{ static_cast<float>(i) / 10 };
+		if (i % 2) pos *= -1;
 		instance_buffer.push_back(pos.x);
-		instance_buffer.push_back(pos.y);
+		instance_buffer.push_back(0);
 		instance_buffer.push_back(0);
 	}
 
@@ -57,7 +58,12 @@ int main(int argc, char* argv[])
 		{ ShaderAttribute::Type::VEC3, ShaderAttribute::Purpose::TRANSLATION, ShaderAttribute::Buffer::INDEX},
 	};
 
-	auto vertex_array_future = blue::Context::gpu_system().submit(CreateMeshEntity{ vertices, instance_buffer, attributes, 3, instances });
+	Indices indices =
+	{
+		0, 1, 2
+	};
+
+	auto vertex_array_future = blue::Context::gpu_system().submit(CreateMeshEntity{ vertices, indices, attributes, 3, instance_buffer });
 	vertex_array_future.wait();
 	auto vertex_array = vertex_array_future.get();
 

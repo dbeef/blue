@@ -59,9 +59,11 @@ struct ShaderAttribute
 
 using VertexType = float;
 using IndexType = unsigned int;
+using InstanceType = float;
 
 using Vertices = std::vector<VertexType>;
 using Indices = std::vector<IndexType>;
+using Instances = std::vector<InstanceType>;
 using Attributes = std::vector<ShaderAttribute>;
 
 using ShaderId = GLuint;
@@ -69,6 +71,7 @@ using TextureId = GLuint;
 using VertexArrayId = GLuint;
 using IndexBufferId = GLuint;
 using VertexBufferId = GLuint;
+using InstanceBufferId = GLuint;
 using UniformBufferId = GLuint;
 
 struct Environment
@@ -100,7 +103,7 @@ struct CreateMeshEntity
 	const Attributes& attributes;
 	const std::uint32_t indices_count{};
 	// Zeroed if instanced rendering is not used.
-	std::uint32_t number_of_instances{};
+	Instances instances;
 };
 
 struct CreateTextureEntity

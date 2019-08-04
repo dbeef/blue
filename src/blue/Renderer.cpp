@@ -26,6 +26,7 @@ namespace
 
 void Renderer::clear() const
 {
+	// TODO: Add an entity + handler for setting this up.
 	DebugGlCall(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT));
 }
 
@@ -47,6 +48,7 @@ void Renderer::draw_render_entities()
 	for (const auto& entity : render_entities)
 	{
 		const auto& vao = entity.vertex_array;
+		DebugGlCall(glBindVertexArray(vao.vao));
 
 		if (current_shader != entity.shader)
 		{
@@ -66,7 +68,7 @@ void Renderer::draw_render_entities()
 			DebugGlCall(glBindTexture(GL_TEXTURE_2D, current_texture));
 			// Right now, blue utilizes only one texture slot.
 			auto loc = glGetUniformLocation(current_shader, "sampler");
-			glUniform1i(loc, 0);
+			DebugGlCall(glUniform1i(loc, 0));
 		}
 
 		const glm::mat4 RotationMatrix = glm::toMat4(entity.rotation);
@@ -74,14 +76,13 @@ void Renderer::draw_render_entities()
 		const glm::mat4 TranslationMatrix = glm::translate(glm::identity<glm::mat4>(), entity.position);
 
 		const glm::mat4 model = TranslationMatrix * RotationMatrix * ScaleMatrix;
-		glUniformMatrix4fv(uniform_locations.modelLoc, 1, GL_FALSE, glm::value_ptr(model));
-
-		DebugGlCall(glBindVertexArray(vao.vao));
+		DebugGlCall(glUniformMatrix4fv(uniform_locations.modelLoc, 1, GL_FALSE, glm::value_ptr(model)));
 
 		if (vao.number_of_instances)
 		{
 			// Instanced rendering
 			DebugGlCall(glDrawArraysInstanced(GL_TRIANGLES, 0, vao.vertices_count, vao.number_of_instances));
+			//glDrawElementsInstanced(GL_TRIANGLES, vao.vertices_count, GL_UNSIGNED_INT, 0, vao.number_of_instances);
 		}
 		else if (vao.ibo)
 		{

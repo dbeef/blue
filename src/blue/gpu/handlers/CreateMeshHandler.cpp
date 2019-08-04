@@ -15,7 +15,7 @@ namespace
 		}
 	}
 
-	void set_vertex_buffer_layout(const std::vector<ShaderAttribute>& attributes, VertexBufferId vertex_buffer, IndexBufferId index_buffer) 
+	void set_vertex_buffer_layout(const std::vector<ShaderAttribute>& attributes, VertexBufferId vertex_buffer, IndexBufferId index_buffer)
 	{
 		int vertex_total_size = 0;
 		int index_total_size = 0;
@@ -43,28 +43,29 @@ namespace
 			{
 				DebugGlCall(glBindBuffer(GL_ARRAY_BUFFER, vertex_buffer));
 				DebugGlCall(glVertexAttribPointer(index, attrib.getNumOfComponents(), GL_FLOAT, GL_FALSE, vertex_total_size, (GLvoid*)vertex_buffer_offset));
-				
+
 				vertex_buffer_offset += attrib.getSize();
 			}
 			else
 			{
 				DebugGlCall(glBindBuffer(GL_ARRAY_BUFFER, index_buffer));
 				DebugGlCall(glVertexAttribPointer(index, attrib.getNumOfComponents(), GL_FLOAT, GL_FALSE, index_total_size, (GLvoid*)index_buffer_offset));
-				
-				// Set one instance of this attribute per vertex:
+
+				// Tell OpenGL this is an instanced vertex attribute.
 				DebugGlCall(glVertexAttribDivisor(index, 1));
 
 				index_buffer_offset += attrib.getSize();
 			}
-			
+
 			index++;
 		}
 	}
 
-	VertexArray handle_no_index_buffer(const CreateMeshEntity& entity)
+	VertexArray handle(const CreateMeshEntity& entity)
 	{
 		VertexBufferId vertex_buffer = 0;
 		VertexArrayId vertex_array = 0;
+		IndexBufferId index_buffer = 0;
 
 		DebugGlCall(glGenBuffers(1, &vertex_buffer));
 
@@ -74,48 +75,31 @@ namespace
 		DebugGlCall(glBindBuffer(GL_ARRAY_BUFFER, vertex_buffer));
 		DebugGlCall(glBufferData(GL_ARRAY_BUFFER, sizeof(VertexType) * entity.vertices.size(), entity.vertices.data(), GL_STATIC_DRAW));
 
-		set_vertex_buffer_layout(entity.attributes, vertex_buffer, 0);
-		
-		glBindVertexArray(0);
-
-		return VertexArray {vertex_array, vertex_buffer, 0, entity.indices_count};
-	}
-
-	VertexArray handle(const CreateMeshEntity& entity)
-	{
-		VertexBufferId vertex_buffer = 0;
-		IndexBufferId index_buffer = 0;
-		VertexArrayId vertex_array = 0;
-
-		DebugGlCall(glGenBuffers(1, &vertex_buffer));
-		DebugGlCall(glGenBuffers(1, &index_buffer));
-
-		DebugGlCall(glGenVertexArrays(1, &vertex_array));
-		DebugGlCall(glBindVertexArray(vertex_array));
-
-		if (entity.number_of_instances)
+		if (!entity.indices.empty())
 		{
-			// Use same type of buffer.
-			DebugGlCall(glBindBuffer(GL_ARRAY_BUFFER, vertex_buffer));
-			DebugGlCall(glBufferData(GL_ARRAY_BUFFER, sizeof(VertexType) * entity.vertices.size(), entity.vertices.data(), GL_STATIC_DRAW));
-
-			DebugGlCall(glBindBuffer(GL_ARRAY_BUFFER, index_buffer));
-			DebugGlCall(glBufferData(GL_ARRAY_BUFFER, sizeof(IndexType) * entity.indices.size(), entity.indices.data(), GL_STATIC_DRAW));
-		}
-		else
-		{
-			DebugGlCall(glBindBuffer(GL_ARRAY_BUFFER, vertex_buffer));
-			DebugGlCall(glBufferData(GL_ARRAY_BUFFER, sizeof(VertexType) * entity.vertices.size(), entity.vertices.data(), GL_STATIC_DRAW));
-
+			DebugGlCall(glGenBuffers(1, &index_buffer));
 			DebugGlCall(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, index_buffer));
 			DebugGlCall(glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(IndexType) * entity.indices.size(), entity.indices.data(), GL_STATIC_DRAW));
 		}
 
-		set_vertex_buffer_layout(entity.attributes, vertex_buffer, index_buffer);
+		if (!entity.instances.empty())
+		{
+			InstanceBufferId instance_buffer = 0;
+			DebugGlCall(glGenBuffers(1, &instance_buffer));
+
+			DebugGlCall(glBindBuffer(GL_ARRAY_BUFFER, instance_buffer));
+			DebugGlCall(glBufferData(GL_ARRAY_BUFFER, sizeof(IndexType) * entity.instances.size(), entity.instances.data(), GL_STATIC_DRAW));
+
+			set_vertex_buffer_layout(entity.attributes, vertex_buffer, instance_buffer);
+		}
+		else
+		{
+			set_vertex_buffer_layout(entity.attributes, vertex_buffer, 0);
+		}
 
 		glBindVertexArray(0);
 
-		return VertexArray{ vertex_array, vertex_buffer, index_buffer, entity.indices_count};
+		return VertexArray{ vertex_array, vertex_buffer, index_buffer, entity.indices_count, static_cast<std::uint32_t>(entity.instances.size()) };
 	}
 }
 
@@ -124,17 +108,7 @@ void handle(std::pair<std::promise<VertexArray>, CreateMeshEntity>& pair)
 	std::promise<VertexArray>& promise = pair.first;
 	const CreateMeshEntity& entity = pair.second;
 
-	if (entity.indices.empty())
-	{
-		VertexArray vao = handle_no_index_buffer(entity);
-		promise.set_value(vao);
-		log_status(vao);
-	}
-	else
-	{
-		VertexArray vao = handle(entity);
-		vao.number_of_instances = entity.number_of_instances;
-		promise.set_value(vao);
-		log_status(vao);
-	}
+	VertexArray vao = handle(entity);
+	promise.set_value(vao);
+	log_status(vao);
 }
