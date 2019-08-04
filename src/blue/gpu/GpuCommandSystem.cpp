@@ -47,6 +47,12 @@ void GpuCommandSystem::execute()
 		update_environment_view_entities.pop();
 	}
 
+	while (!update_environment_camera_pos_entities.empty())
+	{
+		handle(update_environment_camera_pos_entities.front());
+		update_environment_camera_pos_entities.pop();
+	}
+
 	while (!update_environment_projection_entities.empty())
 	{
 		handle(update_environment_projection_entities.front());
@@ -153,6 +159,13 @@ void GpuCommandSystem::submit(const UpdateEnvironmentEntity_Projection& entity)
 {
 	lock();
 	update_environment_projection_entities.push(entity);
+	unlock();
+}
+
+void GpuCommandSystem::submit(const UpdateEnvironmentEntity_CameraPos& entity)
+{
+	lock();
+	update_environment_camera_pos_entities.push(entity);
 	unlock();
 }
 

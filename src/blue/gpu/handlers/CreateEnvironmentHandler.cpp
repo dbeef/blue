@@ -10,8 +10,9 @@
 //                    float ambientStrength; // 128                4                4
 //                    vec3 lightColor;       // 144               16               12
 //                    vec3 lightPos;         // 160               16               12
-//                    mat4 lightSpaceMatrix; // 176               16               64
-//                                           // TOTAL BUFFER SIZE --------------  240
+//                    vec3 cameraPos;        // 176               16               12
+//                    mat4 lightSpaceMatrix; // 192               16               64
+//                                           // TOTAL BUFFER SIZE --------------  256
 //            };
 //
 
@@ -20,7 +21,7 @@ void handle(std::pair<std::promise<UniformBufferId>, CreateEnvironmentEntity>& p
 	std::promise<UniformBufferId>& promise = pair.first;
 	const CreateEnvironmentEntity& entity = pair.second;
 
-	const int buffer_size = 240;
+	const int buffer_size = 256;
 
 	unsigned int id;
 

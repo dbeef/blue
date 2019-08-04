@@ -90,6 +90,7 @@ void Application::register_callbacks()
 	{
 		map_environment.camera.go_forward(CAMERA_SPEED);
 		blue::Context::gpu_system().submit(UpdateEnvironmentEntity_View{ map_environment.environment, map_environment.camera.get_view() });
+		blue::Context::gpu_system().submit(UpdateEnvironmentEntity_CameraPos{ map_environment.environment, map_environment.camera.get_position() });
 	};
 	blue::Context::input().registerKeyCallback({ w_callback, SDLK_w, SDL_KEYDOWN });
 	
@@ -130,6 +131,7 @@ void Application::register_callbacks()
 	{
 		map_environment.camera.go_backward(CAMERA_SPEED);
 		blue::Context::gpu_system().submit(UpdateEnvironmentEntity_View{ map_environment.environment, map_environment.camera.get_view() });
+		blue::Context::gpu_system().submit(UpdateEnvironmentEntity_CameraPos{ map_environment.environment, map_environment.camera.get_position() });
 	};
 	blue::Context::input().registerKeyCallback({ s_callback, SDLK_s, SDL_KEYDOWN });
 
@@ -137,6 +139,7 @@ void Application::register_callbacks()
 	{
 		map_environment.camera.go_left(CAMERA_SPEED);
 		blue::Context::gpu_system().submit(UpdateEnvironmentEntity_View{ map_environment.environment, map_environment.camera.get_view() });
+		blue::Context::gpu_system().submit(UpdateEnvironmentEntity_CameraPos{ map_environment.environment, map_environment.camera.get_position() });
 	};
 	blue::Context::input().registerKeyCallback({ a_callback, SDLK_a, SDL_KEYDOWN });
 
@@ -144,6 +147,7 @@ void Application::register_callbacks()
 	{
 		map_environment.camera.go_right(CAMERA_SPEED);
 		blue::Context::gpu_system().submit(UpdateEnvironmentEntity_View{ map_environment.environment, map_environment.camera.get_view() });
+		blue::Context::gpu_system().submit(UpdateEnvironmentEntity_CameraPos{ map_environment.environment, map_environment.camera.get_position() });
 	};
 	blue::Context::input().registerKeyCallback({ d_callback, SDLK_d, SDL_KEYDOWN });
 
@@ -155,6 +159,7 @@ void Application::register_callbacks()
 		}
 
 		blue::Context::gpu_system().submit(UpdateEnvironmentEntity_View{ map_environment.environment, map_environment.camera.get_view() });
+		blue::Context::gpu_system().submit(UpdateEnvironmentEntity_CameraPos{ map_environment.environment, map_environment.camera.get_position() });
 	};
 	blue::Context::input().registerMouseMoveCallback(mouse_move_callback);
 }

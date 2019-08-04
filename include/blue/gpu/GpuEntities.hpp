@@ -135,6 +135,12 @@ struct UpdateEnvironmentEntity_View
 	const glm::mat4 view;
 };
 
+struct UpdateEnvironmentEntity_CameraPos
+{
+	const UniformBufferId id;
+	const glm::vec3 camera_position;
+};
+
 struct UpdateEnvironmentEntity_Projection
 {
 	const UniformBufferId id;

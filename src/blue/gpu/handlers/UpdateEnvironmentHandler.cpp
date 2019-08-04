@@ -17,6 +17,11 @@ namespace
 	}
 }
 
+void handle(UpdateEnvironmentEntity_CameraPos& entity)
+{
+	upload_chunk(glm::value_ptr(entity.camera_position), 176, 12);
+}
+
 void handle(UpdateEnvironmentEntity_Projection& entity)
 {
 	upload_chunk(glm::value_ptr(entity.projection), 64, 64);

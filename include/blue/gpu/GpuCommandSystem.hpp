@@ -23,6 +23,7 @@ public:
 	void submit(const DisposeMeshEntity&);
 	void submit(const UpdateEnvironmentEntity_Projection&);
 	void submit(const UpdateEnvironmentEntity_View&);
+	void submit(const UpdateEnvironmentEntity_CameraPos&);
 	void submit(const SetClearColorEntity&);
 
 private:
@@ -39,6 +40,7 @@ private:
 	std::queue<SetClearColorEntity> set_clear_color_entities;
 	std::queue<DisposeMeshEntity> dispose_mesh_entities;
 	std::queue<DisposeShaderEntity> dispose_shader_entities;
+	std::queue<UpdateEnvironmentEntity_CameraPos> update_environment_camera_pos_entities;
 	std::queue<UpdateEnvironmentEntity_View> update_environment_view_entities;
 	std::queue<UpdateEnvironmentEntity_Projection> update_environment_projection_entities;
 

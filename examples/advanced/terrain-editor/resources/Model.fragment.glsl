@@ -7,6 +7,7 @@ layout (std140) uniform Matrices
     float ambientStrength;
     vec3 lightColor;
     vec3 lightPos;
+    vec3 cameraPos;
 // Shadows
     mat4 lightSpaceMatrix;
 };

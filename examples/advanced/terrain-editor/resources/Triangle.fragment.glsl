@@ -7,6 +7,7 @@ layout (std140) uniform Matrices
     float ambientStrength;
     vec3 lightColor;
     vec3 lightPos;
+    vec3 cameraPos;
 // Shadows
     mat4 lightSpaceMatrix;
 };
@@ -27,7 +28,10 @@ void main()
   vec2 grid = abs(fract(coord - 0.5f) - 0.5f) / fwidth(coord);
   float line = min(grid.x, grid.y);
 
+  float grid_visibility = min(1.0f, cameraPos.y / 100.0f);
+
   // Just visualize the grid lines directly
-  vec3 grid_final = vec3(1.0 - min(line, 1.0));
+  vec3 grid_final = grid_visibility * vec3(1.0 - min(line, 1.0));
+  
   color = vec4(ColorRGB + grid_final, 1.0f);
 }
