@@ -51,10 +51,10 @@ namespace blue
 		std::atomic<SDL_GLContext> _gl_context{};
 		std::atomic<SDL_Window*> _window_handle{};
 		std::string _title = "Blue";
-		std::atomic_uint16_t _width{ 0 };
-		std::atomic_uint16_t _height{ 0 };
-		std::atomic_uint16_t _last_x{ 0 };
-		std::atomic_uint16_t _last_y{ 0 };
+		std::atomic<std::uint16_t> _width{ 0 };
+		std::atomic<std::uint16_t> _height{ 0 };
+		std::atomic<std::uint16_t> _last_x{ 0 };
+		std::atomic<std::uint16_t> _last_y{ 0 };
 		bool _fullscreen = false;
 	};
 }

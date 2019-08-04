@@ -1,4 +1,5 @@
 #include <blue/gpu/handlers/CreateMeshHandler.hpp>
+#include <blue/gpu/GpuEntities.hpp>
 #include "blue/Context.hpp"
 
 namespace
@@ -11,7 +12,8 @@ namespace
 		}
 		else
 		{
-			blue::Context::logger().info("Vertex array created successfuly ({}).", vertex_array.vao);
+			blue::Context::logger().info("Vertex array created successfuly ({}, VBO: {} IBO: {}).",
+			        vertex_array.vao, vertex_array.vbo, vertex_array.ibo);
 		}
 	}
 
@@ -99,7 +101,14 @@ namespace
 
 		glBindVertexArray(0);
 
-		return VertexArray{ vertex_array, vertex_buffer, index_buffer, entity.indices_count, static_cast<std::uint32_t>(entity.instances.size()) };
+		VertexArray a{};
+        a.vao = vertex_array;
+        a.vbo = vertex_buffer;
+        a.ibo = index_buffer;
+        a.vertices_count = entity.vertices.size();
+        a.number_of_instances = static_cast<std::uint32_t>(entity.instances.size());
+
+		return a;
 	}
 }
 

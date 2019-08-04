@@ -5,6 +5,7 @@ macro(blue_find_dependencies_android)
     find_package(glm REQUIRED)
     find_package(SDL2 REQUIRED VERSION EXACT 2.0.9)
     find_package(spdlog REQUIRED)
+    find_package(Assimp REQUIRED)
 
     target_link_libraries(
             Dependencies INTERFACE
@@ -13,7 +14,7 @@ macro(blue_find_dependencies_android)
             glad
             spdlog::spdlog
             ${OPENGL_LIBRARIES}
-            ${ASSIMP_LIB}
+            "libassimpd.so"
             stb
             imgui
             "dl"

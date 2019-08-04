@@ -11,23 +11,24 @@
 
 namespace
 {
-	inline void upload_chunk(const void* data, int offset, int size) 
+	inline void upload_chunk(UniformBufferId id, const void* data, int offset, int size)
 	{
+        DebugGlCall(glBindBuffer(GL_UNIFORM_BUFFER, id));
 		DebugGlCall(glBufferSubData(GL_UNIFORM_BUFFER, offset, size, data));
 	}
 }
 
 void handle(UpdateEnvironmentEntity_CameraPos& entity)
 {
-	upload_chunk(glm::value_ptr(entity.camera_position), 176, 12);
+	upload_chunk(entity.id, glm::value_ptr(entity.camera_position), 176, 12);
 }
 
 void handle(UpdateEnvironmentEntity_Projection& entity)
 {
-	upload_chunk(glm::value_ptr(entity.projection), 64, 64);
+	upload_chunk(entity.id, glm::value_ptr(entity.projection), 64, 64);
 }
 
 void handle(UpdateEnvironmentEntity_View& entity)
 {
-	upload_chunk(glm::value_ptr(entity.view), 0, 64);
+	upload_chunk(entity.id, glm::value_ptr(entity.view), 0, 64);
 }

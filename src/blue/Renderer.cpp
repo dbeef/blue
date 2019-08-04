@@ -16,11 +16,11 @@ namespace
 {
 	// Using explicit uniform locations in GLSL,
 	// thus it's guaranteed for them to have these values.
-	// See CreateUboHandler.cpp for Uniform Buffer Object values. 
+	// See CreateUboHandler.cpp for Uniform Buffer Object values.
 	// TODO: Make sure every shader has explicit uniform locations; inject them to every shader?
-	const struct 
+	const struct
 	{
-		GLint modelLoc = 4;
+		GLint modelLoc = 0;
 	} uniform_locations;
 }
 
@@ -76,18 +76,26 @@ void Renderer::draw_render_entities()
 		const glm::mat4 TranslationMatrix = glm::translate(glm::identity<glm::mat4>(), entity.position);
 
 		const glm::mat4 model = TranslationMatrix * RotationMatrix * ScaleMatrix;
+
 		DebugGlCall(glUniformMatrix4fv(uniform_locations.modelLoc, 1, GL_FALSE, glm::value_ptr(model)));
 
 		if (vao.number_of_instances)
 		{
-			// Instanced rendering
-			DebugGlCall(glDrawArraysInstanced(GL_TRIANGLES, 0, vao.vertices_count, vao.number_of_instances));
-			//glDrawElementsInstanced(GL_TRIANGLES, vao.vertices_count, GL_UNSIGNED_INT, 0, vao.number_of_instances);
+            if(!vao.ibo) {
+                // Instanced rendering
+                DebugGlCall(glDrawArraysInstanced(GL_TRIANGLES, 0, vao.vertices_count, vao.number_of_instances));
+            }
+            else
+            {
+                // Indexed, instanced rendering:
+                glDrawElementsInstanced(GL_TRIANGLES, vao.vertices_count, GL_UNSIGNED_INT, nullptr,
+                                        vao.number_of_instances);
+            }
 		}
 		else if (vao.ibo)
 		{
 			// Rendering with custom index buffer
-			DebugGlCall(glDrawElements(GL_TRIANGLES, vao.vertices_count, GL_UNSIGNED_INT, 0));
+			DebugGlCall(glDrawElements(GL_TRIANGLES, vao.vertices_count, GL_UNSIGNED_INT, nullptr));
 		}
 		else
 		{
@@ -112,7 +120,18 @@ RenderEntityId Renderer::add(const RenderEntity& entity)
 	lock();
 	static RenderEntityId id = 1;
 	id++;
-	render_entities.emplace_back(RenderEntity{ entity.shader, id, entity.vertex_array, entity.position, entity.rotation, entity.scale, entity.environment, entity.texture });
+
+	RenderEntity e{};
+    e.shader = entity.shader;
+    e.id = id;
+    e.vertex_array = entity.vertex_array;
+    e.position = entity.position;
+    e.scale = entity.scale;
+    e.environment = entity.environment;
+    e.texture = entity.texture;
+
+	render_entities.push_back(e);
+
 	sort_entities_by_shader();
 	unlock();
 	return id;

@@ -28,7 +28,6 @@ void handle(std::pair<std::promise<UniformBufferId>, CreateEnvironmentEntity>& p
 	DebugGlCall(glGenBuffers(1, &id));
 	DebugGlCall(glBindBuffer(GL_UNIFORM_BUFFER, id));
 	DebugGlCall(glBufferData(GL_UNIFORM_BUFFER, buffer_size, nullptr, GL_STATIC_DRAW));
-	DebugGlCall(glBindBuffer(GL_UNIFORM_BUFFER, 0));
 	DebugGlCall(glBindBufferRange(GL_UNIFORM_BUFFER, 0, id, 0, buffer_size));
 
 	if (id == 0)

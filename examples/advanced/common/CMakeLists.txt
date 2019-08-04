@@ -10,7 +10,7 @@ add_library(GameCommons STATIC
         src/Resources.cpp
         )
 
-target_link_libraries(GameCommons blue -lpthread)
+target_link_libraries(GameCommons blue)
 target_include_directories(GameCommons PUBLIC include)
 
 install(TARGETS GameCommons DESTINATION bin)

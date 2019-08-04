@@ -5,8 +5,10 @@ namespace
 {
 	// TODO: Remove explicit uniform location once uniform buffers are used.
 	const char* getOpenGLVersion() {
-#ifdef ANDROID
-		return "#version 300 es\n #extension GL_ARB_explicit_uniform_location : enable";
+#ifdef BLUE_ANDROID
+	    // Explicit uniform locations work from 3.1 ES - setting 3.0 with enabled extension:
+	    // https://android-developers.googleblog.com/2015/04/game-performance-explicit-uniform.html
+		return "#version 300 es\n #extension GL_ARB_explicit_uniform_location : enable \n";
 #else
 		return "#version 330 core\n #extension GL_ARB_explicit_uniform_location : enable \n";
 #endif
@@ -76,7 +78,7 @@ void bind_with_uniform_buffer(ShaderId id)
 	if (uniformBlockIndex >= 0)
 	{
 		blue::Context::logger().info("Found blue uniform buffer in shader, binding.");
-		DebugGlCall(glUniformBlockBinding(id, uniformBlockIndex, 0));
+        DebugGlCall(glUniformBlockBinding(id, uniformBlockIndex, 0));
 	}
 	else
 	{
