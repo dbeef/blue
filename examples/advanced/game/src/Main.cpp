@@ -22,7 +22,7 @@ int main(int argc, char* argv[])
 	Resources::instance().load_models();
 	Resources::instance().load_textures();
 
-	Game::instance().get_map().import_from_file("map.bin");
+	Game::instance().get_map().import_from_file("resources/map.bin");
 	Game::instance().get_map().upload_clickable_vertices();
 	Game::instance().get_map().upload_decoration();
 
