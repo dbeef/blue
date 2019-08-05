@@ -8,6 +8,10 @@ add_library(GameCommons STATIC
         src/terrain/Map.cpp
         src/terrain/Tile.cpp
         src/Resources.cpp
+        src/terrain/Flora.cpp
+        include/terrain/Flora.hpp
+        include/terrain/Map.hpp
+        include/terrain/Tile.hpp
         )
 
 target_link_libraries(GameCommons blue)

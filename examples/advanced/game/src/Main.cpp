@@ -4,6 +4,7 @@
 
 #include <cmath>
 #include <atomic>
+#include <Resources.hpp>
 
 #include "Game.hpp"
 #include "Resources.hpp"
@@ -18,23 +19,25 @@ int main(int argc, char* argv[])
 	Resources::init();
 	Game::init();
 
+    auto& map_environment = Resources::instance().map_environment;
+
+    map_environment.camera.set_pos({ 7.78816, 28.7423, 22.3805 });
+    map_environment.camera.set_rotation({ 0, - 68.5f, - 44.25f });
+
+    blue::Context::gpu_system().submit(UpdateEnvironmentEntity_View{ map_environment.environment, map_environment.camera.get_view() });
+    blue::Context::gpu_system().submit(UpdateEnvironmentEntity_CameraPos{ map_environment.environment, map_environment.camera.get_position() });
+
 	Resources::instance().load_shaders();
 	Resources::instance().load_models();
 	Resources::instance().load_textures();
 
-	Game::instance().get_map().import_from_file("resources/map.bin");
-	Game::instance().get_map().upload_clickable_vertices();
-	Game::instance().get_map().upload_decoration();
+    Game::instance().get_map().import_from_file("resources/map.bin");
+    Game::instance().get_map().upload_clickable_vertices();
+    Game::instance().get_map().upload_decoration();
 
-	// Look at the center of map.
+    Game::instance().get_flora().import_from_file("resources/flora.bin");
 
-	auto& map_environment = Resources::instance().map_environment;
-
-	map_environment.camera.set_pos({ 7.78816, 28.7423, 22.3805 });
-	map_environment.camera.set_rotation({ 0, - 68.5f, - 44.25f });
-
-	blue::Context::gpu_system().submit(UpdateEnvironmentEntity_View{ map_environment.environment, map_environment.camera.get_view() });
-	blue::Context::gpu_system().submit(UpdateEnvironmentEntity_CameraPos{ map_environment.environment, map_environment.camera.get_position() });
+    // Look at the center of map.
 
 	Timestep timestep(30);
 

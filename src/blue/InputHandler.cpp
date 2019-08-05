@@ -13,8 +13,11 @@ void InputHandler::poll()
 		int xpos = blue::Context::window().get_width() / 2;
 		int ypos = blue::Context::window().get_height() / 2;
 
+#if defined(BLUE_WINDOWS) || defined(BLUE_LINUX)
 		bool processed = ImGui_ImplSDL2_ProcessEvent(&event);
+#endif
 
+//
 		//if (event.type == SDL_EventType::SDL_MULTIGESTURE) {
 		//	if (fabs(event.mgesture.dDist) > 0.002) {
 		//		//Pinch open

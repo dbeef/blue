@@ -5,6 +5,7 @@
 
 #include <atomic>
 #include <memory>
+#include <terrain/Flora.hpp>
 
 class Application
 {
@@ -25,6 +26,7 @@ public:
 	bool is_running();
 
 	Map& get_map();
+    Flora& get_flora();
 
 	struct {
 		std::atomic_bool clicked{ false };
@@ -41,7 +43,8 @@ private:
 
 	void register_callbacks();
 
-	std::shared_ptr<Map> _map = std::make_shared<Map>();
+    std::shared_ptr<Flora> _flora = std::make_shared<Flora>();
+    std::shared_ptr<Map> _map = std::make_shared<Map>();
 	std::shared_ptr<BaseState> _current_state = nullptr;
 	std::atomic_bool _running{ true };
 	static Application* _instance;

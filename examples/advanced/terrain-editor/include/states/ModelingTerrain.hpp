@@ -5,6 +5,7 @@
 #include "jobs/MapIntersectionJob.hpp"
 
 #include <atomic>
+#include <Resources.hpp>
 
 class ModelingTerrain : public BaseState
 {
@@ -18,29 +19,13 @@ public:
 		VERTEX_PAINT_SHUFFLE = 3,
 	};
 
-	enum class Model : int
-	{
-		PINE_TREE = 0,
-		HURDLE = 1,
-		WHEAT = 2,
-		BOULDER = 3,
-		SMALL_BOULDER = 4,
-		GRASS = 5,
-		PYLON = 6,
-		BUSH = 7,
-		CUT_TREE = 8,
-		TRACK = 9,
-		BRIDGE = 10,
-	};
-
-	ModelingTerrain(const bool map_imported);
+	explicit ModelingTerrain(const bool map_imported);
 	~ModelingTerrain();
 	std::shared_ptr<BaseState> update() override;
 	void on_entry() override;
 
 private:
 
-	
 	struct ModelEntry
 	{
 		RenderEntityId id;

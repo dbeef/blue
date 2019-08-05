@@ -172,3 +172,8 @@ void Application::register_callbacks()
 	};
 	blue::Context::input().registerMouseMoveCallback(mouse_move_callback);
 }
+
+Flora &Application::get_flora()
+{
+    return *_flora;
+}

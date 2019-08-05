@@ -28,7 +28,7 @@ public:
 
 private:
 	
-	void execute();
+	bool execute();
 	void lock();
 	void unlock();
 

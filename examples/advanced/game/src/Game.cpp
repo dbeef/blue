@@ -172,8 +172,6 @@ void Game::register_callbacks()
 			blue::Context::gpu_system().submit(UpdateEnvironmentEntity_View{ map_environment.environment, map_environment.camera.get_view() });
 			blue::Context::gpu_system().submit(UpdateEnvironmentEntity_CameraPos{ map_environment.environment, map_environment.camera.get_position() });
 
-			blue::Context::logger().info("Delta: {} {}", delta.x, delta.y);
-
 			Game::instance().input.last_x = xpos;
 			Game::instance().input.last_y = ypos;
 		}
@@ -181,4 +179,9 @@ void Game::register_callbacks()
 		const auto& camera = Resources::instance().map_environment.camera;
 	};
 	blue::Context::input().registerMouseMoveCallback(mouse_move_callback);
+}
+
+Flora &Game::get_flora()
+{
+    return *_flora;
 }

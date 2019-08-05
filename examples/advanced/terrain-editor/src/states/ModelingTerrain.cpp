@@ -1,3 +1,4 @@
+#include <states/ModelingTerrain.hpp>
 #include "states/ModelingTerrain.hpp"
 #include "imgui/imgui.h"
 #include "blue/Context.hpp"
@@ -17,7 +18,8 @@ ModelingTerrain::ModelingTerrain(const bool map_imported) : _map_imported(map_im
 		bool export_map = ImGui::Button("Save to file");
 		if (export_map)
 		{
-			Application::instance().get_map().export_to_file("map.bin");
+			Application::instance().get_map().export_to_file("resources/map.bin");
+			Application::instance().get_flora().export_to_file("resources/flora.bin");
 		}
 
 		ImGui::RadioButton("Elevation", reinterpret_cast<int*>(&_mode), 0);
@@ -68,7 +70,8 @@ ModelingTerrain::ModelingTerrain(const bool map_imported) : _map_imported(map_im
 				{
 					last_entity.entity.rotation = glm::quat(last_entity.euler);
 					last_entity.entity.position = last_entity.position;
-					updated_model.store(true);
+                    Application::instance().get_flora().update_entry(last_entity.entity);
+                    updated_model.store(true);
 				}
 
 				ImGui::End();
@@ -123,168 +126,11 @@ std::shared_ptr<BaseState> ModelingTerrain::update()
 			Application::instance().get_map().shuffle_color_points(x, y, _radius);
 		}
 		else if (_mode == Mode::ADDING_MODELS)
-		{
-			auto& map_environment = Resources::instance().map_environment;
-
-			switch (_model)
-			{
-			case(Model::PINE_TREE):
-			{
-				last_entity.entity.position = { static_cast<float>(x), 0, static_cast<float>(y) };
-				last_entity.entity.shader = Resources::instance().shaders.model_shader;
-				last_entity.entity.vertex_array = Resources::instance().models.pine_tree;
-				last_entity.entity.scale = 0.294f;
-				last_entity.entity.rotation = { 0, 0, 0, 0 };
-				last_entity.entity.environment = map_environment.environment;
-
-				last_entity.entity.id = blue::Context::renderer().add(last_entity.entity);
-
-				last_entity.position = { static_cast<float>(x), 0, static_cast<float>(y) };
-
-				break;
-			}
-			case(Model::HURDLE):
-			{
-				last_entity.entity.position = { static_cast<float>(x), 0, static_cast<float>(y) };
-				last_entity.entity.shader = Resources::instance().shaders.model_shader;
-				last_entity.entity.vertex_array = Resources::instance().models.hurdle;
-				last_entity.entity.scale = 0.139f;
-				last_entity.entity.rotation = { 0, 0, 0, 0 };
-				last_entity.entity.environment = map_environment.environment;
-
-				last_entity.entity.id = blue::Context::renderer().add(last_entity.entity);
-
-				last_entity.position = { static_cast<float>(x), 0, static_cast<float>(y) };
-				break;
-			}
-			case(Model::WHEAT):
-			{
-				last_entity.entity.position = { static_cast<float>(x), 0, static_cast<float>(y) };
-				last_entity.entity.shader = Resources::instance().shaders.model_shader;
-				last_entity.entity.vertex_array = Resources::instance().models.wheat;
-				last_entity.entity.scale = _model_scale;
-				last_entity.entity.rotation = { 0, 0, 0, 0 };
-				last_entity.entity.environment = map_environment.environment;
-
-				last_entity.entity.id = blue::Context::renderer().add(last_entity.entity);
-
-				last_entity.position = { static_cast<float>(x), 0, static_cast<float>(y) };
-				break;
-			}
-			case(Model::BOULDER):
-			{
-				last_entity.entity.position = { static_cast<float>(x), 0, static_cast<float>(y) };
-				last_entity.entity.shader = Resources::instance().shaders.model_shader;
-				last_entity.entity.vertex_array = Resources::instance().models.boulder;
-				last_entity.entity.scale = 0.372f;
-				last_entity.entity.rotation = { 0, 0, 0, 0 };
-				last_entity.entity.environment = map_environment.environment;
-
-				last_entity.entity.id = blue::Context::renderer().add(last_entity.entity);
-
-				last_entity.position = { static_cast<float>(x), 0, static_cast<float>(y) };
-				break;
-			}
-			case(Model::SMALL_BOULDER):
-			{
-				last_entity.entity.position = { static_cast<float>(x), 0, static_cast<float>(y) };
-				last_entity.entity.shader = Resources::instance().shaders.model_shader;
-				last_entity.entity.vertex_array = Resources::instance().models.small_boulder;
-				last_entity.entity.scale = 0.200f;
-				last_entity.entity.rotation = { 0, 0, 0, 0 };
-				last_entity.entity.environment = map_environment.environment;
-
-				last_entity.entity.id = blue::Context::renderer().add(last_entity.entity);
-
-				last_entity.position = { static_cast<float>(x), 0, static_cast<float>(y) };
-				break;
-			}
-			case(Model::GRASS):
-			{
-				last_entity.entity.position = { static_cast<float>(x), 0, static_cast<float>(y) };
-				last_entity.entity.shader = Resources::instance().shaders.model_shader;
-				last_entity.entity.vertex_array = Resources::instance().models.grass;
-				last_entity.entity.scale = 0.185f;
-				last_entity.entity.rotation = { 0, 0, 0, 0 };
-				last_entity.entity.environment = map_environment.environment;
-
-				last_entity.entity.id = blue::Context::renderer().add(last_entity.entity);
-
-				last_entity.position = { static_cast<float>(x), 0, static_cast<float>(y) };
-				break;
-			}
-			case(Model::PYLON):
-			{
-				last_entity.entity.position = { static_cast<float>(x), 0, static_cast<float>(y) };
-				last_entity.entity.shader = Resources::instance().shaders.model_shader;
-				last_entity.entity.vertex_array = Resources::instance().models.pylon;
-				last_entity.entity.scale = 0.25f;
-				last_entity.entity.rotation = { 0, 0, 0, 0 };
-				last_entity.entity.environment = map_environment.environment;
-
-				last_entity.entity.id = blue::Context::renderer().add(last_entity.entity);
-
-				last_entity.position = { static_cast<float>(x), 0, static_cast<float>(y) };
-				break;
-			}
-			case(Model::BUSH):
-			{
-				last_entity.entity.position = { static_cast<float>(x), 0, static_cast<float>(y) };
-				last_entity.entity.shader = Resources::instance().shaders.model_shader;
-				last_entity.entity.vertex_array = Resources::instance().models.bush;
-				last_entity.entity.scale = 0.55f;
-				last_entity.entity.rotation = { 0, 0, 0, 0 };
-				last_entity.entity.environment = map_environment.environment;
-
-				last_entity.entity.id = blue::Context::renderer().add(last_entity.entity);
-
-				last_entity.position = { static_cast<float>(x), 0, static_cast<float>(y) };
-				break;
-			}
-			case(Model::CUT_TREE):
-			{
-				last_entity.entity.position = { static_cast<float>(x), 0, static_cast<float>(y) };
-				last_entity.entity.shader = Resources::instance().shaders.model_shader;
-				last_entity.entity.vertex_array = Resources::instance().models.cut_tree;
-				last_entity.entity.scale = 0.180f;
-				last_entity.entity.rotation = { 0, 0, 0, 0 };
-				last_entity.entity.environment = map_environment.environment;
-
-				last_entity.entity.id = blue::Context::renderer().add(last_entity.entity);
-
-				last_entity.position = { static_cast<float>(x), 0, static_cast<float>(y) };
-				break;
-			}
-			case(Model::TRACK):
-			{
-				last_entity.entity.position = { static_cast<float>(x), 0, static_cast<float>(y) };
-				last_entity.entity.shader = Resources::instance().shaders.model_shader;
-				last_entity.entity.vertex_array = Resources::instance().models.track;
-				last_entity.entity.scale = 0.180f;
-				last_entity.entity.rotation = { 0, 0, 0, 0 };
-				last_entity.entity.environment = map_environment.environment;
-
-				last_entity.entity.id = blue::Context::renderer().add(last_entity.entity);
-
-				last_entity.position = { static_cast<float>(x), 0, static_cast<float>(y) };
-				break;
-			}
-			case(Model::BRIDGE):
-			{
-				last_entity.entity.position = { static_cast<float>(x), 0, static_cast<float>(y) };
-				last_entity.entity.shader = Resources::instance().shaders.model_shader;
-				last_entity.entity.vertex_array = Resources::instance().models.bridge;
-				last_entity.entity.scale = 0.35f;
-				last_entity.entity.rotation = { 0, 0, 0, 0 };
-				last_entity.entity.environment = map_environment.environment;
-
-				last_entity.entity.id = blue::Context::renderer().add(last_entity.entity);
-
-				last_entity.position = { static_cast<float>(x), 0, static_cast<float>(y) };
-				break;
-			}
-			}
-		}
+        {
+            glm::vec3 position = {x.load(), 0, y.load()};
+            last_entity.entity = Application::instance().get_flora().add_entry(_model, position, {0, 0, 0});
+            last_entity.position = last_entity.entity.position;
+        }
 
 		// Dispose and reupload:
 		Application::instance().get_map().dispose_current_decoration_on_gpus();

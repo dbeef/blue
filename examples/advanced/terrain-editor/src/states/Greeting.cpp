@@ -39,7 +39,8 @@ std::shared_ptr<BaseState> Greeting::update()
 	}
 	else if (_load_level.load())
 	{
-		Application::instance().get_map().import_from_file("map.bin");
+		Application::instance().get_map().import_from_file("resources/map.bin");
+		Application::instance().get_flora().import_from_file("resources/flora.bin");
 		return std::make_shared<ModelingTerrain>(true);
 	}
 	else

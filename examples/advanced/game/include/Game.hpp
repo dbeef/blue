@@ -4,6 +4,7 @@
 
 #include <atomic>
 #include <memory>
+#include <terrain/Flora.hpp>
 
 class Game
 {
@@ -25,6 +26,8 @@ public:
 
 	Map& get_map();
 
+	Flora& get_flora();
+
 	struct {
 		std::atomic_bool gesture{ false };
 		std::atomic<std::uint32_t> press_x{ 0 };
@@ -40,6 +43,7 @@ private:
 	void register_callbacks();
 
 	std::shared_ptr<Map> _map = std::make_shared<Map>();
+	std::shared_ptr<Flora> _flora = std::make_shared<Flora>();
 	std::atomic_bool _running{ true };
 	static Game* _instance;
 };
