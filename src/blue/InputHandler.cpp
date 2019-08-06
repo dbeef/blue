@@ -55,6 +55,11 @@ void InputHandler::poll()
 			}
 		}
 
+		if(event.type == SDL_EventType::SDL_MULTIGESTURE)
+        {
+		    gestureCallback(event.mgesture);
+        }
+
 		//if (event.type == SDL_QUIT)
 		//	exit = true;
 		//if (event.type == SDL_WINDOWEVENT && event.window.event == SDL_WINDOWEVENT_CLOSE &&

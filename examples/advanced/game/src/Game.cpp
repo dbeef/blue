@@ -1,3 +1,4 @@
+#include <Resources.hpp>
 #include "Game.hpp"
 
 #include "blue/Assertions.h"
@@ -178,7 +179,19 @@ void Game::register_callbacks()
 
 		const auto& camera = Resources::instance().map_environment.camera;
 	};
+
 	blue::Context::input().registerMouseMoveCallback(mouse_move_callback);
+
+    auto gesture_callback = [this](SDL_MultiGestureEvent event)
+    {
+        const float& delta_rotation_rad = event.dTheta;
+        auto& map_environment = Resources::instance().map_environment;
+        // FIXME: It's actually adding rotation.
+        map_environment.camera.set_rotation({delta_rotation_rad * 10, 0, 0});
+        blue::Context::gpu_system().submit(UpdateEnvironmentEntity_View{ map_environment.environment, map_environment.camera.get_view() });
+    };
+
+    blue::Context::input().registerGestureCallback(gesture_callback);
 }
 
 Flora &Game::get_flora()
