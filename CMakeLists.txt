@@ -1,6 +1,9 @@
-cmake_minimum_required(VERSION 3.10)
+cmake_minimum_required(VERSION 3.6)
 
 project(blue)
+
+# Used for Android APK deployment.
+set(BLUE_ROOT_PATH ${CMAKE_CURRENT_LIST_DIR})
 
 include(cmake/CurrentPlatform.cmake)
 include(cmake/Dependencies.cmake)
@@ -10,6 +13,9 @@ blue_detect_platform()
 blue_find_dependencies()
 
 option(BLUE_ADD_TESTS "Run tests after build." ON)
+
+message(STATUS "[BLUE] Build type: ${CMAKE_BUILD_TYPE}")
+
 if (BLUE_ADD_TESTS)
     blue_add_tests()
 endif ()
@@ -105,3 +111,7 @@ install(
 )
 
 export(PACKAGE blue)
+
+if(BLUE_PLATFORM_ANDROID)
+    blue_android_postbuild()
+endif()

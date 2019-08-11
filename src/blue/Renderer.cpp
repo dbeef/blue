@@ -11,16 +11,17 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
+#include <blue/Renderer.h>
 
 namespace
 {
 	// Using explicit uniform locations in GLSL,
 	// thus it's guaranteed for them to have these values.
-	// See CreateUboHandler.cpp for Uniform Buffer Object values. 
+	// See CreateUboHandler.cpp for Uniform Buffer Object values.
 	// TODO: Make sure every shader has explicit uniform locations; inject them to every shader?
-	const struct 
+	const struct
 	{
-		GLint modelLoc = 4;
+		GLint modelLoc = 0;
 	} uniform_locations;
 }
 
@@ -41,33 +42,29 @@ void Renderer::draw_imgui_entities()
 
 void Renderer::draw_render_entities()
 {
-	static ShaderId current_shader = 0;
-	static TextureId current_texture = 0;
-	static UniformBufferId current_environment = 0;
-
 	for (const auto& entity : render_entities)
 	{
 		const auto& vao = entity.vertex_array;
 		DebugGlCall(glBindVertexArray(vao.vao));
 
-		if (current_shader != entity.shader)
+		if (cache.current_shader != entity.shader)
 		{
-			current_shader = entity.shader;
-			DebugGlCall(glUseProgram(current_shader));
+            cache.current_shader = entity.shader;
+			DebugGlCall(glUseProgram(cache.current_shader));
 		}
 
-		if (current_environment != entity.environment)
+		if (cache.current_environment != entity.environment)
 		{
-			current_environment = entity.environment;
-			DebugGlCall(glBindBuffer(GL_UNIFORM_BUFFER, current_environment));
+            cache.current_environment = entity.environment;
+            DebugGlCall(glBindBuffer(GL_UNIFORM_BUFFER, cache.current_environment));
 		}
 
-		if (current_texture != entity.texture && entity.texture != 0)
+		if (cache.current_texture != entity.texture && entity.texture != 0)
 		{
-			current_texture = entity.texture;
-			DebugGlCall(glBindTexture(GL_TEXTURE_2D, current_texture));
+            cache.current_texture = entity.texture;
+			DebugGlCall(glBindTexture(GL_TEXTURE_2D, cache.current_texture));
 			// Right now, blue utilizes only one texture slot.
-			auto loc = glGetUniformLocation(current_shader, "sampler");
+			auto loc = glGetUniformLocation(cache.current_shader, "sampler");
 			DebugGlCall(glUniform1i(loc, 0));
 		}
 
@@ -75,19 +72,27 @@ void Renderer::draw_render_entities()
 		const glm::mat4 ScaleMatrix = glm::scale(glm::identity<glm::mat4>(), glm::vec3(entity.scale));
 		const glm::mat4 TranslationMatrix = glm::translate(glm::identity<glm::mat4>(), entity.position);
 
-		const glm::mat4 model = TranslationMatrix * RotationMatrix * ScaleMatrix;
-		DebugGlCall(glUniformMatrix4fv(uniform_locations.modelLoc, 1, GL_FALSE, glm::value_ptr(model)));
+		// FIXME: This does not need to be updated every frame - possible optimization.
+        const glm::mat4 model = TranslationMatrix * RotationMatrix * ScaleMatrix;
+        DebugGlCall(glUniformMatrix4fv(uniform_locations.modelLoc, 1, GL_FALSE, glm::value_ptr(model)));
 
 		if (vao.number_of_instances)
 		{
-			// Instanced rendering
-			DebugGlCall(glDrawArraysInstanced(GL_TRIANGLES, 0, vao.vertices_count, vao.number_of_instances));
-			//glDrawElementsInstanced(GL_TRIANGLES, vao.vertices_count, GL_UNSIGNED_INT, 0, vao.number_of_instances);
+            if(!vao.ibo) {
+                // Instanced rendering
+                DebugGlCall(glDrawArraysInstanced(GL_TRIANGLES, 0, vao.vertices_count, vao.number_of_instances));
+            }
+            else
+            {
+                // Indexed, instanced rendering:
+                glDrawElementsInstanced(GL_TRIANGLES, vao.vertices_count, GL_UNSIGNED_INT, nullptr,
+                                        vao.number_of_instances);
+            }
 		}
 		else if (vao.ibo)
 		{
 			// Rendering with custom index buffer
-			DebugGlCall(glDrawElements(GL_TRIANGLES, vao.vertices_count, GL_UNSIGNED_INT, 0));
+			DebugGlCall(glDrawElements(GL_TRIANGLES, vao.vertices_count, GL_UNSIGNED_INT, nullptr));
 		}
 		else
 		{
@@ -112,7 +117,19 @@ RenderEntityId Renderer::add(const RenderEntity& entity)
 	lock();
 	static RenderEntityId id = 1;
 	id++;
-	render_entities.emplace_back(RenderEntity{ entity.shader, id, entity.vertex_array, entity.position, entity.rotation, entity.scale, entity.environment, entity.texture });
+
+	RenderEntity e{};
+    e.shader = entity.shader;
+    e.id = id;
+    e.vertex_array = entity.vertex_array;
+    e.position = entity.position;
+    e.rotation = entity.rotation;
+    e.scale = entity.scale;
+    e.environment = entity.environment;
+    e.texture = entity.texture;
+
+	render_entities.push_back(e);
+
 	sort_entities_by_shader();
 	unlock();
 	return id;
@@ -187,4 +204,11 @@ void Renderer::sort_entities_by_shader()
 		{
 			return first.shader > second.shader;
 		});
+}
+
+void Renderer::invalidate_cache()
+{
+    cache.current_environment = 0;
+    cache.current_shader = 0;
+    cache.current_texture = 0;
 }

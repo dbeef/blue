@@ -1,4 +1,4 @@
-if(ANDROID)
+if(BLUE_PLATFORM STREQUAL "Android")
     add_subdirectory(opengl-es)
 else()
     add_subdirectory(opengl)

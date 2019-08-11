@@ -5,6 +5,8 @@
 #include "Resources.hpp"
 
 #include <fstream>
+#include <istream>
+#include "blue/ResourcesPath.h"
 
 #include <glm/gtx/normal.hpp>
 #include "glm/geometric.hpp"
@@ -17,21 +19,35 @@ void Map::shuffle_color_points(float x, float y, float R)
 
 void Map::import_from_file(const std::string& filename)
 {
-	std::fstream in(filename, std::fstream::binary | std::fstream::in);
+    auto path_extended = paths::getResourcesPath() + filename;
 
-	if (!in.is_open())
-	{
-		blue::Context::logger().error("Failed to open file: {} for reading map", filename);
-		return;
-	}
+    std::vector<char> data;
 
+    SDL_RWops* file = SDL_RWFromFile(path_extended.c_str(), "rb");
+    if (file != NULL) {
+        auto size = file->size(file);
+        //Initialize data
+        data.resize(size);
+        auto read = file->read(file, &data[0], size, 1);
+        //Close file handler
+        SDL_RWclose(file);
+    }
+    else
+    {
+        blue::Context::logger().error("Error: Unable to open map file. SDL Error: {}", SDL_GetError());
+        return;
+    }
+
+    std::size_t offset = 0;
 	std::size_t number_of_non_clickable = 0;
 
 	for (std::size_t x = 0; x < CHUNK_DIMENSION; x++)
 	{
 		for (std::size_t y = 0; y < CHUNK_DIMENSION; y++)
 		{
-			in.read(reinterpret_cast<char*>(&tiles[x][y].clickable), sizeof(bool));
+			tiles[x][y].clickable = data.data()[offset];
+			offset += sizeof(bool);
+
 			if (!tiles[x][y].clickable)
 			{
 				number_of_non_clickable++;
@@ -44,24 +60,27 @@ void Map::import_from_file(const std::string& filename)
 
 	for (std::size_t index = 0; index < decoration_vertices.size(); index++)
 	{
-		in.read(reinterpret_cast<char*>(&decoration_vertices[index]), sizeof(float));
+	    const auto float_ptr = reinterpret_cast<float*>(&data[offset]);
+        decoration_vertices[index] = *float_ptr;
+        offset += sizeof(float);
 	}
 
 	for (std::size_t index = 0; index < number_of_non_clickable; index++)
 	{
-		for (const auto& index : Tile::get_indices(index))
+		for (const auto& i : Tile::get_indices(index))
 		{
-			decoration_indices.push_back(index);
+			decoration_indices.push_back(i);
 		}
 	}
 
 	decoration_tiles = number_of_non_clickable;
-	in.close();
+
+    blue::Context::logger().info("Found vertices: {}", number_of_vertices);
 }
 
 void Map::export_to_file(const std::string& filename)
 {
-	std::fstream out(filename, std::fstream::binary | std::fstream::out);
+	std::fstream out(paths::getResourcesPath() + filename, std::fstream::binary | std::fstream::out);
 
 	if (!out.is_open())
 	{
@@ -131,6 +150,9 @@ void Map::upload_clickable_vertices()
 			tile_index++;
 		}
 	}
+
+	blue::Context::logger().info("Clickable vertices: {} Clickable indices: {}",
+	        clickable_vertices.size(), clickable_indices.size());
 
 	auto attributes = Tile::get_attributes();
 

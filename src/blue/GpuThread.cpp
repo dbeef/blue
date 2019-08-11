@@ -85,7 +85,9 @@ void GpuThread::render_thread_loop()
 
 	Timestep timestep(60, true);
 
+#if defined(BLUE_WINDOWS) || defined(BLUE_LINUX)
 	init_imgui();
+#endif
 
 	while (blue::Context::gpu_thread().is_running())
 	{
@@ -96,16 +98,22 @@ void GpuThread::render_thread_loop()
 		renderer.clear();
 		renderer.draw_render_entities();
 
+#if defined(BLUE_WINDOWS) || defined(BLUE_LINUX)
 		imgui_start();
 		renderer.draw_imgui_entities();
 		imgui_end();
+#endif
 
 		renderer.unlock();
 
 		window.swap_buffers();
 
 		gpu_system.lock();
-		gpu_system.execute();
+		bool executed_some_work = gpu_system.execute();
+		if (executed_some_work)
+        {
+		    renderer.invalidate_cache();
+        }
 		gpu_system.unlock();
 
 		timestep.mark_end();

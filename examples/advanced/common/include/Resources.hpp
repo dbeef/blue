@@ -3,6 +3,21 @@
 #include "blue/gpu/GpuEntities.hpp"
 #include "blue/camera/PerspectiveCamera.hpp"
 
+enum class Model : int
+{
+    PINE_TREE = 0,
+    HURDLE = 1,
+    WHEAT = 2,
+    BOULDER = 3,
+    SMALL_BOULDER = 4,
+    GRASS = 5,
+    PYLON = 6,
+    BUSH = 7,
+    CUT_TREE = 8,
+    TRACK = 9,
+    BRIDGE = 10,
+};
+
 class Resources
 {
 public:

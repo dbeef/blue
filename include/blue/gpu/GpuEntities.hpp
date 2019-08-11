@@ -6,6 +6,7 @@
 #include <glm/mat4x4.hpp>
 #include <memory>
 #include <vector>
+#include <string>
 
 struct ShaderAttribute
 {

@@ -4,7 +4,7 @@ set(CMAKE_CXX_STANDARD 14)
 
 project(TerrainEditorSample)
 
-add_executable(TerrainEditorSample
+set(SOURCES
         src/Main.cpp
         src/Application.cpp
         src/states/BaseState.cpp
@@ -20,7 +20,13 @@ add_executable(TerrainEditorSample
         include/jobs/MapIntersectionJob.hpp
         )
 
-target_link_libraries(TerrainEditorSample blue SDL2::SDL2main GameCommons -lpthread)
+if(${BLUE_PLATFORM} STREQUAL "Android")
+    add_library(TerrainEditorSample SHARED ${SOURCES})
+else()
+    add_executable(TerrainEditorSample ${SOURCES})
+endif()
+
+target_link_libraries(TerrainEditorSample blue SDL2::SDL2main GameCommons)
 target_include_directories(TerrainEditorSample PRIVATE include)
 
 add_custom_command(TARGET TerrainEditorSample PRE_BUILD
@@ -29,6 +35,3 @@ add_custom_command(TARGET TerrainEditorSample PRE_BUILD
         )
 
 install(TARGETS TerrainEditorSample DESTINATION bin)
-
-
-

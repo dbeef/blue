@@ -15,6 +15,7 @@
 // Currently using SDL's enums for keys / actions (press/release).
 // TODO: Map SDL's enums to Blue's enums to have a layer of abstraction from SDL.
 using MouseCallback = std::function<void(double dx, double dy)>;
+using GestureCallback = std::function<void(SDL_MultiGestureEvent)>;
 
 struct KeyCallback
 {
@@ -68,6 +69,11 @@ public:
 		mouseCommands.emplace_back(callback);
 	}
 
+	inline void registerGestureCallback(const GestureCallback& callback)
+    {
+	    gestureCallback = callback;
+    }
+
 	void poll();
 
 	void mouse_callback(double xpos, double ypos);
@@ -79,6 +85,7 @@ public:
 	std::vector<MouseKeyCallback> mouseButtonCommands;
 	std::vector<KeyCallback> keyboardKeyCommands;
 	std::vector<MouseCallback> mouseCommands;
+	GestureCallback gestureCallback = {};
 };
 
 #endif //OPENGL_PLAYGROUND_INPUTHANDLER_H

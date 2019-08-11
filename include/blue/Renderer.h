@@ -47,8 +47,16 @@ public:
 	void update(const RenderEntity& entity);
 	void remove_render_entity(const RenderEntityId& id);
 	void remove_imgui_entity(const ImGuiEntityId& id);
+    void invalidate_cache();
 
 private:
+
+    struct
+    {
+        ShaderId current_shader = 0;
+        TextureId current_texture = 0;
+        UniformBufferId current_environment = 0;
+    } cache;
 
 	void draw_render_entities();
 	void draw_imgui_entities();

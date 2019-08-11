@@ -7,14 +7,19 @@
 
 void InputHandler::poll()
 {
-	SDL_Event event;
+    // FIXME: Clean this class. Add checking on event type before processing it.
+
+    SDL_Event event;
 	while (SDL_PollEvent(&event)) {
 
 		int xpos = blue::Context::window().get_width() / 2;
 		int ypos = blue::Context::window().get_height() / 2;
 
+#if defined(BLUE_WINDOWS) || defined(BLUE_LINUX)
 		bool processed = ImGui_ImplSDL2_ProcessEvent(&event);
+#endif
 
+//
 		//if (event.type == SDL_EventType::SDL_MULTIGESTURE) {
 		//	if (fabs(event.mgesture.dDist) > 0.002) {
 		//		//Pinch open
@@ -51,6 +56,11 @@ void InputHandler::poll()
 				mouse_callback(event.motion.x, event.motion.y);
 			}
 		}
+
+		if(event.type == SDL_EventType::SDL_MULTIGESTURE)
+        {
+		    gestureCallback(event.mgesture);
+        }
 
 		//if (event.type == SDL_QUIT)
 		//	exit = true;

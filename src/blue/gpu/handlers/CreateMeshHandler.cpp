@@ -1,4 +1,5 @@
 #include <blue/gpu/handlers/CreateMeshHandler.hpp>
+#include <blue/gpu/GpuEntities.hpp>
 #include "blue/Context.hpp"
 
 namespace
@@ -11,11 +12,12 @@ namespace
 		}
 		else
 		{
-			blue::Context::logger().info("Vertex array created successfuly ({}).", vertex_array.vao);
+			blue::Context::logger().info("Vertex array created successfuly ({}, VBO: {} IBO: {}).",
+			        vertex_array.vao, vertex_array.vbo, vertex_array.ibo);
 		}
 	}
 
-	void set_vertex_buffer_layout(const std::vector<ShaderAttribute>& attributes, VertexBufferId vertex_buffer, IndexBufferId index_buffer)
+	void set_vertex_buffer_layout(const std::vector<ShaderAttribute>& attributes, VertexBufferId vertex_buffer, InstanceBufferId instance_buffer)
 	{
 		int vertex_total_size = 0;
 		int index_total_size = 0;
@@ -48,7 +50,7 @@ namespace
 			}
 			else
 			{
-				DebugGlCall(glBindBuffer(GL_ARRAY_BUFFER, index_buffer));
+				DebugGlCall(glBindBuffer(GL_ARRAY_BUFFER, instance_buffer));
 				DebugGlCall(glVertexAttribPointer(index, attrib.getNumOfComponents(), GL_FLOAT, GL_FALSE, index_total_size, (GLvoid*)index_buffer_offset));
 
 				// Tell OpenGL this is an instanced vertex attribute.
@@ -61,23 +63,31 @@ namespace
 		}
 	}
 
+	// TODO: Add creating instance-rendering entity based on existing VertexArray object,
+	//  in order to reuse already uploaded VB/IB.
+	// TODO: Re-make example to use model loading.
+
 	VertexArray handle(const CreateMeshEntity& entity)
 	{
 		VertexBufferId vertex_buffer = 0;
 		VertexArrayId vertex_array = 0;
 		IndexBufferId index_buffer = 0;
 
-		DebugGlCall(glGenBuffers(1, &vertex_buffer));
+        if (!entity.indices.empty())
+        {
+            DebugGlCall(glGenBuffers(1, &index_buffer));
+        }
 
-		DebugGlCall(glGenVertexArrays(1, &vertex_array));
+        DebugGlCall(glGenBuffers(1, &vertex_buffer));
+
+        DebugGlCall(glGenVertexArrays(1, &vertex_array));
 		DebugGlCall(glBindVertexArray(vertex_array));
 
-		DebugGlCall(glBindBuffer(GL_ARRAY_BUFFER, vertex_buffer));
+        DebugGlCall(glBindBuffer(GL_ARRAY_BUFFER, vertex_buffer));
 		DebugGlCall(glBufferData(GL_ARRAY_BUFFER, sizeof(VertexType) * entity.vertices.size(), entity.vertices.data(), GL_STATIC_DRAW));
 
 		if (!entity.indices.empty())
 		{
-			DebugGlCall(glGenBuffers(1, &index_buffer));
 			DebugGlCall(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, index_buffer));
 			DebugGlCall(glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(IndexType) * entity.indices.size(), entity.indices.data(), GL_STATIC_DRAW));
 		}
@@ -99,7 +109,14 @@ namespace
 
 		glBindVertexArray(0);
 
-		return VertexArray{ vertex_array, vertex_buffer, index_buffer, entity.indices_count, static_cast<std::uint32_t>(entity.instances.size()) };
+        VertexArray a{};
+        a.vao = vertex_array;
+        a.vbo = vertex_buffer;
+        a.ibo = index_buffer;
+        a.vertices_count = entity.indices_count;
+        a.number_of_instances = static_cast<std::uint32_t>(entity.instances.size());
+
+		return a;
 	}
 }
 

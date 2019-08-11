@@ -9,67 +9,81 @@
 #include "blue/gpu/handlers/SetClearColorHandler.hpp"
 #include "blue/Context.hpp"
 
-void GpuCommandSystem::execute()
+bool GpuCommandSystem::execute()
 {
+    bool executed_some_work = false;
+
 	while (!compile_shader_entities.empty())
 	{
 		handle(compile_shader_entities.front());
 		compile_shader_entities.pop();
+        executed_some_work = true;
 	}
 
 	while (!dispose_shader_entities.empty())
 	{
 		handle(dispose_shader_entities.front());
 		dispose_shader_entities.pop();
+        executed_some_work = true;
 	}
 
 	while (!create_mesh_entities.empty())
 	{
 		handle(create_mesh_entities.front());
 		create_mesh_entities.pop();
+        executed_some_work = true;
 	}
 
 	while (!dispose_mesh_entities.empty())
 	{
 		handle(dispose_mesh_entities.front());
 		dispose_mesh_entities.pop();
+        executed_some_work = true;
 	}
 
 	while (!create_env_entities.empty())
 	{
 		handle(create_env_entities.front());
 		create_env_entities.pop();
+        executed_some_work = true;
 	}
 
 	while (!update_environment_view_entities.empty())
 	{
 		handle(update_environment_view_entities.front());
 		update_environment_view_entities.pop();
+        executed_some_work = true;
 	}
 
 	while (!update_environment_camera_pos_entities.empty())
 	{
 		handle(update_environment_camera_pos_entities.front());
 		update_environment_camera_pos_entities.pop();
+        executed_some_work = true;
 	}
 
 	while (!update_environment_projection_entities.empty())
 	{
 		handle(update_environment_projection_entities.front());
 		update_environment_projection_entities.pop();
+        executed_some_work = true;
 	}
 
 	while (!create_texture_entities.empty())
 	{
 		handle(create_texture_entities.front());
 		create_texture_entities.pop();
+        executed_some_work = true;
 	}
 
 	while (!set_clear_color_entities.empty())
 	{
 		handle(set_clear_color_entities.front());
 		set_clear_color_entities.pop();
+		executed_some_work = true;
 	}
+
+	return executed_some_work;
 }
 
  void GpuCommandSystem::lock()

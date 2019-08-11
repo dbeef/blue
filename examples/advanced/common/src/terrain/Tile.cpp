@@ -1,4 +1,5 @@
 #include "terrain/Tile.hpp"
+#include <cstdlib>
 
 Vertices Tile::get_vertices_translated(float x_pos, float y_pos, const glm::vec3& color_1, const glm::vec3& color_2)
 {

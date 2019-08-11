@@ -4,7 +4,7 @@
 
 #include "glad/glad.h"
 #ifdef BLUE_ANDROID
-#	include <glad_egl.h>
+#	include <glad/glad_egl.h>
 #endif
 
 namespace 

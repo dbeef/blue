@@ -1,11 +1,11 @@
-macro(blue_find_dependencies_linux)
+function(blue_find_dependencies_linux)
 
     set(OpenGL_GL_PREFERENCE GLVND)
 
     find_package(OpenGL REQUIRED)
     find_package(Assimp REQUIRED)
     find_package(glm REQUIRED)
-    find_package(SDL2 REQUIRED VERSION EXACT 2.0.9)
+    find_package(SDL2 REQUIRED)
     find_package(spdlog REQUIRED)
     find_package(Assimp REQUIRED)
 
@@ -20,4 +20,4 @@ macro(blue_find_dependencies_linux)
             imgui
             )
 
-endmacro()
+endfunction()
