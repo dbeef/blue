@@ -16,6 +16,7 @@ public:
 
 	std::future<ShaderId> submit(const CompileShaderEntity&);
 	std::future<VertexArray> submit(const CreateMeshEntity&);
+	std::future<VertexArray> submit(const CreateInstancedMeshEntity&);
 	std::future<UniformBufferId> submit(const CreateEnvironmentEntity&);
 	std::future<TextureId> submit(const CreateTextureEntity&);
 
@@ -33,6 +34,7 @@ private:
 	void unlock();
 
 	std::queue<std::pair<std::promise<VertexArray>, CreateMeshEntity>> create_mesh_entities;
+	std::queue<std::pair<std::promise<VertexArray>, CreateInstancedMeshEntity>> create_instanced_mesh_entities;
 	std::queue<std::pair<std::promise<ShaderId>, CompileShaderEntity>> compile_shader_entities;
 	std::queue<std::pair<std::promise<TextureId>, CreateTextureEntity>> create_texture_entities;
 	std::queue<std::pair<std::promise<UniformBufferId>, CreateEnvironmentEntity>> create_env_entities;

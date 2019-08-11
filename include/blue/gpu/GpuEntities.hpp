@@ -103,8 +103,13 @@ struct CreateMeshEntity
 	const Indices& indices;
 	const Attributes& attributes;
 	const std::uint32_t indices_count{};
-	// Zeroed if instanced rendering is not used.
-	Instances instances;
+};
+
+struct CreateInstancedMeshEntity
+{
+	const VertexArray& vao;
+	const Attributes& attributes;
+	const Instances& instances;
 };
 
 struct CreateTextureEntity

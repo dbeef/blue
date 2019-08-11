@@ -1,6 +1,9 @@
 #include <blue/gpu/handlers/CreateMeshHandler.hpp>
 #include <blue/gpu/GpuEntities.hpp>
 #include "blue/Context.hpp"
+#include <blue/gpu/handlers/CreateMeshHandler.hpp>
+#include <blue/gpu/GpuEntities.hpp>
+#include "blue/Context.hpp"
 
 namespace
 {
@@ -13,7 +16,7 @@ namespace
 		else
 		{
 			blue::Context::logger().info("Vertex array created successfuly ({}, VBO: {} IBO: {}).",
-			        vertex_array.vao, vertex_array.vbo, vertex_array.ibo);
+				vertex_array.vao, vertex_array.vbo, vertex_array.ibo);
 		}
 	}
 
@@ -63,50 +66,38 @@ namespace
 		}
 	}
 
-	VertexArray handle(const CreateMeshEntity& entity)
+	VertexArray handle(const CreateInstancedMeshEntity& entity)
 	{
-		VertexBufferId vertex_buffer = 0;
 		VertexArrayId vertex_array = 0;
-		IndexBufferId index_buffer = 0;
 
-        if (!entity.indices.empty())
-        {
-            DebugGlCall(glGenBuffers(1, &index_buffer));
-        }
-
-        DebugGlCall(glGenBuffers(1, &vertex_buffer));
-
-        DebugGlCall(glGenVertexArrays(1, &vertex_array));
+		DebugGlCall(glGenVertexArrays(1, &vertex_array));
 		DebugGlCall(glBindVertexArray(vertex_array));
 
-        DebugGlCall(glBindBuffer(GL_ARRAY_BUFFER, vertex_buffer));
-		DebugGlCall(glBufferData(GL_ARRAY_BUFFER, sizeof(VertexType) * entity.vertices.size(), entity.vertices.data(), GL_STATIC_DRAW));
+		DebugGlCall(glBindBuffer(GL_ARRAY_BUFFER, entity.vao.vbo));
+		DebugGlCall(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, entity.vao.ibo));
 
-		if (!entity.indices.empty())
-		{
-			DebugGlCall(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, index_buffer));
-			DebugGlCall(glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(IndexType) * entity.indices.size(), entity.indices.data(), GL_STATIC_DRAW));
-		}
-
-		set_vertex_buffer_layout(entity.attributes, vertex_buffer, 0);
-
+		InstanceBufferId instance_buffer = 0;
+		DebugGlCall(glGenBuffers(1, &instance_buffer));
+		DebugGlCall(glBindBuffer(GL_ARRAY_BUFFER, instance_buffer));
+		DebugGlCall(glBufferData(GL_ARRAY_BUFFER, sizeof(IndexType) * entity.instances.size(), entity.instances.data(), GL_STATIC_DRAW));
+		set_vertex_buffer_layout(entity.attributes, entity.vao.vbo, instance_buffer);
 		glBindVertexArray(0);
 
-        VertexArray a{};
-        a.vao = vertex_array;
-        a.vbo = vertex_buffer;
-        a.ibo = index_buffer;
-        a.vertices_count = entity.indices_count;
-		a.number_of_instances = 0;
+		VertexArray a{};
+		a.vao = vertex_array;
+		a.vbo = entity.vao.vbo;
+		a.ibo = entity.vao.ibo;
+		a.vertices_count = entity.vao.vertices_count;
+		a.number_of_instances = static_cast<std::uint32_t>(entity.instances.size());
 
 		return a;
 	}
 }
 
-void handle(std::pair<std::promise<VertexArray>, CreateMeshEntity>& pair)
+void handle(std::pair<std::promise<VertexArray>, CreateInstancedMeshEntity>& pair)
 {
 	std::promise<VertexArray>& promise = pair.first;
-	const CreateMeshEntity& entity = pair.second;
+	const CreateInstancedMeshEntity& entity = pair.second;
 
 	VertexArray vao = handle(entity);
 	promise.set_value(vao);

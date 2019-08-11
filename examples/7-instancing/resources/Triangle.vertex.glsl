@@ -1,8 +1,11 @@
 layout(location = 0) in vec3 position;
-layout(location = 1) in vec3 translation;
+layout(location = 1) in vec3 color;
+layout(location = 2) in vec3 normal;
+
+// That one comes from instanced buffer:
+layout(location = 3) in vec3 translation;
 
 layout(location = 0) uniform lowp mat4 model;
-
 
 layout (std140) uniform Matrices
 {
@@ -17,11 +20,17 @@ layout (std140) uniform Matrices
         mat4 lightSpaceMatrix;
 };
 
-
-out vec3 out_color;
+flat out lowp vec3 ColorRGB;
+out vec3 Normal;
+out vec3 FragPos;
 
 void main()
 {
         gl_Position = projection * view * model * vec4(position + translation, 1.0f);
-        out_color = vec3(float(gl_InstanceID) / 100, float(gl_InstanceID) / 100, float(gl_InstanceID) / 100);
+        // Forwarding values to fragment shader
+        ColorRGB = color;
+        Normal = normal;
+        FragPos = vec3(model * vec4(position, 1.0f));
 }
+
+

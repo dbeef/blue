@@ -41,6 +41,7 @@ add_library(
         src/blue/gpu/handlers/CreateTextureHandler.cpp
         src/blue/gpu/handlers/DisposeShaderHandler.cpp
         src/blue/gpu/handlers/CreateMeshHandler.cpp
+        src/blue/gpu/handlers/CreateInstancedMeshHandler.cpp
         src/blue/gpu/handlers/DisposeMeshHandler.cpp
         src/blue/gpu/handlers/CreateEnvironmentHandler.cpp
         src/blue/gpu/GpuCommandSystem.cpp
@@ -64,6 +65,7 @@ add_library(
         include/blue/gpu/handlers/CreateTextureHandler.hpp
         include/blue/gpu/handlers/DisposeShaderHandler.hpp
         include/blue/gpu/handlers/CreateMeshHandler.hpp
+        include/blue/gpu/handlers/CreateInstancedMeshHandler.hpp
         include/blue/gpu/handlers/DisposeMeshHandler.hpp
         include/blue/gpu/handlers/CreateEnvironmentHandler.hpp
         include/blue/gpu/GpuCommandSystem.hpp
