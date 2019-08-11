@@ -11,7 +11,7 @@ class Map
 
 public:
 
-	static const int CHUNK_DIMENSION = 32;
+	static const int CHUNK_DIMENSION = 64;
 
 	void upload_clickable_vertices();
 	void upload_decoration_vertices();

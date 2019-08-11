@@ -127,7 +127,7 @@ void Map::upload_clickable_vertices()
 			glm::vec3 clickable_color_1 = { 0.2f, 0.7f, 0.2f };
 			glm::vec3 clickable_color_2 = { 0.2f, 0.7f, 0.2f };
 			int random_variable = 10 + std::rand() / ((RAND_MAX + 1u) / 16);  // Note: 1+rand()%6 is biased
-			float color_delta = 1.0f / random_variable;
+			float color_delta = 0.75f / random_variable;
 			if (random_variable % 2)
 			{
 				clickable_color_1.y += color_delta;
@@ -200,7 +200,7 @@ void Map::upload_decoration_vertices()
 			clickable_color_2 *= 0.83f;
 
 			int random_variable = 10 + std::rand() / ((RAND_MAX + 1u) / 16);  // Note: 1+rand()%6 is biased
-			float color_delta = 1.0f / random_variable;
+			float color_delta = 0.75f / random_variable;
 			if (random_variable % 2)
 			{
 				clickable_color_1.y +=  color_delta;
@@ -408,7 +408,7 @@ void Map::color_points(float x, float y, float R, const glm::vec3& color)
 		glm::vec3 clickable_color_1 = color;
 		glm::vec3 clickable_color_2 = color;
 		int random_variable = 10 + std::rand() / ((RAND_MAX + 1u) / 16);  // Note: 1+rand()%6 is biased
-		float color_delta = 1.0f / random_variable;
+		float color_delta = 0.75f / random_variable;
 		if (random_variable % 2)
 		{
 			clickable_color_1.x += color_delta;

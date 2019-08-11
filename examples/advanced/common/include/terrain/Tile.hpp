@@ -10,6 +10,6 @@ public:
 	static Indices get_indices(std::uint32_t offset = 0);
 	static Attributes get_attributes();
 
-	bool clickable = true;
+	bool clickable = false;
 
 };

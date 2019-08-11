@@ -122,7 +122,7 @@ void Flora::import_from_file(const std::string &filename)
     }
 
     std::sort(temp.begin(), temp.end(), [](const Entry &first, const Entry &second)
-    {
+    { 
         return first.model > second.model;
     });
 
