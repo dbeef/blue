@@ -256,7 +256,7 @@ RenderEntity Flora::add_entry(Model model, const glm::vec3 &position, const glm:
             entity.vertex_array = Resources::instance().models.track;
             break;
         }
-        case (Model::BRIDGE):
+        case (Model::BRIDGE):	
         {
             entity.vertex_array = Resources::instance().models.bridge;
             break;
@@ -291,7 +291,7 @@ RenderEntity Flora::add_instanced_rendering_entry(Model model, const Instances& 
     RenderEntity entity;
     const auto &environment = Resources::instance().map_environment.environment;
 
-    entity.shader = Resources::instance().shaders.model_shader;
+    entity.shader = Resources::instance().shaders.model_instanced_shader;
     entity.environment = environment;
 	entity.position = {0, 0, 0};
 	entity.rotation = glm::identity<glm::quat>();

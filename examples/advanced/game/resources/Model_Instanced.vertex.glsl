@@ -1,6 +1,7 @@
 layout(location = 0) in vec3 position;
 layout(location = 1) in vec3 color;
 layout(location = 2) in vec3 normal;
+layout(location = 3) in mat4 instanced_model;
 
 layout(location = 0) uniform lowp mat4 model;
 
@@ -24,7 +25,7 @@ out vec3 FragPos;
 
 void main()
 {
-        gl_Position = projection * view * model * vec4(position, 1.0f);
+        gl_Position = projection * view * model * instanced_model * vec4(position, 1.0f);
         // Forwarding values to fragment shader
         ColorRGB = color;
         Normal = normal;

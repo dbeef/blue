@@ -43,6 +43,7 @@ public:
 		ShaderId clickable_map_shader;
 		ShaderId decoration_map_shader;
 		ShaderId model_shader;
+		ShaderId model_instanced_shader;
 	} shaders;
 	
 	struct {

@@ -45,6 +45,12 @@ void Resources::load_shaders()
 		shader_future.wait();
 		shaders.model_shader = shader_future.get();
 	}
+	{
+		auto compile_shader_entity = ShaderUtils::make_entity("resources/Model_Instanced.vertex.glsl", "resources/Model_Instanced.fragment.glsl");
+		auto shader_future = blue::Context::gpu_system().submit(compile_shader_entity);
+		shader_future.wait();
+		shaders.model_instanced_shader = shader_future.get();
+	}
 }
 
 void Resources::load_models()
