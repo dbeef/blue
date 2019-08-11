@@ -60,7 +60,7 @@ int main(int argc, char* argv[])
 		{ ShaderAttribute::Type::VEC3, ShaderAttribute::Purpose::VERTEX_POSITION, ShaderAttribute::Buffer::VERTEX},
 		{ ShaderAttribute::Type::VEC3, ShaderAttribute::Purpose::COLOR, ShaderAttribute::Buffer::VERTEX},
 		{ ShaderAttribute::Type::VEC3, ShaderAttribute::Purpose::NORMAL, ShaderAttribute::Buffer::VERTEX},
-		{ ShaderAttribute::Type::VEC3, ShaderAttribute::Purpose::TRANSLATION, ShaderAttribute::Buffer::INDEX},
+		{ ShaderAttribute::Type::VEC3, ShaderAttribute::Purpose::TRANSLATION, ShaderAttribute::Buffer::INSTANCED},
 	};
 
 	Instances instances;
@@ -75,7 +75,7 @@ int main(int argc, char* argv[])
 		}
 	}
 
-	auto instanced_vertex_array = blue::Context::gpu_system().submit(CreateInstancedMeshEntity{ vertex_array, instanced_attributes, instances }).get();
+	auto instanced_vertex_array = blue::Context::gpu_system().submit(CreateInstancedMeshEntity{ vertex_array, instanced_attributes, instances, 100 * 100 }).get();
 
 	// Create environment
 

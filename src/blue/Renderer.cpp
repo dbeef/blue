@@ -85,8 +85,7 @@ void Renderer::draw_render_entities()
             else
             {
                 // Indexed, instanced rendering:
-                glDrawElementsInstanced(GL_TRIANGLES, vao.vertices_count, GL_UNSIGNED_INT, nullptr,
-                                        vao.number_of_instances);
+                glDrawElementsInstanced(GL_TRIANGLES, vao.vertices_count, GL_UNSIGNED_INT, nullptr, vao.number_of_instances);
             }
 		}
 		else if (vao.ibo)

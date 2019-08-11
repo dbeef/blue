@@ -9,6 +9,65 @@
 #include <fstream>
 #include <blue/ResourcesPath.h>
 
+namespace
+{
+	float get_default_scale(Model model)
+	{
+		switch (model)
+		{
+		case (Model::PINE_TREE):
+		{
+			return 0.294f;
+		}
+		case (Model::HURDLE):
+		{
+			return 0.139f;
+		}
+		case (Model::WHEAT):
+		{
+			return 1.0;
+		}
+		case (Model::BOULDER):
+		{
+			return 0.372f;
+		}
+		case (Model::SMALL_BOULDER):
+		{
+			return 0.200f;
+		}
+		case (Model::GRASS):
+		{
+			return 0.185f;
+		}
+		case (Model::PYLON):
+		{
+			return 0.25f;
+		}
+		case (Model::BUSH):
+		{
+			return 0.55f;
+		}
+		case (Model::CUT_TREE):
+		{
+			return 0.180f;
+		}
+		case (Model::TRACK):
+		{
+			return 0.180f;
+		}
+		case (Model::BRIDGE):
+		{
+			return 0.35f;
+		}
+		default:
+		{
+			blue::Context::logger().error("Failed to match model! Value: {}", static_cast<int>(model));
+			return 1.0f;
+		}
+		}
+	}
+}
+
 void Flora::import_from_file(const std::string &filename)
 {
     auto path_extended = paths::getResourcesPath() + filename;
@@ -55,8 +114,6 @@ void Flora::import_from_file(const std::string &filename)
         const glm::quat rotation = *reinterpret_cast<glm::quat *>(&data[offset]);
         offset += sizeof(rotation);
 
-        add_entry(model, position, glm::eulerAngles(rotation));
-
         Entry e;
         e.model = model;
         e.entity.position = position;
@@ -69,31 +126,37 @@ void Flora::import_from_file(const std::string &filename)
         return first.model > second.model;
     });
 
-    Model current_model{};
+	Model current_model{};
     Instances current_instances{};
+	std::uint32_t instances_count = 0;
 
-    for (const auto &entry : temp)
+    for (std::size_t index = 0; index < temp.size(); index++)
     {
-        if (entry.model != current_model)
+		const auto& entry = temp[index];
+		bool last_entry = index == temp.size() - 1;
+
+        if (entry.model != current_model || last_entry)
         {
             if(!current_instances.empty())
             {
-                add_instanced_rendering_entry(current_model, current_instances);
+                add_instanced_rendering_entry(current_model, current_instances, instances_count);
             }
 
             current_model = entry.model;
             current_instances = {};
+			instances_count = 0;
         }
 
-        current_instances.push_back(entry.entity.position.x);
-        current_instances.push_back(entry.entity.position.y);
-        current_instances.push_back(entry.entity.position.z);
+		instances_count++;
 
-        const glm::mat4 RotationMatrix = glm::toMat4(entry.entity.rotation);
+		const glm::mat4 ScaleMatrix = glm::scale(glm::identity<glm::mat4>(), glm::vec3(get_default_scale(entry.model)));
+		const glm::mat4 RotationMatrix = glm::toMat4(entry.entity.rotation);
+		const glm::mat4 TranslationMatrix = glm::translate(glm::identity<glm::mat4>(), entry.entity.position);
+		const glm::mat4 Model = TranslationMatrix * RotationMatrix * ScaleMatrix;
 
         for (std::size_t index = 0; index < 16; index++)
         {
-            current_instances.push_back(glm::value_ptr(RotationMatrix)[index]);
+            current_instances.push_back(glm::value_ptr(Model)[index]);
         }
     }
 }
@@ -139,73 +202,63 @@ RenderEntity Flora::add_entry(Model model, const glm::vec3 &position, const glm:
     entity.shader = Resources::instance().shaders.model_shader;
     entity.rotation = glm::quat(rotation);
     entity.environment = environment;
+	entity.scale = get_default_scale(model);
 
     switch (model)
     {
         case (Model::PINE_TREE):
         {
             entity.vertex_array = Resources::instance().models.pine_tree;
-            entity.scale = 0.294f;
             break;
         }
         case (Model::HURDLE):
         {
             entity.vertex_array = Resources::instance().models.hurdle;
-            entity.scale = 0.139f;
             break;
         }
         case (Model::WHEAT):
         {
             entity.vertex_array = Resources::instance().models.wheat;
-            entity.scale = 1.0;
             break;
         }
         case (Model::BOULDER):
         {
             entity.vertex_array = Resources::instance().models.boulder;
-            entity.scale = 0.372f;
             break;
         }
         case (Model::SMALL_BOULDER):
         {
             entity.vertex_array = Resources::instance().models.small_boulder;
-            entity.scale = 0.200f;
             break;
         }
         case (Model::GRASS):
         {
             entity.vertex_array = Resources::instance().models.grass;
-            entity.scale = 0.185f;
             break;
         }
         case (Model::PYLON):
         {
             entity.vertex_array = Resources::instance().models.pylon;
-            entity.scale = 0.25f;
             break;
         }
         case (Model::BUSH):
         {
             entity.vertex_array = Resources::instance().models.bush;
-            entity.scale = 0.55f;
             break;
         }
         case (Model::CUT_TREE):
         {
             entity.vertex_array = Resources::instance().models.cut_tree;
-            entity.scale = 0.180f;
             break;
         }
         case (Model::TRACK):
         {
             entity.vertex_array = Resources::instance().models.track;
-            entity.scale = 0.180f;
             break;
         }
         case (Model::BRIDGE):
         {
             entity.vertex_array = Resources::instance().models.bridge;
-            entity.scale = 0.35f;
             break;
         }
         default:
@@ -220,80 +273,84 @@ RenderEntity Flora::add_entry(Model model, const glm::vec3 &position, const glm:
     return entity;
 }
 
-RenderEntity Flora::add_instanced_rendering_entry(Model model, const Instances& instances)
+RenderEntity Flora::add_instanced_rendering_entry(Model model, const Instances& instances, std::uint32_t instances_count)
 {
+	Attributes attributes =
+	{
+		{ ShaderAttribute::Type::VEC3, ShaderAttribute::Purpose::VERTEX_POSITION, ShaderAttribute::Buffer::VERTEX},
+		{ ShaderAttribute::Type::VEC3, ShaderAttribute::Purpose::COLOR, ShaderAttribute::Buffer::VERTEX},
+		{ ShaderAttribute::Type::VEC3, ShaderAttribute::Purpose::NORMAL, ShaderAttribute::Buffer::VERTEX},
+		// Attributes from instance buffer:
+		// Uploading 4x4 matrix this way, since there's a size limit for single attribute in OpenGL:
+		{ ShaderAttribute::Type::VEC4, ShaderAttribute::Purpose::MODEL, ShaderAttribute::Buffer::INSTANCED},
+		{ ShaderAttribute::Type::VEC4, ShaderAttribute::Purpose::MODEL, ShaderAttribute::Buffer::INSTANCED},
+		{ ShaderAttribute::Type::VEC4, ShaderAttribute::Purpose::MODEL, ShaderAttribute::Buffer::INSTANCED},
+		{ ShaderAttribute::Type::VEC4, ShaderAttribute::Purpose::MODEL, ShaderAttribute::Buffer::INSTANCED},
+	};
+
     RenderEntity entity;
     const auto &environment = Resources::instance().map_environment.environment;
 
     entity.shader = Resources::instance().shaders.model_shader;
     entity.environment = environment;
+	entity.position = {0, 0, 0};
+	entity.rotation = glm::identity<glm::quat>();
 
     switch (model)
     {
         case (Model::PINE_TREE):
         {
             entity.vertex_array = Resources::instance().models.pine_tree;
-            entity.scale = 0.294f;
-            break;
+			break;
         }
         case (Model::HURDLE):
         {
             entity.vertex_array = Resources::instance().models.hurdle;
-            entity.scale = 0.139f;
             break;
         }
         case (Model::WHEAT):
         {
             entity.vertex_array = Resources::instance().models.wheat;
-            entity.scale = 1.0;
             break;
         }
         case (Model::BOULDER):
         {
             entity.vertex_array = Resources::instance().models.boulder;
-            entity.scale = 0.372f;
             break;
         }
         case (Model::SMALL_BOULDER):
         {
             entity.vertex_array = Resources::instance().models.small_boulder;
-            entity.scale = 0.200f;
             break;
         }
         case (Model::GRASS):
         {
             entity.vertex_array = Resources::instance().models.grass;
-            entity.scale = 0.185f;
             break;
         }
         case (Model::PYLON):
         {
             entity.vertex_array = Resources::instance().models.pylon;
-            entity.scale = 0.25f;
             break;
         }
         case (Model::BUSH):
         {
             entity.vertex_array = Resources::instance().models.bush;
-            entity.scale = 0.55f;
             break;
         }
         case (Model::CUT_TREE):
         {
             entity.vertex_array = Resources::instance().models.cut_tree;
-            entity.scale = 0.180f;
             break;
         }
         case (Model::TRACK):
         {
             entity.vertex_array = Resources::instance().models.track;
-            entity.scale = 0.180f;
             break;
         }
         case (Model::BRIDGE):
         {
             entity.vertex_array = Resources::instance().models.bridge;
-            entity.scale = 0.35f;
             break;
         }
         default:
@@ -301,9 +358,11 @@ RenderEntity Flora::add_instanced_rendering_entry(Model model, const Instances& 
             blue::Context::logger().error("Failed to match model! Value: {}", static_cast<int>(model));
         }
     }
-
-
-//    entity.id = blue::Context::renderer().add(entity);
+	
+	auto instanced_vertex_array = blue::Context::gpu_system().submit(CreateInstancedMeshEntity{ entity.vertex_array, attributes, instances, instances_count }).get();
+	entity.vertex_array = instanced_vertex_array;
+	entity.scale = 1.0f;
+    entity.id = blue::Context::renderer().add(entity);
 
     entries.push_back({model, entity});
     return entity;

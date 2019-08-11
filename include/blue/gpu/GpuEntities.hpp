@@ -15,7 +15,7 @@ struct ShaderAttribute
 		FLOAT,
 		VEC2,
 		VEC3,
-		VEC4
+		VEC4,
 	};
 
 	enum class Purpose
@@ -26,12 +26,14 @@ struct ShaderAttribute
 		NORMAL,
 		OTHER,
 		TRANSLATION,
+		QUATERNION,
+		MODEL,
 	};
 
 	enum class Buffer
 	{
 		VERTEX,
-		INDEX
+		INSTANCED
 	};
 
 	ShaderAttribute(Type type, const Purpose& purpose, const Buffer& buffer) : _type(type), _purpose(purpose), _buffer(buffer) {}
@@ -110,6 +112,7 @@ struct CreateInstancedMeshEntity
 	const VertexArray& vao;
 	const Attributes& attributes;
 	const Instances& instances;
+	const std::uint32_t number_of_instances;
 };
 
 struct CreateTextureEntity

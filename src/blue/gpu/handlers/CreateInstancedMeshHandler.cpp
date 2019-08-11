@@ -88,7 +88,7 @@ namespace
 		a.vbo = entity.vao.vbo;
 		a.ibo = entity.vao.ibo;
 		a.vertices_count = entity.vao.vertices_count;
-		a.number_of_instances = static_cast<std::uint32_t>(entity.instances.size());
+		a.number_of_instances = static_cast<std::uint32_t>(entity.number_of_instances);
 
 		return a;
 	}
