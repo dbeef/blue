@@ -34,9 +34,7 @@ int main(int argc, char* argv[])
 	// Issue the GPU thread with task of compiling shader program:
 
 	auto compile_shader_entity = ShaderUtils::make_entity("resources/Triangle.vertex.glsl", "resources/Triangle.fragment.glsl");
-	auto shader_future = blue::Context::gpu_system().submit(compile_shader_entity);
-	shader_future.wait();
-	auto shader = shader_future.get();
+	auto shader = blue::Context::gpu_system().submit(compile_shader_entity).get();
 
 	// Issue the GPU thread with task of uploading mesh:
 
@@ -52,9 +50,24 @@ int main(int argc, char* argv[])
 	unsigned int vertex_counter = 0;
 	auto vertices = models::parse_scene(scene_ptr, attributes, vertex_counter);
 
-	auto vertex_array_future = blue::Context::gpu_system().submit(CreateMeshEntity{ vertices, {}, attributes, vertex_counter});
-	vertex_array_future.wait();
-	auto vertex_array = vertex_array_future.get();
+	auto vertex_array = blue::Context::gpu_system().submit(CreateMeshEntity{ vertices, {}, attributes, vertex_counter}).get();
+
+	// Floor
+	
+	Vertices floor_vertices =
+	{
+		/* Vertex pos */-1.0f, -1.0f, 0.0f, /* Color */ 1.0f, 1.0f, 1.0f, /* Normal */ 0.0f, 0.0f, 1.0f,
+		/* Vertex pos */-1.0f,  1.0f, 0.0f, /* Color */ 1.0f, 1.0f, 1.0f, /* Normal */ 0.0f, 0.0f, 1.0f,
+		/* Vertex pos */ 1.0f,  1.0f, 0.0f, /* Color */ 1.0f, 1.0f, 1.0f, /* Normal */ 0.0f, 0.0f, 1.0f,
+		/* Vertex pos */ 1.0f, -1.0f, 0.0f, /* Color */ 1.0f, 1.0f, 1.0f, /* Normal */ 0.0f, 0.0f, 1.0f,
+	};
+
+	Indices floor_indices =
+	{
+		0, 1, 2, 2, 3, 0
+	};
+
+	auto floor_vertex_array = blue::Context::gpu_system().submit(CreateMeshEntity{ floor_vertices, floor_indices, attributes, 6 }).get();
 
 	// Create framebuffer with depth component only
 
@@ -62,9 +75,7 @@ int main(int argc, char* argv[])
 
 	// Create environment
 
-	auto environment_future = blue::Context::gpu_system().submit(CreateEnvironmentEntity{});
-	environment_future.wait();
-	auto environment = environment_future.get();
+	auto environment = blue::Context::gpu_system().submit(CreateEnvironmentEntity{}).get();
 
 	PerspectiveCamera camera;
 
@@ -74,14 +85,22 @@ int main(int argc, char* argv[])
 	// Submit render command consisting of compiled shader and uploaded mesh
 
 	RenderEntity entity;
-	entity.position = { 0, 0, -2.5f };
+	entity.position = { -2.0f,-2.0, -2.5f };
 	entity.shader = shader;
 	entity.vertex_array = vertex_array;
 	entity.scale = 0.5f;
 	entity.rotation = { 0, 0, 0, 0 };
 	entity.environment = environment;
-
 	entity.id = blue::Context::renderer().add(entity);
+
+	RenderEntity floor_entity;
+	floor_entity.position = { 0.0f, 0.0f, -25.0f };
+	floor_entity.shader = shader;
+	floor_entity.vertex_array = floor_vertex_array;
+	floor_entity.scale = 10.0f;
+	floor_entity.rotation = { 0, 0, 0, 0 };
+	floor_entity.environment = environment;
+	floor_entity.id = blue::Context::renderer().add(floor_entity);
 
 	// Start logics loop with timestep limited to 30 times per second:
 	Timestep timestep(30);

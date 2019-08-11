@@ -20,8 +20,10 @@ out vec4 color;
 
 void main()
 {
+    float ambientStrengthTemp = 0.15f;
+
     vec3 lightColor = vec3(1.0f, 1.0f, 1.0f);
-    vec3 ambient = ambientStrength * lightColor;
+    vec3 ambient = ambientStrengthTemp * lightColor;
 
     vec3 norm = normalize(Normal);
     vec3 lightDir = normalize(lightPos - FragPos);
