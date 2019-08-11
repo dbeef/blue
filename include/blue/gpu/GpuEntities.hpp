@@ -96,10 +96,10 @@ struct VertexArray
 
 struct Framebuffer
 {
-	FramebufferId framebuffer;
-	TextureId texture;
-	std::uint16_t texture_width;
-	std::uint16_t texture_height;
+	FramebufferId framebuffer = 0;
+	TextureId texture = 0;
+	std::uint16_t texture_width = 0;
+	std::uint16_t texture_height = 0;
 };
 
 struct CreateFramebufferEntity

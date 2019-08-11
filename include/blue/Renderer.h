@@ -29,6 +29,8 @@ struct RenderEntity
 	//
 	GLenum stencil_function = GL_ALWAYS;
 	GLuint stencil_mask = 0xFF;
+	//
+	Framebuffer framebuffer{};
 };
 
 // 64 bytes of size - fills CPU cache line on IA32/IA64 and ARM A-series (most of smartphones).
@@ -56,6 +58,7 @@ private:
         ShaderId current_shader = 0;
         TextureId current_texture = 0;
         UniformBufferId current_environment = 0;
+		FramebufferId current_framebuffer = 0;
     } cache;
 
 	void draw_render_entities();

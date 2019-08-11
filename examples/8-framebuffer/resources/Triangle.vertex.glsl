@@ -20,6 +20,7 @@ layout (std140) uniform Matrices
 flat out lowp vec3 ColorRGB;
 out vec3 Normal;
 out vec3 FragPos;
+out lowp vec4 FragPosLightSpace;
 
 void main()
 {
@@ -28,6 +29,7 @@ void main()
         ColorRGB = color;
         Normal = normal;
         FragPos = vec3(model * vec4(position, 1.0f));
+        FragPosLightSpace = lightSpaceMatrix * vec4(FragPos, 1.0);
 }
 
 

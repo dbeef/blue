@@ -171,10 +171,10 @@ std::future<UniformBufferId> GpuCommandSystem::submit(const CreateEnvironmentEnt
 	return future;
 }
 
-std::future<FramebufferId> GpuCommandSystem::submit(const CreateFramebufferEntity& entity)
+std::future<Framebuffer> GpuCommandSystem::submit(const CreateFramebufferEntity& entity)
 {
-	std::promise<FramebufferId> promise;
-	std::future<FramebufferId> future = promise.get_future();
+	std::promise<Framebuffer> promise;
+	std::future<Framebuffer> future = promise.get_future();
 
 	auto pair = std::make_pair(std::move(promise), entity);
 	lock();

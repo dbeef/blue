@@ -3,6 +3,7 @@
 #include <blue/ShaderUtils.h>
 #include <blue/ModelLoader.h>
 #include <blue/camera/PerspectiveCamera.hpp>
+#include <blue/camera/OrthographicCamera.hpp>
 
 #include <cmath>
 #include <atomic>
@@ -35,6 +36,9 @@ int main(int argc, char* argv[])
 
 	auto compile_shader_entity = ShaderUtils::make_entity("resources/Triangle.vertex.glsl", "resources/Triangle.fragment.glsl");
 	auto shader = blue::Context::gpu_system().submit(compile_shader_entity).get();
+	
+	auto depth_compile_shader_entity = ShaderUtils::make_entity("resources/SimpleDepth.vertex.glsl", "resources/SimpleDepth.fragment.glsl");
+	auto depth_shader = blue::Context::gpu_system().submit(depth_compile_shader_entity).get();
 
 	// Issue the GPU thread with task of uploading mesh:
 
@@ -82,6 +86,14 @@ int main(int argc, char* argv[])
 	blue::Context::gpu_system().submit(UpdateEnvironmentEntity_Projection{ environment, camera.get_projection() });
 	blue::Context::gpu_system().submit(UpdateEnvironmentEntity_View{ environment, camera.get_view() });
 
+	// Create light source environment
+
+	auto light_environment = blue::Context::gpu_system().submit(CreateEnvironmentEntity{}).get();
+
+	OrthographicCamera ortho;
+	blue::Context::gpu_system().submit(UpdateEnvironmentEntity_Projection{ light_environment, ortho.get_projection() });
+	blue::Context::gpu_system().submit(UpdateEnvironmentEntity_View{ light_environment, ortho.get_view() });
+
 	// Submit render command consisting of compiled shader and uploaded mesh
 
 	RenderEntity entity;
@@ -92,6 +104,16 @@ int main(int argc, char* argv[])
 	entity.rotation = { 0, 0, 0, 0 };
 	entity.environment = environment;
 	entity.id = blue::Context::renderer().add(entity);
+/*
+	RenderEntity shadow_entity;
+	shadow_entity.position = { -2.0f,-2.0, -2.5f };
+	shadow_entity.shader = depth_shader;
+	shadow_entity.vertex_array = vertex_array;
+	shadow_entity.scale = 0.5f;
+	shadow_entity.rotation = { 0, 0, 0, 0 };
+	shadow_entity.framebuffer = framebuffer;
+	shadow_entity.environment = light_environment;
+	shadow_entity.id = blue::Context::renderer().add(shadow_entity);*/
 
 	RenderEntity floor_entity;
 	floor_entity.position = { 0.0f, 0.0f, -25.0f };
@@ -108,12 +130,6 @@ int main(int argc, char* argv[])
 	while (running)
 	{
 		timestep.mark_start();
-
-		static glm::vec3 euler(0, 1.0f, 0);
-		euler.y += 0.02f;
-		entity.rotation = glm::quat(euler);
-		blue::Context::renderer().update(entity);
-
 		blue::Context::input().poll();
 		timestep.mark_end();
 		timestep.delay();

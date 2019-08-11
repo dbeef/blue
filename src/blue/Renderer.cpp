@@ -49,23 +49,48 @@ void Renderer::draw_render_entities()
 
 		if (cache.current_shader != entity.shader)
 		{
-            cache.current_shader = entity.shader;
+			cache.current_shader = entity.shader;
 			DebugGlCall(glUseProgram(cache.current_shader));
 		}
 
 		if (cache.current_environment != entity.environment)
 		{
-            cache.current_environment = entity.environment;
-            DebugGlCall(glBindBuffer(GL_UNIFORM_BUFFER, cache.current_environment));
+			cache.current_environment = entity.environment;
+			DebugGlCall(glBindBuffer(GL_UNIFORM_BUFFER, cache.current_environment));
 		}
 
 		if (cache.current_texture != entity.texture && entity.texture != 0)
 		{
-            cache.current_texture = entity.texture;
+			cache.current_texture = entity.texture;
 			DebugGlCall(glBindTexture(GL_TEXTURE_2D, cache.current_texture));
-			// Right now, blue utilizes only one texture slot.
+			// Right now, blue utilizes only one texture slot (GL_TEXTURE0).
 			auto loc = glGetUniformLocation(cache.current_shader, "sampler");
 			DebugGlCall(glUniform1i(loc, 0));
+		}
+
+		if (cache.current_framebuffer != entity.framebuffer.framebuffer)
+		{
+			cache.current_framebuffer = entity.framebuffer.framebuffer;
+			if (cache.current_framebuffer == 0)
+			{
+				// Finished drawing to framebuffer:
+				DebugGlCall(glBindFramebuffer(GL_FRAMEBUFFER, 0));
+				DebugGlCall(glViewport(0, 0, blue::Context::window().get_width(), blue::Context::window().get_height()));
+
+				DebugGlCall(glStencilFunc(GL_ALWAYS, 1, 0xFF)); // all fragments should update the stencil buffer
+				DebugGlCall(glStencilMask(0x00)); // make sure we don't update the stencil buffer, since we finished 
+
+				DebugGlCall(glCullFace(GL_BACK)); // reset to original culling face
+				DebugGlCall(glBindTexture(GL_TEXTURE_2D, entity.framebuffer.texture));
+
+				cache.current_texture = entity.framebuffer.texture;
+			}
+			else
+			{
+				// Started drawing to framebuffer.
+				DebugGlCall(glBindFramebuffer(GL_FRAMEBUFFER, cache.current_framebuffer));
+				DebugGlCall(glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, entity.framebuffer.texture, 0));
+			}
 		}
 
 		const glm::mat4 RotationMatrix = glm::toMat4(entity.rotation);
@@ -73,20 +98,20 @@ void Renderer::draw_render_entities()
 		const glm::mat4 TranslationMatrix = glm::translate(glm::identity<glm::mat4>(), entity.position);
 
 		// FIXME: This does not need to be updated every frame - possible optimization.
-        const glm::mat4 model = TranslationMatrix * RotationMatrix * ScaleMatrix;
-        DebugGlCall(glUniformMatrix4fv(uniform_locations.modelLoc, 1, GL_FALSE, glm::value_ptr(model)));
+		const glm::mat4 model = TranslationMatrix * RotationMatrix * ScaleMatrix;
+		DebugGlCall(glUniformMatrix4fv(uniform_locations.modelLoc, 1, GL_FALSE, glm::value_ptr(model)));
 
 		if (vao.number_of_instances)
 		{
-            if(!vao.ibo) {
-                // Instanced rendering
-                DebugGlCall(glDrawArraysInstanced(GL_TRIANGLES, 0, vao.vertices_count, vao.number_of_instances));
-            }
-            else
-            {
-                // Indexed, instanced rendering:
-                glDrawElementsInstanced(GL_TRIANGLES, vao.vertices_count, GL_UNSIGNED_INT, nullptr, vao.number_of_instances);
-            }
+			if (!vao.ibo) {
+				// Instanced rendering
+				DebugGlCall(glDrawArraysInstanced(GL_TRIANGLES, 0, vao.vertices_count, vao.number_of_instances));
+			}
+			else
+			{
+				// Indexed, instanced rendering:
+				glDrawElementsInstanced(GL_TRIANGLES, vao.vertices_count, GL_UNSIGNED_INT, nullptr, vao.number_of_instances);
+			}
 		}
 		else if (vao.ibo)
 		{
@@ -118,14 +143,14 @@ RenderEntityId Renderer::add(const RenderEntity& entity)
 	id++;
 
 	RenderEntity e{};
-    e.shader = entity.shader;
-    e.id = id;
-    e.vertex_array = entity.vertex_array;
-    e.position = entity.position;
-    e.rotation = entity.rotation;
-    e.scale = entity.scale;
-    e.environment = entity.environment;
-    e.texture = entity.texture;
+	e.shader = entity.shader;
+	e.id = id;
+	e.vertex_array = entity.vertex_array;
+	e.position = entity.position;
+	e.rotation = entity.rotation;
+	e.scale = entity.scale;
+	e.environment = entity.environment;
+	e.texture = entity.texture;
 
 	render_entities.push_back(e);
 
@@ -207,7 +232,8 @@ void Renderer::sort_entities_by_shader()
 
 void Renderer::invalidate_cache()
 {
-    cache.current_environment = 0;
-    cache.current_shader = 0;
-    cache.current_texture = 0;
+	cache.current_environment = 0;
+	cache.current_shader = 0;
+	cache.current_texture = 0;
+	cache.current_framebuffer = 0;
 }
