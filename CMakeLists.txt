@@ -38,6 +38,7 @@ add_library(
         src/blue/InputHandler.cpp
         src/blue/Timestep.cpp
         src/blue/gpu/handlers/CompileShaderHandler.cpp
+        src/blue/gpu/handlers/CreateFramebufferHandler.cpp
         src/blue/gpu/handlers/CreateTextureHandler.cpp
         src/blue/gpu/handlers/DisposeShaderHandler.cpp
         src/blue/gpu/handlers/CreateMeshHandler.cpp
@@ -56,6 +57,7 @@ add_library(
         include/blue/TextureUtils.hpp
         include/blue/GpuThread.hpp
         include/blue/gpu/handlers/SetClearColorHandler.hpp
+        include/blue/gpu/handlers/CreateFramebufferHandler.hpp
         include/blue/ModelLoader.h
         include/blue/gpu/handlers/UpdateEnvironmentHandler.hpp
         include/blue/ShaderUtils.h

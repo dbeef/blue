@@ -76,6 +76,7 @@ using IndexBufferId = GLuint;
 using VertexBufferId = GLuint;
 using InstanceBufferId = GLuint;
 using UniformBufferId = GLuint;
+using FramebufferId = GLuint;
 
 struct Environment
 {
@@ -91,6 +92,21 @@ struct VertexArray
 	std::uint32_t vertices_count{}; 
 	// Zeroed if instanced rendering is not used:
 	std::uint32_t number_of_instances{};
+};
+
+struct Framebuffer
+{
+	FramebufferId framebuffer;
+	TextureId texture;
+	std::uint16_t texture_width;
+	std::uint16_t texture_height;
+};
+
+struct CreateFramebufferEntity
+{
+	bool with_texture;
+	std::uint16_t texture_width;
+	std::uint16_t texture_height;
 };
 
 struct CompileShaderEntity
