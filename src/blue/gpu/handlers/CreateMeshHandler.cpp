@@ -63,21 +63,24 @@ namespace
 		}
 	}
 
+	// TODO: Add creating instance-rendering entity based on existing VertexArray object,
+	//  in order to reuse already uploaded VB/IB.
+	// TODO: Re-make example to use model loading.
+
 	VertexArray handle(const CreateMeshEntity& entity)
 	{
 		VertexBufferId vertex_buffer = 0;
 		VertexArrayId vertex_array = 0;
 		IndexBufferId index_buffer = 0;
 
-
         if (!entity.indices.empty())
         {
             DebugGlCall(glGenBuffers(1, &index_buffer));
         }
+
         DebugGlCall(glGenBuffers(1, &vertex_buffer));
 
         DebugGlCall(glGenVertexArrays(1, &vertex_array));
-
 		DebugGlCall(glBindVertexArray(vertex_array));
 
         DebugGlCall(glBindBuffer(GL_ARRAY_BUFFER, vertex_buffer));

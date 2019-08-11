@@ -4,11 +4,15 @@ set(CMAKE_CXX_STANDARD 14)
 
 project(InstancingSample)
 
-add_executable(InstancingSample
-        src/Main.cpp
-        )
+set(SOURCES src/Main.cpp)
 
-target_link_libraries(InstancingSample blue SDL2::SDL2main -lpthread)
+if(${BLUE_PLATFORM} STREQUAL "Android")
+    add_library(InstancingSample SHARED ${SOURCES})
+else()
+    add_executable(InstancingSample ${SOURCES})
+endif()
+
+target_link_libraries(InstancingSample blue SDL2::SDL2main)
 target_include_directories(InstancingSample PRIVATE include)
 
 add_custom_command(TARGET InstancingSample PRE_BUILD
@@ -17,3 +21,7 @@ add_custom_command(TARGET InstancingSample PRE_BUILD
         )
 
 install(TARGETS InstancingSample DESTINATION bin)
+
+if(BLUE_PLATFORM_ANDROID)
+    blue_android_deploy_asset(InstancingSample resources ${CMAKE_CURRENT_LIST_DIR}/resources)
+endif()

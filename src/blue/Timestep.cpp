@@ -4,7 +4,6 @@
 
 void Timestep::delay() const
 {
-//    using namespace std::literals::chrono_literals;
 	const auto delta = std::chrono::duration_cast<std::chrono::microseconds>(_end - _start);
 
 #ifndef NDEBUG

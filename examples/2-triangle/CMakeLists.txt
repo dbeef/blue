@@ -4,11 +4,15 @@ set(CMAKE_CXX_STANDARD 14)
 
 project(TriangleSample)
 
-add_executable(TriangleSample
-        src/Main.cpp
-        )
+set(SOURCES src/Main.cpp)
 
-target_link_libraries(TriangleSample blue SDL2::SDL2main -lpthread)
+if(${BLUE_PLATFORM} STREQUAL "Android")
+    add_library(TriangleSample SHARED ${SOURCES})
+else()
+    add_executable(TriangleSample ${SOURCES})
+endif()
+
+target_link_libraries(TriangleSample blue SDL2::SDL2main)
 target_include_directories(TriangleSample PRIVATE include)
 
 add_custom_command(TARGET TriangleSample PRE_BUILD
@@ -17,3 +21,7 @@ add_custom_command(TARGET TriangleSample PRE_BUILD
         )
 
 install(TARGETS TriangleSample DESTINATION bin)
+
+if(BLUE_PLATFORM_ANDROID)
+    blue_android_deploy_asset(TriangleSample resources ${CMAKE_CURRENT_LIST_DIR}/resources)
+endif()

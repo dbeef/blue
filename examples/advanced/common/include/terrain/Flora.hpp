@@ -19,6 +19,7 @@ public:
     };
 
     RenderEntity add_entry(Model model, const glm::vec3& position, const glm::vec3& rotation);
+    RenderEntity add_instanced_rendering_entry(Model model, const Instances& instances);
     void remove_entry(const RenderEntity& render_entity);
     void update_entry(const RenderEntity& render_entity);
 

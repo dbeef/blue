@@ -4,11 +4,15 @@ set(CMAKE_CXX_STANDARD 14)
 
 project(ModelLoadingSample)
 
-add_executable(ModelLoadingSample
-        src/Main.cpp
-        )
+set(SOURCES src/Main.cpp)
 
-target_link_libraries(ModelLoadingSample blue SDL2::SDL2main -lpthread)
+if(${BLUE_PLATFORM} STREQUAL "Android")
+    add_library(ModelLoadingSample SHARED ${SOURCES})
+else()
+    add_executable(ModelLoadingSample ${SOURCES})
+endif()
+
+target_link_libraries(ModelLoadingSample blue SDL2::SDL2main)
 target_include_directories(ModelLoadingSample PRIVATE include)
 
 add_custom_command(TARGET ModelLoadingSample PRE_BUILD
@@ -21,3 +25,7 @@ if(BLUE_PLATFORM STREQUAL "Windows")
 endif()
 
 install(TARGETS ModelLoadingSample DESTINATION bin)
+
+if(BLUE_PLATFORM_ANDROID)
+    blue_android_deploy_asset(ModelLoadingSample resources ${CMAKE_CURRENT_LIST_DIR}/resources)
+endif()

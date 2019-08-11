@@ -7,7 +7,9 @@
 
 void InputHandler::poll()
 {
-	SDL_Event event;
+    // FIXME: Clean this class. Add checking on event type before processing it.
+
+    SDL_Event event;
 	while (SDL_PollEvent(&event)) {
 
 		int xpos = blue::Context::window().get_width() / 2;

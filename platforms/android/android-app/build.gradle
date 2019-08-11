@@ -15,7 +15,7 @@ android {
         externalNativeBuild {
             cmake {
                 // Add any cmake options here.
-                arguments "-DANDROID_STL=c++_static", "-DANDROID=TRUE"
+                arguments "-DANDROID_STL=c++_static", "-DANDROID=TRUE", "-DCMAKE_BUILD_TYPE=Release"
                 //cppFlags "-std=c++11 -frtti -fexceptions"
                 //arguments "-DANDROID_TOOLCHAIN=gcc"
             }

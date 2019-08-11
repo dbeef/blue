@@ -4,11 +4,15 @@ set(CMAKE_CXX_STANDARD 14)
 
 project(TexturedRectangleSample)
 
-add_executable(TexturedRectangleSample
-        src/Main.cpp
-        )
+set(SOURCES src/Main.cpp)
 
-target_link_libraries(TexturedRectangleSample blue SDL2::SDL2main -lpthread)
+if(${BLUE_PLATFORM} STREQUAL "Android")
+    add_library(TexturedRectangleSample SHARED ${SOURCES})
+else()
+    add_executable(TexturedRectangleSample ${SOURCES})
+endif()
+
+target_link_libraries(TexturedRectangleSample blue SDL2::SDL2main)
 target_include_directories(TexturedRectangleSample PRIVATE include)
 
 add_custom_command(TARGET TexturedRectangleSample PRE_BUILD
@@ -17,3 +21,7 @@ add_custom_command(TARGET TexturedRectangleSample PRE_BUILD
         )
 
 install(TARGETS TexturedRectangleSample DESTINATION bin)
+
+if(BLUE_PLATFORM_ANDROID)
+    blue_android_deploy_asset(TexturedRectangleSample resources ${CMAKE_CURRENT_LIST_DIR}/resources)
+endif()

@@ -1,8 +1,7 @@
 layout(location = 0) in vec2 position;
 layout(location = 1) in vec2 tex_coord;
 
-layout(location = 4) uniform lowp mat4 model;
-
+layout(location = 0) uniform lowp mat4 model;
 
 layout (std140) uniform Matrices
 {

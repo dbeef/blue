@@ -4,18 +4,16 @@ set(CMAKE_CXX_STANDARD 14)
 
 project(GameSample)
 
-if(${BLUE_PLATFORM} STREQUAL "Android")
-    add_library(GameSample SHARED
-            src/Main.cpp
-            src/Game.cpp
-            include/Game.hpp
-            )
-else()
-    add_executable(GameSample
+set(SOURCES
         src/Main.cpp
         src/Game.cpp
         include/Game.hpp
         )
+
+if(${BLUE_PLATFORM} STREQUAL "Android")
+    add_library(GameSample SHARED ${SOURCES})
+else()
+    add_executable(GameSample ${SOURCES})
 endif()
 
 target_link_libraries(GameSample SDL2::SDL2main blue GameCommons)
@@ -28,5 +26,6 @@ add_custom_command(TARGET GameSample PRE_BUILD
 
 install(TARGETS GameSample DESTINATION bin)
 
-
-
+if(BLUE_PLATFORM_ANDROID)
+    blue_android_deploy_asset(GameSample resources ${CMAKE_CURRENT_LIST_DIR}/resources)
+endif()
