@@ -35,3 +35,7 @@ add_custom_command(TARGET TerrainEditorSample PRE_BUILD
         )
 
 install(TARGETS TerrainEditorSample DESTINATION bin)
+
+if(BLUE_PLATFORM_WINDOWS)
+    blue_windows_deploy_dynamic_dependencies(TerrainEditorSample)
+endif()

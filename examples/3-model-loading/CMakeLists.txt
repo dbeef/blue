@@ -29,3 +29,7 @@ install(TARGETS ModelLoadingSample DESTINATION bin)
 if(BLUE_PLATFORM_ANDROID)
     blue_android_deploy_asset(ModelLoadingSample resources ${CMAKE_CURRENT_LIST_DIR}/resources)
 endif()
+
+if(BLUE_PLATFORM_WINDOWS)
+    blue_windows_deploy_dynamic_dependencies(ModelLoadingSample)
+endif()

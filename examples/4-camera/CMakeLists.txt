@@ -29,3 +29,7 @@ install(TARGETS CameraSample DESTINATION bin)
 if(BLUE_PLATFORM_ANDROID)
     blue_android_deploy_asset(CameraSample resources ${CMAKE_CURRENT_LIST_DIR}/resources)
 endif()
+
+if(BLUE_PLATFORM_WINDOWS)
+    blue_windows_deploy_dynamic_dependencies(CameraSample)
+endif()
