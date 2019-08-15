@@ -45,6 +45,12 @@ int main(int argc, char* argv[])
 	{
 		timestep.mark_start();
 		Game::instance().handle_input();
+
+		static float x = 0.0f;
+		x += 0.05f;
+		float sin = std::sin(x) * 0.2f;
+		blue::Context::gpu_system().submit(UpdateUniformVariableEntity{ ShaderAttribute::Type::FLOAT, &sin, Resources::instance().shaders.model_instanced_shader, 1, "" });
+
 		timestep.mark_end();
 		timestep.delay();
 	}

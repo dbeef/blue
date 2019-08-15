@@ -50,7 +50,7 @@ public:
 	void remove_render_entity(const RenderEntityId& id);
 	void remove_imgui_entity(const ImGuiEntityId& id);
     void invalidate_cache();
-    void invalidate_cache_shader();
+    void set_cached_shader(ShaderId program);
 
 private:
 

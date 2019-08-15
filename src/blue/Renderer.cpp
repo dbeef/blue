@@ -238,7 +238,7 @@ void Renderer::invalidate_cache()
 	cache.current_framebuffer = 0;
 }
 
-void Renderer::invalidate_cache_shader()
+void Renderer::set_cached_shader(ShaderId program)
 {
-	cache.current_shader = 0;
+	cache.current_shader = program;
 }

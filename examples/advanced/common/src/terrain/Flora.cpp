@@ -118,7 +118,8 @@ void Flora::import_from_file(const std::string &filename)
         e.model = model;
         e.entity.position = position;
         e.entity.rotation = rotation;
-        temp.push_back(e);
+		if(model == Model::PINE_TREE)
+			temp.push_back(e);
     }
 
     std::sort(temp.begin(), temp.end(), [](const Entry &first, const Entry &second)
@@ -280,6 +281,7 @@ RenderEntity Flora::add_instanced_rendering_entry(Model model, const Instances& 
 		{ ShaderAttribute::Type::VEC3, ShaderAttribute::Purpose::VERTEX_POSITION, ShaderAttribute::Buffer::VERTEX},
 		{ ShaderAttribute::Type::VEC3, ShaderAttribute::Purpose::COLOR, ShaderAttribute::Buffer::VERTEX},
 		{ ShaderAttribute::Type::VEC3, ShaderAttribute::Purpose::NORMAL, ShaderAttribute::Buffer::VERTEX},
+		{ ShaderAttribute::Type::FLOAT, ShaderAttribute::Purpose::NORMALIZED_HEIGHT, ShaderAttribute::Buffer::VERTEX},
 		// Attributes from instance buffer:
 		// Uploading 4x4 matrix this way, since there's a size limit for single attribute in OpenGL:
 		{ ShaderAttribute::Type::VEC4, ShaderAttribute::Purpose::MODEL, ShaderAttribute::Buffer::INSTANCED},
