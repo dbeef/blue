@@ -70,6 +70,7 @@ namespace
 
 	float find_max_height(const aiScene*& scene)
 	{
+		// TODO: Real implementation. 
 		return 2.0f;
 	}
 
