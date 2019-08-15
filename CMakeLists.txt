@@ -45,6 +45,7 @@ add_library(
         src/blue/gpu/handlers/CreateInstancedMeshHandler.cpp
         src/blue/gpu/handlers/DisposeMeshHandler.cpp
         src/blue/gpu/handlers/CreateEnvironmentHandler.cpp
+        src/blue/gpu/handlers/UpdateUniformVariableHandler.cpp
         src/blue/gpu/GpuCommandSystem.cpp
         src/blue/ShaderUtils.cpp
         src/blue/camera/OrthographicCamera.cpp
@@ -56,6 +57,7 @@ add_library(
         src/blue/GpuThread.cpp
         include/blue/TextureUtils.hpp
         include/blue/GpuThread.hpp
+        include/blue/gpu/handlers/UpdateUniformVariableHandler.hpp
         include/blue/gpu/handlers/SetClearColorHandler.hpp
         include/blue/gpu/handlers/CreateFramebufferHandler.hpp
         include/blue/ModelLoader.h

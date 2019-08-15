@@ -58,6 +58,25 @@ namespace
 		max->x = max->y = max->z = -1e10f;
 		get_bounding_box_for_node(scene, scene->mRootNode, min, max, &trafo);
 	}
+
+	bool is_normalized_height_requested(const Attributes& attributes)
+	{
+		for (const auto& attribute : attributes)
+		{
+			if (attribute._purpose == ShaderAttribute::Purpose::NORMALIZED_HEIGHT) return true;
+		}
+		return false;
+	}
+
+	float find_max_height(const aiScene*& scene)
+	{
+		return 2.0f;
+	}
+
+	float find_min_height(const aiScene*& scene)
+	{
+		return 0;
+	}
 }
 
 const aiScene* models::load_scene(const std::string& path)
@@ -109,9 +128,8 @@ const aiScene* models::load_scene(const std::string& path)
 	}
 }
 
-std::vector<VertexType> models::parse_scene(const aiScene*& scene, const std::vector<ShaderAttribute>& attributes, unsigned int& vertex_counter)
+std::vector<VertexType> models::parse_scene(const aiScene*& scene, const Attributes& attributes, unsigned int& vertex_counter)
 {
-	std::vector<VertexType> vertices;
 	vertex_counter = 0;
 
 	aiMatrix4x4 trafo;
@@ -119,80 +137,97 @@ std::vector<VertexType> models::parse_scene(const aiScene*& scene, const std::ve
 	auto& nd = scene->mRootNode;
 	aiMultiplyMatrix4(&trafo, &nd->mTransformation);
 
+	float max_height = 0.0f;
+	float min_height = 0.0f;
+	float span = 0.0f;
+
+	if (is_normalized_height_requested(attributes))
 	{
-		std::vector<GLfloat> vertices;
-		std::vector<GLuint> indices;
-		for (unsigned long mesh_index = 0; mesh_index < scene->mNumMeshes; mesh_index++) {
-			const auto& mesh = scene->mMeshes[mesh_index];
+		max_height = find_max_height(scene);
+		min_height = find_min_height(scene);
+		span = std::abs(max_height) + std::abs(min_height);
+	}
 
-			for (unsigned long t = 0; t < mesh->mNumFaces; ++t) {
-				const struct aiFace* face = &mesh->mFaces[t];
+	std::vector<VertexType> vertices;
+	for (unsigned long mesh_index = 0; mesh_index < scene->mNumMeshes; mesh_index++) {
+		const auto& mesh = scene->mMeshes[mesh_index];
 
-				GLenum face_mode;
-				switch (face->mNumIndices) {
-				case 1:
-					face_mode = GL_POINTS;
-					continue;
-					break;
-				case 2:
-					face_mode = GL_LINES;
-					continue;
-					break;
-				case 3:
-					face_mode = GL_TRIANGLES;
-					break;
-				}
+		for (unsigned long t = 0; t < mesh->mNumFaces; ++t) {
+			const struct aiFace* face = &mesh->mFaces[t];
 
-				aiColor4D current_color;
+			GLenum face_mode;
+			switch (face->mNumIndices) {
+			case 1:
+				face_mode = GL_POINTS;
+				continue;
+				break;
+			case 2:
+				face_mode = GL_LINES;
+				continue;
+				break;
+			case 3:
+				face_mode = GL_TRIANGLES;
+				break;
+			}
 
-				for (unsigned long i = 0; i < face->mNumIndices; i++)
+			aiColor4D current_color;
+
+			for (unsigned long i = 0; i < face->mNumIndices; i++)
+			{
+
+				auto index = face->mIndices[i];
+				auto vertex = mesh->mVertices[index];
+				vertex_counter++;
+
+				for (const auto& attribute : attributes)
 				{
-
-					auto index = face->mIndices[i];
-					auto vertex = mesh->mVertices[index];
-					vertex_counter++;
-
-					for (const auto& attribute : attributes)
+					switch (attribute._purpose)
 					{
-						switch (attribute._purpose)
-						{
-						case(ShaderAttribute::Purpose::VERTEX_POSITION):
-						{
-							vertices.push_back(vertex.x);
-							vertices.push_back(vertex.y);
-							vertices.push_back(vertex.z);
-							break;
+					case(ShaderAttribute::Purpose::VERTEX_POSITION):
+					{
+						vertices.push_back(vertex.x);
+						vertices.push_back(vertex.y);
+						vertices.push_back(vertex.z);
+						break;
+					}
+					case(ShaderAttribute::Purpose::COLOR):
+					{
+						if (mesh->mColors[0] != nullptr) {
+							current_color = mesh->mColors[0][index];
+							vertices.push_back(current_color.r);
+							vertices.push_back(current_color.g);
+							vertices.push_back(current_color.b);
 						}
-						case(ShaderAttribute::Purpose::COLOR):
-						{
-							if (mesh->mColors[0] != nullptr) {
-								current_color = mesh->mColors[0][index];
-								vertices.push_back(current_color.r);
-								vertices.push_back(current_color.g);
-								vertices.push_back(current_color.b);
-							}
-							else {
-								vertices.push_back(0);
-								vertices.push_back(0);
-								vertices.push_back(0);
-							}
-							break;
+						else {
+							vertices.push_back(0);
+							vertices.push_back(0);
+							vertices.push_back(0);
 						}
-						case(ShaderAttribute::Purpose::NORMAL):
-						{
-							if (mesh->mNormals != nullptr) {
-								auto normal = mesh->mNormals[index];
-								vertices.push_back(normal.x);
-								vertices.push_back(normal.y);
-								vertices.push_back(normal.z);
-							}
-							else {
-								vertices.push_back(0);
-								vertices.push_back(0);
-								vertices.push_back(0);
-							}
+						break;
+					}
+					case(ShaderAttribute::Purpose::NORMAL):
+					{
+						if (mesh->mNormals != nullptr) {
+							auto normal = mesh->mNormals[index];
+							vertices.push_back(normal.x);
+							vertices.push_back(normal.y);
+							vertices.push_back(normal.z);
 						}
+						else {
+							vertices.push_back(0);
+							vertices.push_back(0);
+							vertices.push_back(0);
 						}
+						break;
+					}
+					case(ShaderAttribute::Purpose::NORMALIZED_HEIGHT):
+					{
+						float current_height = std::abs(vertex.y);
+						float normalized = current_height / span;
+
+						vertices.push_back(normalized);
+						break;
+					}
 					}
 				}
 			}

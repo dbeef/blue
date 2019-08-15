@@ -24,6 +24,7 @@ struct ShaderAttribute
 		TEXTURE_COORDINATE,
 		COLOR,
 		NORMAL,
+		NORMALIZED_HEIGHT,
 		OTHER,
 		TRANSLATION,
 		QUATERNION,
@@ -107,6 +108,17 @@ struct CreateFramebufferEntity
 	bool with_texture;
 	std::uint16_t texture_width;
 	std::uint16_t texture_height;
+};
+
+struct UpdateUniformVariableEntity
+{
+	ShaderAttribute::Type type;
+	const void* value;
+	ShaderId program;
+	// If explicit uniform location is used, one can specify location:
+	GLint location;
+	// Used to query GPU for uniform location, if `location` is zero:
+	std::string name;
 };
 
 struct CompileShaderEntity

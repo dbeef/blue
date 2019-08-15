@@ -21,6 +21,7 @@ public:
 	std::future<UniformBufferId> submit(const CreateEnvironmentEntity&);
 	std::future<TextureId> submit(const CreateTextureEntity&);
 
+	void submit(const UpdateUniformVariableEntity&);
 	void submit(const DisposeShaderEntity&);
 	void submit(const DisposeMeshEntity&);
 	void submit(const UpdateEnvironmentEntity_Projection&);
@@ -41,6 +42,7 @@ private:
 	std::queue<std::pair<std::promise<Framebuffer>, CreateFramebufferEntity>> create_framebuffer_entities;
 	std::queue<std::pair<std::promise<UniformBufferId>, CreateEnvironmentEntity>> create_env_entities;
 
+	std::queue<UpdateUniformVariableEntity> update_uniform_variable_entities;
 	std::queue<SetClearColorEntity> set_clear_color_entities;
 	std::queue<DisposeMeshEntity> dispose_mesh_entities;
 	std::queue<DisposeShaderEntity> dispose_shader_entities;

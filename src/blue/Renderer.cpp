@@ -237,3 +237,8 @@ void Renderer::invalidate_cache()
 	cache.current_texture = 0;
 	cache.current_framebuffer = 0;
 }
+
+void Renderer::invalidate_cache_shader()
+{
+	cache.current_shader = 0;
+}

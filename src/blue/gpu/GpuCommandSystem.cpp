@@ -9,6 +9,7 @@
 #include "blue/gpu/handlers/CreateEnvironmentHandler.hpp"
 #include "blue/gpu/handlers/UpdateEnvironmentHandler.hpp"
 #include "blue/gpu/handlers/SetClearColorHandler.hpp"
+#include "blue/gpu/handlers/UpdateUniformVariableHandler.hpp"
 #include "blue/Context.hpp"
 
 bool GpuCommandSystem::execute()
@@ -47,6 +48,13 @@ bool GpuCommandSystem::execute()
 	{
 		handle(dispose_mesh_entities.front());
 		dispose_mesh_entities.pop();
+        executed_some_work = true;
+	}
+
+	while (!update_uniform_variable_entities.empty())
+	{
+		handle(update_uniform_variable_entities.front());
+		update_uniform_variable_entities.pop();
         executed_some_work = true;
 	}
 
@@ -201,6 +209,13 @@ void GpuCommandSystem::submit(const DisposeShaderEntity& entity)
 {
 	lock();
 	dispose_shader_entities.push(entity);
+	unlock();
+}
+
+void GpuCommandSystem::submit(const UpdateUniformVariableEntity& entity)
+{
+	lock();
+	update_uniform_variable_entities.push(entity);
 	unlock();
 }
 
