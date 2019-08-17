@@ -11,11 +11,12 @@ layout (std140) uniform Matrices
     float ambientStrength;
     vec3 lightColor;
     vec3 lightPos;
+    vec3 cameraPos;
 // Shadows
     mat4 lightSpaceMatrix;
 };
 
 void main()
 {
-    gl_Position = lightSpaceMatrix * model * vec4(aPos, 1.0);
+    gl_Position = projection * view * model * vec4(aPos, 1.0);
 }
