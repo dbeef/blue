@@ -1,3 +1,4 @@
+#include <Resources.hpp>
 #include "Resources.hpp"
 #include "blue/Assertions.h"
 #include "blue/ShaderUtils.h"
@@ -28,10 +29,10 @@ void Resources::dispose()
 void Resources::load_shaders()
 {
 	{
-		auto compile_shader_entity = ShaderUtils::make_entity("resources/Triangle.vertex.glsl", "resources/Triangle.fragment.glsl");
+		auto compile_shader_entity = ShaderUtils::make_entity("resources/SimpleDepth.vertex.glsl", "resources/SimpleDepth.fragment.glsl");
 		auto shader_future = blue::Context::gpu_system().submit(compile_shader_entity);
 		shader_future.wait();
-		shaders.clickable_map_shader = shader_future.get();
+		shaders.simple_depth_shader = shader_future.get();
 	}
 	{
 		auto compile_shader_entity = ShaderUtils::make_entity("resources/Decoration.vertex.glsl", "resources/Decoration.fragment.glsl");
@@ -58,8 +59,8 @@ void Resources::load_models()
 	Attributes attributes =
 	{
 		{ ShaderAttribute::Type::VEC3, ShaderAttribute::Purpose::VERTEX_POSITION, ShaderAttribute::Buffer::VERTEX},
-		{ ShaderAttribute::Type::VEC3, ShaderAttribute::Purpose::COLOR, ShaderAttribute::Buffer::VERTEX},
 		{ ShaderAttribute::Type::VEC3, ShaderAttribute::Purpose::NORMAL, ShaderAttribute::Buffer::VERTEX},
+		{ ShaderAttribute::Type::VEC3, ShaderAttribute::Purpose::COLOR, ShaderAttribute::Buffer::VERTEX},
 	};
 
 	{

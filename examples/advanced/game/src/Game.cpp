@@ -14,18 +14,20 @@ Game* Game::_instance = nullptr;
 Game::Game()
 {
 	auto& map_environment = Resources::instance().map_environment;
+	auto& light_environment = Resources::instance().light_environment;
 	Resources::instance().map_environment.camera.set_pos({ 16, 10, 16 });
 
 	// Create map_environment
 
-	auto environment_future = blue::Context::gpu_system().submit(CreateEnvironmentEntity{});
-	environment_future.wait();
-	map_environment.environment = environment_future.get();
+	map_environment.environment = blue::Context::gpu_system().submit(CreateEnvironmentEntity{}).get();
+	light_environment.environment = blue::Context::gpu_system().submit(CreateEnvironmentEntity{}).get();
 
 	// Upload map_environment.camera's matrices
 
 	blue::Context::gpu_system().submit(UpdateEnvironmentEntity_Projection{ map_environment.environment, map_environment.camera.get_projection() });
 	blue::Context::gpu_system().submit(UpdateEnvironmentEntity_View{ map_environment.environment, map_environment.camera.get_view() });
+
+	light_environment.depth = blue::Context::gpu_system().submit(CreateFramebufferEntity{ true, 1024, 1024 }).get();
 
 	register_callbacks();
 
@@ -86,6 +88,18 @@ void Game::register_callbacks()
 		map_environment.camera.go_forward(CAMERA_SPEED);
 		blue::Context::gpu_system().submit(UpdateEnvironmentEntity_View{ map_environment.environment, map_environment.camera.get_view() });
 		blue::Context::gpu_system().submit(UpdateEnvironmentEntity_CameraPos{ map_environment.environment, map_environment.camera.get_position() });
+
+//		auto& light_environment = Resources::instance().light_environment;
+//		light_environment.camera.set_pos(map_environment.camera.get_position());
+//		blue::Context::gpu_system().submit(UpdateEnvironmentEntity_View{ light_environment.environment, map_environment.camera.get_view() });
+//		blue::Context::gpu_system().submit(UpdateEnvironmentEntity_CameraPos{ map_environment.environment, map_environment.camera.get_position() });
+//		blue::Context::gpu_system().submit(UpdateEnvironmentEntity_Projection{ light_environment.environment, light_environment.camera.get_projection() });
+//		blue::Context::gpu_system().submit(UpdateEnvironmentEntity_View{ light_environment.environment, light_environment.camera.get_view() });
+//		blue::Context::gpu_system().submit(UpdateEnvironmentEntity_LightSpaceMatrix{ map_environment.environment,
+//																					 light_environment.camera.get_projection() * light_environment.camera.get_view() });
+//
+//		blue::Context::gpu_system().submit(UpdateEnvironmentEntity_LightPos{ map_environment.environment, light_environment.camera.get_position() });
+
 	};
 	blue::Context::input().registerKeyCallback({ w_callback, SDLK_w, SDL_KEYDOWN });
 
@@ -126,6 +140,17 @@ void Game::register_callbacks()
 		map_environment.camera.go_backward(CAMERA_SPEED);
 		blue::Context::gpu_system().submit(UpdateEnvironmentEntity_View{ map_environment.environment, map_environment.camera.get_view() });
 		blue::Context::gpu_system().submit(UpdateEnvironmentEntity_CameraPos{ map_environment.environment, map_environment.camera.get_position() });
+//		auto& light_environment = Resources::instance().light_environment;
+//		light_environment.camera.set_pos(map_environment.camera.get_position());
+//		blue::Context::gpu_system().submit(UpdateEnvironmentEntity_View{ light_environment.environment, map_environment.camera.get_view() });
+//		blue::Context::gpu_system().submit(UpdateEnvironmentEntity_CameraPos{ map_environment.environment, map_environment.camera.get_position() });
+//		blue::Context::gpu_system().submit(UpdateEnvironmentEntity_Projection{ light_environment.environment, light_environment.camera.get_projection() });
+//		blue::Context::gpu_system().submit(UpdateEnvironmentEntity_View{ light_environment.environment, light_environment.camera.get_view() });
+//		blue::Context::gpu_system().submit(UpdateEnvironmentEntity_LightSpaceMatrix{ map_environment.environment,
+//																					 light_environment.camera.get_projection() * light_environment.camera.get_view() });
+//
+//		blue::Context::gpu_system().submit(UpdateEnvironmentEntity_LightPos{ map_environment.environment, light_environment.camera.get_position() });
+//
 	};
 	blue::Context::input().registerKeyCallback({ s_callback, SDLK_s, SDL_KEYDOWN });
 
@@ -135,6 +160,17 @@ void Game::register_callbacks()
 		map_environment.camera.go_left(CAMERA_SPEED);
 		blue::Context::gpu_system().submit(UpdateEnvironmentEntity_View{ map_environment.environment, map_environment.camera.get_view() });
 		blue::Context::gpu_system().submit(UpdateEnvironmentEntity_CameraPos{ map_environment.environment, map_environment.camera.get_position() });
+//		auto& light_environment = Resources::instance().light_environment;
+//		light_environment.camera.set_pos(map_environment.camera.get_position());
+//		blue::Context::gpu_system().submit(UpdateEnvironmentEntity_View{ light_environment.environment, map_environment.camera.get_view() });
+//		blue::Context::gpu_system().submit(UpdateEnvironmentEntity_CameraPos{ map_environment.environment, map_environment.camera.get_position() });
+//		blue::Context::gpu_system().submit(UpdateEnvironmentEntity_Projection{ light_environment.environment, light_environment.camera.get_projection() });
+//		blue::Context::gpu_system().submit(UpdateEnvironmentEntity_View{ light_environment.environment, light_environment.camera.get_view() });
+//		blue::Context::gpu_system().submit(UpdateEnvironmentEntity_LightSpaceMatrix{ map_environment.environment,
+//																					 light_environment.camera.get_projection() * light_environment.camera.get_view() });
+//
+//		blue::Context::gpu_system().submit(UpdateEnvironmentEntity_LightPos{ map_environment.environment, light_environment.camera.get_position() });
+
 	};
 	blue::Context::input().registerKeyCallback({ a_callback, SDLK_a, SDL_KEYDOWN });
 
@@ -144,6 +180,17 @@ void Game::register_callbacks()
 		map_environment.camera.go_right(CAMERA_SPEED);
 		blue::Context::gpu_system().submit(UpdateEnvironmentEntity_View{ map_environment.environment, map_environment.camera.get_view() });
 		blue::Context::gpu_system().submit(UpdateEnvironmentEntity_CameraPos{ map_environment.environment, map_environment.camera.get_position() });
+//		auto& light_environment = Resources::instance().light_environment;
+//		light_environment.camera.set_pos(map_environment.camera.get_position());
+//		blue::Context::gpu_system().submit(UpdateEnvironmentEntity_View{ light_environment.environment, map_environment.camera.get_view() });
+//		blue::Context::gpu_system().submit(UpdateEnvironmentEntity_CameraPos{ map_environment.environment, map_environment.camera.get_position() });
+//		blue::Context::gpu_system().submit(UpdateEnvironmentEntity_Projection{ light_environment.environment, light_environment.camera.get_projection() });
+//		blue::Context::gpu_system().submit(UpdateEnvironmentEntity_View{ light_environment.environment, light_environment.camera.get_view() });
+//		blue::Context::gpu_system().submit(UpdateEnvironmentEntity_LightSpaceMatrix{ map_environment.environment,
+//																					 light_environment.camera.get_projection() * light_environment.camera.get_view() });
+//
+//		blue::Context::gpu_system().submit(UpdateEnvironmentEntity_LightPos{ map_environment.environment, light_environment.camera.get_position() });
+
 	};
 	blue::Context::input().registerKeyCallback({ d_callback, SDLK_d, SDL_KEYDOWN });
 
@@ -189,7 +236,19 @@ void Game::register_callbacks()
         // FIXME: It's actually adding rotation.
         map_environment.camera.set_rotation({delta_rotation_rad * 10, 0, 0});
         blue::Context::gpu_system().submit(UpdateEnvironmentEntity_View{ map_environment.environment, map_environment.camera.get_view() });
-    };
+
+//		auto& light_environment = Resources::instance().light_environment;
+//		light_environment.camera.set_pos(map_environment.camera.get_position());
+//		blue::Context::gpu_system().submit(UpdateEnvironmentEntity_View{ light_environment.environment, map_environment.camera.get_view() });
+//		blue::Context::gpu_system().submit(UpdateEnvironmentEntity_CameraPos{ map_environment.environment, map_environment.camera.get_position() });
+//		blue::Context::gpu_system().submit(UpdateEnvironmentEntity_Projection{ light_environment.environment, light_environment.camera.get_projection() });
+//		blue::Context::gpu_system().submit(UpdateEnvironmentEntity_View{ light_environment.environment, light_environment.camera.get_view() });
+//		blue::Context::gpu_system().submit(UpdateEnvironmentEntity_LightSpaceMatrix{ map_environment.environment,
+//																					 light_environment.camera.get_projection() * light_environment.camera.get_view() });
+//
+//		blue::Context::gpu_system().submit(UpdateEnvironmentEntity_LightPos{ map_environment.environment, light_environment.camera.get_position() });
+
+	};
 
     blue::Context::input().registerGestureCallback(gesture_callback);
 }

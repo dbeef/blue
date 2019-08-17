@@ -203,6 +203,7 @@ RenderEntity Flora::add_entry(Model model, const glm::vec3 &position, const glm:
     entity.rotation = glm::quat(rotation);
     entity.environment = environment;
 	entity.scale = get_default_scale(model);
+    entity.framebuffer.framebuffer = 0;
 
     switch (model)
     {
@@ -362,9 +363,25 @@ RenderEntity Flora::add_instanced_rendering_entry(Model model, const Instances& 
 	auto instanced_vertex_array = blue::Context::gpu_system().submit(CreateInstancedMeshEntity{ entity.vertex_array, attributes, instances, instances_count }).get();
 	entity.vertex_array = instanced_vertex_array;
 	entity.scale = 1.0f;
+	entity.texture = Resources::instance().light_environment.depth.texture;
+
+//    entity.environment = Resources::instance().light_environment.environment;
+
     entity.id = blue::Context::renderer().add(entity);
 
+    RenderEntity shadow;
+    shadow.position = entity.position;
+    shadow.shader = entity.shader;
+    shadow.vertex_array = entity.vertex_array;
+    shadow.scale = entity.scale;
+    shadow.rotation = entity.rotation;
+    shadow.environment = Resources::instance().light_environment.environment;
+    shadow.texture = 0;
+    shadow.framebuffer = Resources::instance().light_environment.depth;
+    shadow.id = blue::Context::renderer().add(shadow);
+
     entries.push_back({model, entity});
+    entries.push_back({model, shadow});
     return entity;
 }
 

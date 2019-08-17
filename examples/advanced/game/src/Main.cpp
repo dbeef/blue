@@ -20,19 +20,33 @@ int main(int argc, char* argv[])
 	Game::init();
 
     auto& map_environment = Resources::instance().map_environment;
+    auto& light_environment = Resources::instance().light_environment;
 
     map_environment.camera.set_pos({ 7.78816, 28.7423, 22.3805 });
     map_environment.camera.set_rotation({ 0, - 68.5f, - 44.25f });
 
-    blue::Context::gpu_system().submit(UpdateEnvironmentEntity_View{ map_environment.environment, map_environment.camera.get_view() });
+	light_environment.camera.set_far(500.0f);
+	light_environment.camera.set_near(-100.0f);
+	light_environment.camera.set_pos({ 64.0f, 20.4532f, 64.0f});
+//	light_environment.camera.look_at({64.0f, 0.0f, 64.0f});
+
+	blue::Context::gpu_system().submit(UpdateEnvironmentEntity_View{ map_environment.environment, map_environment.camera.get_view() });
     blue::Context::gpu_system().submit(UpdateEnvironmentEntity_CameraPos{ map_environment.environment, map_environment.camera.get_position() });
+
+	// Upload light-space matrices to both environments:
+	blue::Context::gpu_system().submit(UpdateEnvironmentEntity_Projection{ light_environment.environment, light_environment.camera.get_projection() });
+	blue::Context::gpu_system().submit(UpdateEnvironmentEntity_View{ light_environment.environment, light_environment.camera.get_view() });
+	blue::Context::gpu_system().submit(UpdateEnvironmentEntity_LightSpaceMatrix{ map_environment.environment,
+																			  light_environment.camera.get_projection() * light_environment.camera.get_view() });
+
+	blue::Context::gpu_system().submit(UpdateEnvironmentEntity_LightPos{ map_environment.environment, light_environment.camera.get_position() });
 
 	Resources::instance().load_shaders();
 	Resources::instance().load_models();
 	Resources::instance().load_textures();
 
     Game::instance().get_map().import_from_file("resources/map.bin");
-    Game::instance().get_map().upload_clickable_vertices();
+//    Game::instance().get_map().upload_clickable_vertices(); // FIXME?
     Game::instance().get_map().upload_decoration();
 
     Game::instance().get_flora().import_from_file("resources/flora.bin");

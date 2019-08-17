@@ -1,5 +1,6 @@
 #pragma once
 
+#include <blue/camera/OrthographicCamera.hpp>
 #include "blue/gpu/GpuEntities.hpp"
 #include "blue/camera/PerspectiveCamera.hpp"
 
@@ -40,10 +41,18 @@ public:
 	} map_environment;
 
 	struct {
+		UniformBufferId environment = 0;
+		OrthographicCamera camera = OrthographicCamera(OrthographicCamera::Mode::CLIP_SPACE);
+		Framebuffer depth;
+	} light_environment;
+
+	struct {
+		// TODO: Remove '_shader' postfix.
 		ShaderId clickable_map_shader;
 		ShaderId decoration_map_shader;
 		ShaderId model_shader;
 		ShaderId model_instanced_shader;
+		ShaderId simple_depth_shader;
 	} shaders;
 	
 	struct {

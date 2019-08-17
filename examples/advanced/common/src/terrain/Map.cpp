@@ -9,6 +9,7 @@
 #include "blue/ResourcesPath.h"
 
 #include <glm/gtx/normal.hpp>
+#include <Resources.hpp>
 #include "glm/geometric.hpp"
 
 
@@ -280,9 +281,22 @@ void Map::upload_decoration()
 	entity.vertex_array = decoration_vertices_vertex_array;
 	entity.scale = 1.0f;
 	entity.rotation = glm::identity<glm::quat>();
+//    entity.environment = Resources::instance().light_environment.environment;
 	entity.environment = Resources::instance().map_environment.environment;
-	entity.texture = 0;
+	entity.texture = Resources::instance().light_environment.depth.texture;
+	entity.framebuffer.framebuffer = 0;
 
+	RenderEntity shadow;
+	shadow.position = { 0, 0, 0 };
+	shadow.shader = Resources::instance().shaders.decoration_map_shader;
+	shadow.vertex_array = decoration_vertices_vertex_array;
+	shadow.scale = 1.0f;
+	shadow.rotation = glm::identity<glm::quat>();
+	shadow.environment = Resources::instance().light_environment.environment;
+	shadow.texture = 0;
+	shadow.framebuffer = Resources::instance().light_environment.depth;
+
+	shadow.id = blue::Context::renderer().add(shadow);
 	decoration_vertices_render_entity = blue::Context::renderer().add(entity);
 }
 
