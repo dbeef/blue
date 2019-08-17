@@ -109,11 +109,7 @@ void GpuThread::render_thread_loop()
 		window.swap_buffers();
 
 		gpu_system.lock();
-		bool executed_some_work = gpu_system.execute();
-		if (executed_some_work)
-        {
-		    renderer.invalidate_cache();
-        }
+		gpu_system.execute();
 		gpu_system.unlock();
 
 		timestep.mark_end();

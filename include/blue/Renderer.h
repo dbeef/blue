@@ -49,8 +49,8 @@ public:
 	void update(const RenderEntity& entity);
 	void remove_render_entity(const RenderEntityId& id);
 	void remove_imgui_entity(const ImGuiEntityId& id);
-    void invalidate_cache();
     void invalidate_cache_shader();
+    void invalidate_cache_uniform_buffer();
 
 private:
 
@@ -70,6 +70,7 @@ private:
 	void unlock();
 
 	void sort_entities_by_shader();
+	void sort_entities_by_framebuffer();
 
 	std::atomic_bool locked{ false };
 	std::vector<RenderEntity> render_entities;

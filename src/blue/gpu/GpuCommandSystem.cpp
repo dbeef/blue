@@ -79,10 +79,24 @@ bool GpuCommandSystem::execute()
         executed_some_work = true;
 	}
 
+	while (!update_environment_light_space_matrix_entities.empty())
+	{
+		handle(update_environment_light_space_matrix_entities.front());
+		update_environment_light_space_matrix_entities.pop();
+        executed_some_work = true;
+	}
+
 	while (!update_environment_camera_pos_entities.empty())
 	{
 		handle(update_environment_camera_pos_entities.front());
 		update_environment_camera_pos_entities.pop();
+        executed_some_work = true;
+	}
+
+	while (!update_environment_light_pos_entities.empty())
+	{
+		handle(update_environment_light_pos_entities.front());
+		update_environment_light_pos_entities.pop();
         executed_some_work = true;
 	}
 
@@ -240,10 +254,24 @@ void GpuCommandSystem::submit(const UpdateEnvironmentEntity_CameraPos& entity)
 	unlock();
 }
 
+void GpuCommandSystem::submit(const UpdateEnvironmentEntity_LightPos& entity)
+{
+	lock();
+	update_environment_light_pos_entities.push(entity);
+	unlock();
+}
+
 void GpuCommandSystem::submit(const UpdateEnvironmentEntity_View& entity)
 {
 	lock();
 	update_environment_view_entities.push(entity);
+	unlock();
+}
+
+void GpuCommandSystem::submit(const UpdateEnvironmentEntity_LightSpaceMatrix& entity)
+{
+	lock();
+	update_environment_light_space_matrix_entities.push(entity);
 	unlock();
 }
 

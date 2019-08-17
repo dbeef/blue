@@ -57,6 +57,7 @@ void Renderer::draw_render_entities()
 		{
 			cache.current_environment = entity.environment;
 			DebugGlCall(glBindBuffer(GL_UNIFORM_BUFFER, cache.current_environment));
+			DebugGlCall(glBindBufferRange(GL_UNIFORM_BUFFER, 0, cache.current_environment, 0, 256));
 		}
 
 		if (cache.current_texture != entity.texture && entity.texture != 0)
@@ -76,20 +77,18 @@ void Renderer::draw_render_entities()
 				// Finished drawing to framebuffer:
 				DebugGlCall(glBindFramebuffer(GL_FRAMEBUFFER, 0));
 				DebugGlCall(glViewport(0, 0, blue::Context::window().get_width(), blue::Context::window().get_height()));
-
-				DebugGlCall(glStencilFunc(GL_ALWAYS, 1, 0xFF)); // all fragments should update the stencil buffer
-				DebugGlCall(glStencilMask(0x00)); // make sure we don't update the stencil buffer, since we finished 
-
-				DebugGlCall(glCullFace(GL_BACK)); // reset to original culling face
-				DebugGlCall(glBindTexture(GL_TEXTURE_2D, entity.framebuffer.texture));
-
-				cache.current_texture = entity.framebuffer.texture;
 			}
 			else
 			{
 				// Started drawing to framebuffer.
+				DebugGlCall(glViewport(0, 0, entity.framebuffer.texture_width, entity.framebuffer.texture_height));
 				DebugGlCall(glBindFramebuffer(GL_FRAMEBUFFER, cache.current_framebuffer));
-				DebugGlCall(glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, entity.framebuffer.texture, 0));
+
+				DebugGlCall(glActiveTexture(GL_TEXTURE0));
+				DebugGlCall(glBindTexture(GL_TEXTURE_2D, entity.framebuffer.texture));
+
+				DebugGlCall(glClear(GL_DEPTH_BUFFER_BIT));
+				DebugGlCall(glCullFace(GL_FRONT));
 			}
 		}
 
@@ -103,7 +102,8 @@ void Renderer::draw_render_entities()
 
 		if (vao.number_of_instances)
 		{
-			if (!vao.ibo) {
+			if (!vao.ibo)
+			{
 				// Instanced rendering
 				DebugGlCall(glDrawArraysInstanced(GL_TRIANGLES, 0, vao.vertices_count, vao.number_of_instances));
 			}
@@ -151,10 +151,16 @@ RenderEntityId Renderer::add(const RenderEntity& entity)
 	e.scale = entity.scale;
 	e.environment = entity.environment;
 	e.texture = entity.texture;
-
+	{
+		e.framebuffer.framebuffer = entity.framebuffer.framebuffer;
+		e.framebuffer.texture = entity.framebuffer.texture;
+		e.framebuffer.texture_width = entity.framebuffer.texture_width;
+		e.framebuffer.texture_height = entity.framebuffer.texture_height;
+	}
 	render_entities.push_back(e);
 
 	sort_entities_by_shader();
+	sort_entities_by_framebuffer();
 	unlock();
 	return id;
 }
@@ -230,15 +236,20 @@ void Renderer::sort_entities_by_shader()
 		});
 }
 
-void Renderer::invalidate_cache()
+void Renderer::sort_entities_by_framebuffer()
 {
-	cache.current_environment = 0;
-	cache.current_shader = 0;
-	cache.current_texture = 0;
-	cache.current_framebuffer = 0;
+	std::sort(render_entities.begin(), render_entities.end(), [](const RenderEntity& first, const RenderEntity& second)
+		{
+			return first.framebuffer.framebuffer > second.framebuffer.framebuffer;
+		});
 }
 
 void Renderer::invalidate_cache_shader()
 {
 	cache.current_shader = 0;
+}
+
+void Renderer::invalidate_cache_uniform_buffer()
+{
+	cache.current_environment = 0;
 }

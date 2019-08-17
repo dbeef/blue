@@ -15,6 +15,7 @@ namespace
 	{
         DebugGlCall(glBindBuffer(GL_UNIFORM_BUFFER, id));
 		DebugGlCall(glBufferSubData(GL_UNIFORM_BUFFER, offset, size, data));
+		blue::Context::renderer().invalidate_cache_uniform_buffer();
 	}
 }
 
@@ -23,9 +24,19 @@ void handle(UpdateEnvironmentEntity_CameraPos& entity)
 	upload_chunk(entity.id, glm::value_ptr(entity.camera_position), 176, 12);
 }
 
+void handle(UpdateEnvironmentEntity_LightPos& entity)
+{
+	upload_chunk(entity.id, glm::value_ptr(entity.light_position), 160, 12);
+}
+
 void handle(UpdateEnvironmentEntity_Projection& entity)
 {
 	upload_chunk(entity.id, glm::value_ptr(entity.projection), 64, 64);
+}
+
+void handle(UpdateEnvironmentEntity_LightSpaceMatrix& entity)
+{
+	upload_chunk(entity.id, glm::value_ptr(entity.light_space_matrix), 192, 64);
 }
 
 void handle(UpdateEnvironmentEntity_View& entity)

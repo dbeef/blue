@@ -172,6 +172,18 @@ struct UpdateEnvironmentEntity_View
 	const glm::mat4 view;
 };
 
+struct UpdateEnvironmentEntity_LightSpaceMatrix
+{
+	const UniformBufferId id;
+	const glm::mat4 light_space_matrix;
+};
+
+struct UpdateEnvironmentEntity_LightPos
+{
+	const UniformBufferId id;
+	const glm::vec3 light_position;
+};
+
 struct UpdateEnvironmentEntity_CameraPos
 {
 	const UniformBufferId id;

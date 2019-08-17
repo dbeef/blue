@@ -32,6 +32,14 @@ namespace
 			GLfloat borderColor[] = { 1.0f, 1.0f, 1.0f, 1.0f };
 			DebugGlCall(glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, borderColor));
 
+			// Attach texture to framebuffer
+
+			DebugGlCall(glBindFramebuffer(GL_FRAMEBUFFER, framebuffer_id));
+			DebugGlCall(glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, texture_id, 0));
+			DebugGlCall(glDrawBuffer(GL_NONE));
+			DebugGlCall(glReadBuffer(GL_NONE));
+			DebugGlCall(glBindFramebuffer(GL_FRAMEBUFFER, 0));
+
 			if (texture_id)
 			{
 				blue::Context::logger().info("Created framebuffer's texture attachment successfuly ({}).", texture_id);
@@ -64,8 +72,7 @@ namespace
 
 void handle(std::pair<std::promise<Framebuffer>, CreateFramebufferEntity>& pair)
 {
-	std::promise<Framebuffer
-	>& promise = pair.first;
+	std::promise<Framebuffer>& promise = pair.first;
 	const CreateFramebufferEntity& entity = pair.second;
 	promise.set_value(create_framebuffer(entity));
 }

@@ -23,12 +23,15 @@ void handle(std::pair<std::promise<UniformBufferId>, CreateEnvironmentEntity>& p
 
 	const int buffer_size = 256;
 
-	unsigned int id;
+	GLuint id;
 
 	DebugGlCall(glGenBuffers(1, &id));
 	DebugGlCall(glBindBuffer(GL_UNIFORM_BUFFER, id));
 	DebugGlCall(glBufferData(GL_UNIFORM_BUFFER, buffer_size, nullptr, GL_STATIC_DRAW));
 	DebugGlCall(glBindBufferRange(GL_UNIFORM_BUFFER, 0, id, 0, buffer_size));
+
+	// TODO: Invalidate only uniform buffer, probably move invalidate_cache call higher
+	blue::Context::renderer().invalidate_cache_uniform_buffer();
 
 	if (id == 0)
 	{
