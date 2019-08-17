@@ -289,6 +289,20 @@ RenderEntity Flora::add_instanced_rendering_entry(Model model, const Instances& 
 		{ ShaderAttribute::Type::VEC4, ShaderAttribute::Purpose::MODEL, ShaderAttribute::Buffer::INSTANCED},
 	};
 
+	Attributes swinging_attributes =
+	{
+		{ ShaderAttribute::Type::VEC3, ShaderAttribute::Purpose::VERTEX_POSITION, ShaderAttribute::Buffer::VERTEX},
+		{ ShaderAttribute::Type::VEC3, ShaderAttribute::Purpose::COLOR, ShaderAttribute::Buffer::VERTEX},
+		{ ShaderAttribute::Type::VEC3, ShaderAttribute::Purpose::NORMAL, ShaderAttribute::Buffer::VERTEX},
+        { ShaderAttribute::Type::FLOAT, ShaderAttribute::Purpose::NORMALIZED_HEIGHT, ShaderAttribute::Buffer::VERTEX},
+        // Attributes from instance buffer:
+		// Uploading 4x4 matrix this way, since there's a size limit for single attribute in OpenGL:
+		{ ShaderAttribute::Type::VEC4, ShaderAttribute::Purpose::MODEL, ShaderAttribute::Buffer::INSTANCED},
+		{ ShaderAttribute::Type::VEC4, ShaderAttribute::Purpose::MODEL, ShaderAttribute::Buffer::INSTANCED},
+		{ ShaderAttribute::Type::VEC4, ShaderAttribute::Purpose::MODEL, ShaderAttribute::Buffer::INSTANCED},
+		{ ShaderAttribute::Type::VEC4, ShaderAttribute::Purpose::MODEL, ShaderAttribute::Buffer::INSTANCED},
+	};
+
     RenderEntity entity;
     const auto &environment = Resources::instance().map_environment.environment;
 
@@ -301,57 +315,69 @@ RenderEntity Flora::add_instanced_rendering_entry(Model model, const Instances& 
     {
         case (Model::PINE_TREE):
         {
-            entity.vertex_array = Resources::instance().models.pine_tree;
+            entity.shader = Resources::instance().shaders.swinging_shader;
+            auto instanced_vertex_array = blue::Context::gpu_system().submit(CreateInstancedMeshEntity{ Resources::instance().models.pine_tree, swinging_attributes, instances, instances_count }).get();
+            entity.vertex_array = instanced_vertex_array;
 			break;
         }
         case (Model::HURDLE):
         {
-            entity.vertex_array = Resources::instance().models.hurdle;
+            auto instanced_vertex_array = blue::Context::gpu_system().submit(CreateInstancedMeshEntity{ Resources::instance().models.hurdle, attributes, instances, instances_count }).get();
+            entity.vertex_array = instanced_vertex_array;
             break;
         }
         case (Model::WHEAT):
         {
-            entity.vertex_array = Resources::instance().models.wheat;
+            auto instanced_vertex_array = blue::Context::gpu_system().submit(CreateInstancedMeshEntity{ Resources::instance().models.wheat, attributes, instances, instances_count }).get();
+            entity.vertex_array = instanced_vertex_array;
             break;
         }
         case (Model::BOULDER):
         {
-            entity.vertex_array = Resources::instance().models.boulder;
+            auto instanced_vertex_array = blue::Context::gpu_system().submit(CreateInstancedMeshEntity{ Resources::instance().models.boulder, attributes, instances, instances_count }).get();
+            entity.vertex_array = instanced_vertex_array;
             break;
         }
         case (Model::SMALL_BOULDER):
         {
-            entity.vertex_array = Resources::instance().models.small_boulder;
+            auto instanced_vertex_array = blue::Context::gpu_system().submit(CreateInstancedMeshEntity{ Resources::instance().models.small_boulder, attributes, instances, instances_count }).get();
+            entity.vertex_array = instanced_vertex_array;
             break;
         }
         case (Model::GRASS):
         {
-            entity.vertex_array = Resources::instance().models.grass;
+            auto instanced_vertex_array = blue::Context::gpu_system().submit(CreateInstancedMeshEntity{ Resources::instance().models.grass, attributes, instances, instances_count }).get();
+            entity.vertex_array = instanced_vertex_array;
             break;
         }
         case (Model::PYLON):
         {
-            entity.vertex_array = Resources::instance().models.pylon;
+            auto instanced_vertex_array = blue::Context::gpu_system().submit(CreateInstancedMeshEntity{ Resources::instance().models.pylon, attributes, instances, instances_count }).get();
+            entity.vertex_array = instanced_vertex_array;
             break;
         }
         case (Model::BUSH):
         {
-            entity.vertex_array = Resources::instance().models.bush;
+            auto instanced_vertex_array = blue::Context::gpu_system().submit(CreateInstancedMeshEntity{ Resources::instance().models.bush, attributes, instances, instances_count }).get();
+            entity.vertex_array = instanced_vertex_array;
             break;
         }
         case (Model::CUT_TREE):
         {
-            entity.vertex_array = Resources::instance().models.cut_tree;
+            auto instanced_vertex_array = blue::Context::gpu_system().submit(CreateInstancedMeshEntity{ Resources::instance().models.cut_tree, attributes, instances, instances_count }).get();
+            entity.vertex_array = instanced_vertex_array;
             break;
         }
         case (Model::TRACK):
         {
-            entity.vertex_array = Resources::instance().models.track;
+            auto instanced_vertex_array = blue::Context::gpu_system().submit(CreateInstancedMeshEntity{ Resources::instance().models.track, attributes, instances, instances_count }).get();
+            entity.vertex_array = instanced_vertex_array;
             break;
         }
         case (Model::BRIDGE):
         {
-            entity.vertex_array = Resources::instance().models.bridge;
+            auto instanced_vertex_array = blue::Context::gpu_system().submit(CreateInstancedMeshEntity{ Resources::instance().models.bridge, attributes, instances, instances_count }).get();
+            entity.vertex_array = instanced_vertex_array;
             break;
         }
         default:
@@ -359,12 +385,9 @@ RenderEntity Flora::add_instanced_rendering_entry(Model model, const Instances& 
             blue::Context::logger().error("Failed to match model! Value: {}", static_cast<int>(model));
         }
     }
-	
-	auto instanced_vertex_array = blue::Context::gpu_system().submit(CreateInstancedMeshEntity{ entity.vertex_array, attributes, instances, instances_count }).get();
-	entity.vertex_array = instanced_vertex_array;
+
 	entity.scale = 1.0f;
 	entity.texture = Resources::instance().light_environment.depth.texture;
-
 //    entity.environment = Resources::instance().light_environment.environment;
 
     entity.id = blue::Context::renderer().add(entity);

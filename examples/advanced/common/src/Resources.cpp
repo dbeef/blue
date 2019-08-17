@@ -52,6 +52,12 @@ void Resources::load_shaders()
 		shader_future.wait();
 		shaders.model_instanced_shader = shader_future.get();
 	}
+	{
+		auto compile_shader_entity = ShaderUtils::make_entity("resources/Swinging_Instanced.vertex.glsl", "resources/Swinging_Instanced.fragment.glsl");
+		auto shader_future = blue::Context::gpu_system().submit(compile_shader_entity);
+		shader_future.wait();
+		shaders.swinging_shader = shader_future.get();
+	}
 }
 
 void Resources::load_models()
@@ -63,12 +69,20 @@ void Resources::load_models()
 		{ ShaderAttribute::Type::VEC3, ShaderAttribute::Purpose::COLOR, ShaderAttribute::Buffer::VERTEX},
 	};
 
+	Attributes swinging_attributes =
+	{
+		{ ShaderAttribute::Type::VEC3, ShaderAttribute::Purpose::VERTEX_POSITION, ShaderAttribute::Buffer::VERTEX},
+		{ ShaderAttribute::Type::VEC3, ShaderAttribute::Purpose::NORMAL, ShaderAttribute::Buffer::VERTEX},
+		{ ShaderAttribute::Type::VEC3, ShaderAttribute::Purpose::COLOR, ShaderAttribute::Buffer::VERTEX},
+		{ ShaderAttribute::Type::FLOAT, ShaderAttribute::Purpose::NORMALIZED_HEIGHT, ShaderAttribute::Buffer::VERTEX},
+	};
+
 	{
 		auto scene_ptr = models::load_scene("resources/PineTree.fbx");
 		unsigned int vertex_counter = 0;
-		auto vertices = models::parse_scene(scene_ptr, attributes, vertex_counter);
+		auto vertices = models::parse_scene(scene_ptr, swinging_attributes, vertex_counter);
 
-		auto vertex_array_future = blue::Context::gpu_system().submit(CreateMeshEntity{ vertices, {}, attributes, vertex_counter });
+		auto vertex_array_future = blue::Context::gpu_system().submit(CreateMeshEntity{ vertices, {}, swinging_attributes, vertex_counter });
 		vertex_array_future.wait();
 		models.pine_tree = vertex_array_future.get();
 	}

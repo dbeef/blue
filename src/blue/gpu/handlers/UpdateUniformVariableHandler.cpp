@@ -20,7 +20,7 @@ void handle(const UpdateUniformVariableEntity& entity)
 	}
 
 	DebugGlCall(glUseProgram(entity.program));
-	blue::Context::renderer().invalidate_cache_shader();
+	blue::Context::renderer().set_cached_shader(entity.program);
 
 	switch (entity.type)
 	{

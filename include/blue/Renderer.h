@@ -49,8 +49,8 @@ public:
 	void update(const RenderEntity& entity);
 	void remove_render_entity(const RenderEntityId& id);
 	void remove_imgui_entity(const ImGuiEntityId& id);
-    void invalidate_cache_shader();
     void invalidate_cache_uniform_buffer();
+	void set_cached_shader(ShaderId);
 
 private:
 

@@ -244,12 +244,13 @@ void Renderer::sort_entities_by_framebuffer()
 		});
 }
 
-void Renderer::invalidate_cache_shader()
-{
-	cache.current_shader = 0;
-}
-
 void Renderer::invalidate_cache_uniform_buffer()
 {
 	cache.current_environment = 0;
+}
+
+void Renderer::set_cached_shader(ShaderId program)
+{
+    cache.current_shader = 0;
+    cache.current_shader = program;
 }

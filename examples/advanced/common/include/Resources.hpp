@@ -53,6 +53,7 @@ public:
 		ShaderId model_shader;
 		ShaderId model_instanced_shader;
 		ShaderId simple_depth_shader;
+		ShaderId swinging_shader;
 	} shaders;
 	
 	struct {
