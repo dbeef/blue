@@ -1,4 +1,4 @@
-layout(location = 9) uniform sampler2D shadowmap;
+layout(location = 9) uniform sampler2D sampler; // shadowmap
 
 in lowp vec4 FragPosLightSpace;
 
@@ -11,6 +11,7 @@ layout (std140) uniform Matrices
     float ambientStrength;
     vec3 lightColor;
     vec3 lightPos;
+    vec3 cameraPos;
 // Shadows
     mat4 lightSpaceMatrix;
 };
@@ -21,7 +22,6 @@ flat in lowp vec3 ColorRGB;
 in vec3 Normal;
 in vec3 FragPos;
 out vec4 color;
-
 
 float ShadowCalculation(vec4 fragPosLightSpace)
 {
@@ -35,7 +35,7 @@ float ShadowCalculation(vec4 fragPosLightSpace)
         return 0.0f;
 
     // get closest depth value from light's perspective (using [0,1] range fragPosLight as coords)
-    float closestDepth = texture(shadowmap, projCoords.xy).r;
+    float closestDepth = texture(sampler, projCoords.xy).r;
 
     // get depth of current fragment from light's perspective
     float currentDepth = projCoords.z;
@@ -44,7 +44,7 @@ float ShadowCalculation(vec4 fragPosLightSpace)
     // check whether current frag pos is in shadow
 
     float shadow = 0.0;
-    vec2 texelSize = 1.0f / vec2(textureSize(shadowmap, 0).xy);
+    vec2 texelSize = 1.0f / vec2(textureSize(sampler, 0).xy);
 
     // texelSize.y = 1.0f / float(textureSizeTemp.y);
 
@@ -52,7 +52,7 @@ float ShadowCalculation(vec4 fragPosLightSpace)
     {
         for(int y = -1; y <= 1; ++y)
         {
-            float pcfDepth = texture(shadowmap, projCoords.xy + vec2(x, y) * texelSize).r;
+            float pcfDepth = texture(sampler, projCoords.xy + vec2(x, y) * texelSize).r;
             shadow += currentDepth - bias > pcfDepth ? 1.0 : 0.0;
         }
     }

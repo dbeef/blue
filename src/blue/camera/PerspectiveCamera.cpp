@@ -2,8 +2,19 @@
 // Created by dbeef on 3/25/19.
 //
 
+#include <blue/camera/PerspectiveCamera.hpp>
 #include "blue/camera/PerspectiveCamera.hpp"
 #include "blue/Context.hpp"
+
+void PerspectiveCamera::set_near(float near)
+{
+    _near = near;
+}
+
+void PerspectiveCamera::set_far(float far)
+{
+    _far = far;
+}
 
 void PerspectiveCamera::set_pos(const glm::vec3& pos)
 {
@@ -143,4 +154,11 @@ GLfloat PerspectiveCamera::get_last_x() const
 GLfloat PerspectiveCamera::get_last_y() const
 {
 	return _lastY;
+}
+
+void PerspectiveCamera::look_at(const glm::vec3 &target)
+{
+    _HELPER_CAMERA_TARGET = target;
+    _HELPER_CAMERA_DIRECTION = glm::normalize(_position - _HELPER_CAMERA_TARGET);
+    _front = -_HELPER_CAMERA_DIRECTION;
 }

@@ -65,7 +65,7 @@ int main(int argc, char* argv[])
 
 	// Upload camera's matrices
 
-	OrthographicCamera camera;
+	OrthographicCamera camera(OrthographicCamera::Mode::SCREEN_SPACE);
 
 	blue::Context::gpu_system().submit(UpdateEnvironmentEntity_Projection{ environment_id, camera.get_projection() });
 	blue::Context::gpu_system().submit(UpdateEnvironmentEntity_View{ environment_id, camera.get_view() });

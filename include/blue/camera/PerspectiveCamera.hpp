@@ -18,6 +18,8 @@ public:
 
 	void reset();
 
+	void look_at(const glm::vec3& target);
+
 	glm::mat4 get_view() override;
 
 	glm::mat4 get_projection() override;
@@ -25,6 +27,10 @@ public:
 	void set_pos(const glm::vec3&);
 
 	void set_rotation(const glm::vec3& euler);
+
+	void set_near(float);
+
+	void set_far(float);
 
 	// moving
 
@@ -76,8 +82,8 @@ private:
 	glm::vec3 _CAMERA_RIGHT = glm::normalize(glm::cross(_HELPER_UP, _HELPER_CAMERA_DIRECTION));
 	glm::vec3 _CAMERA_UP = glm::cross(_HELPER_CAMERA_DIRECTION, _CAMERA_RIGHT);
 
-	const float _near = 0.1f;
-	const float _far = 500.0f;
+	float _near = 0.1f;
+	float _far = 500.0f;
 
 	float _aspect{}; // (view ratio)
 };

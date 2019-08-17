@@ -26,7 +26,9 @@ public:
 	void submit(const DisposeMeshEntity&);
 	void submit(const UpdateEnvironmentEntity_Projection&);
 	void submit(const UpdateEnvironmentEntity_View&);
+	void submit(const UpdateEnvironmentEntity_LightSpaceMatrix&);
 	void submit(const UpdateEnvironmentEntity_CameraPos&);
+	void submit(const UpdateEnvironmentEntity_LightPos&);
 	void submit(const SetClearColorEntity&);
 
 private:
@@ -47,7 +49,9 @@ private:
 	std::queue<DisposeMeshEntity> dispose_mesh_entities;
 	std::queue<DisposeShaderEntity> dispose_shader_entities;
 	std::queue<UpdateEnvironmentEntity_CameraPos> update_environment_camera_pos_entities;
+	std::queue<UpdateEnvironmentEntity_LightPos> update_environment_light_pos_entities;
 	std::queue<UpdateEnvironmentEntity_View> update_environment_view_entities;
+	std::queue<UpdateEnvironmentEntity_LightSpaceMatrix> update_environment_light_space_matrix_entities;
 	std::queue<UpdateEnvironmentEntity_Projection> update_environment_projection_entities;
 
 	std::atomic_bool locked {false};
