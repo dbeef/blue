@@ -10,8 +10,6 @@ class Game
 {
 public:
 
-	Game();
-
 	static Game& instance();
 
 	static void init();
@@ -39,8 +37,6 @@ public:
 	} input;
 
 private:
-
-	void register_callbacks();
 
 	std::shared_ptr<Map> _map = std::make_shared<Map>();
 	std::shared_ptr<Flora> _flora = std::make_shared<Flora>();

@@ -2,12 +2,11 @@
 #include <blue/Timestep.hpp>
 #include <imgui/imgui.h>
 
-#include <cmath>
-#include <atomic>
-#include <Resources.hpp>
-
+#include "Callbacks.hpp"
 #include "Game.hpp"
 #include "Resources.hpp"
+
+#include <cmath>
 
 int main(int argc, char* argv[])
 {
@@ -18,40 +17,19 @@ int main(int argc, char* argv[])
 
 	Resources::init();
 	Game::init();
+	Callbacks::init();
+	Callbacks::instance().register_callbacks();
 
-    auto& map_environment = Resources::instance().map_environment;
-    auto& light_environment = Resources::instance().light_environment;
-
-    map_environment.camera.set_pos({ 7.78816, 28.7423, 22.3805 });
-    map_environment.camera.set_rotation({ 0, - 68.5f, - 44.25f });
-
-	light_environment.camera.set_far(500.0f);
-	light_environment.camera.set_near(-100.0f);
-	light_environment.camera.set_pos({ 64.0f, 20.4532f, 64.0f});
-//	light_environment.camera.look_at({64.0f, 0.0f, 64.0f});
-
-	blue::Context::gpu_system().submit(UpdateEnvironmentEntity_View{ map_environment.environment, map_environment.camera.get_view() });
-    blue::Context::gpu_system().submit(UpdateEnvironmentEntity_CameraPos{ map_environment.environment, map_environment.camera.get_position() });
-
-	// Upload light-space matrices to both environments:
-	blue::Context::gpu_system().submit(UpdateEnvironmentEntity_Projection{ light_environment.environment, light_environment.camera.get_projection() });
-	blue::Context::gpu_system().submit(UpdateEnvironmentEntity_View{ light_environment.environment, light_environment.camera.get_view() });
-	blue::Context::gpu_system().submit(UpdateEnvironmentEntity_LightSpaceMatrix{ map_environment.environment,
-																			  light_environment.camera.get_projection() * light_environment.camera.get_view() });
-
-	blue::Context::gpu_system().submit(UpdateEnvironmentEntity_LightPos{ map_environment.environment, light_environment.camera.get_position() });
-
+	Resources::instance().load_environment();
 	Resources::instance().load_shaders();
 	Resources::instance().load_models();
 	Resources::instance().load_textures();
 
-    Game::instance().get_map().import_from_file("resources/map.bin");
-//    Game::instance().get_map().upload_clickable_vertices(); // FIXME?
+	Game::instance().get_map().import_from_file("resources/map.bin");
+	// FIXME: For some reason this causes crash - may be something wrong with shader.
+	// Game::instance().get_map().upload_clickable_vertices();
     Game::instance().get_map().upload_decoration();
-
     Game::instance().get_flora().import_from_file("resources/flora.bin");
-
-    // Look at the center of map.
 
 	Timestep timestep(30);
 
@@ -63,12 +41,14 @@ int main(int argc, char* argv[])
 		static float x = 0.0f;
 		x += 0.05f;
 		float sin = std::sin(x) * 0.2f;
-		blue::Context::gpu_system().submit(UpdateUniformVariableEntity{ ShaderAttribute::Type::FLOAT, &sin, Resources::instance().shaders.swinging_shader, 1, "" });
+		auto swing_update = UpdateUniformVariableEntity{ ShaderAttribute::Type::FLOAT, &sin, Resources::instance().shaders.swinging_shader, 1, "" };
+		blue::Context::gpu_system().submit(swing_update);
 
 		timestep.mark_end();
 		timestep.delay();
 	}
 
+	Callbacks::dispose();
 	Game::dispose();
 	Resources::dispose();
 

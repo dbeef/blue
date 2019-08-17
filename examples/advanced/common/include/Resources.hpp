@@ -29,6 +29,8 @@ public:
 
 	static void dispose();
 
+	void load_environment();
+
 	void load_shaders();
 
 	void load_models();

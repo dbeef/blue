@@ -1,9 +1,9 @@
-#include <Resources.hpp>
+#include <blue/Assertions.h>
+#include <blue/ShaderUtils.h>
+#include <blue/ModelLoader.h>
+#include <blue/Context.hpp>
+
 #include "Resources.hpp"
-#include "blue/Assertions.h"
-#include "blue/ShaderUtils.h"
-#include "blue/ModelLoader.h"
-#include "blue/Context.hpp"
 
 Resources* Resources::_instance = nullptr;
 
@@ -186,4 +186,43 @@ void Resources::load_models()
 
 void Resources::load_textures()
 {
+	// No textures so far.
+}
+
+void Resources::load_environment()
+{
+	// Create framebuffer with only depth component for shadows:
+	light_environment.depth = blue::Context::gpu_system().submit(CreateFramebufferEntity{ true, 1024, 1024 }).get();
+
+	// Create map_environment
+	map_environment.environment = blue::Context::gpu_system().submit(CreateEnvironmentEntity{}).get();
+	light_environment.environment = blue::Context::gpu_system().submit(CreateEnvironmentEntity{}).get();
+
+	// Upload map environment camera matrices
+	blue::Context::gpu_system().submit(UpdateEnvironmentEntity_Projection{ map_environment.environment, map_environment.camera.get_projection() });
+	blue::Context::gpu_system().submit(UpdateEnvironmentEntity_View{ map_environment.environment, map_environment.camera.get_view() });
+
+	// Set pale blue clear color
+	blue::Context::gpu_system().submit(SetClearColorEntity{ {0.25f, 0.45f, 0.8f} });
+
+	// Move camera to initial position
+	map_environment.camera.set_pos({ 7.78816, 28.7423, 22.3805 });
+	map_environment.camera.add_rotation(- 68.5f, - 44.25f);
+
+	blue::Context::gpu_system().submit(UpdateEnvironmentEntity_View{ map_environment.environment, map_environment.camera.get_view() });
+	blue::Context::gpu_system().submit(UpdateEnvironmentEntity_CameraPos{ map_environment.environment, map_environment.camera.get_position() });
+
+	// Move light-source camera to initial position
+	light_environment.camera.set_far(500.0f);
+	light_environment.camera.set_near(-100.0f);
+	light_environment.camera.set_pos({ 64.0f, 20.4532f, 64.0f});
+	// FIXME: Add functionality to camera to look at specific point.
+	// light_environment.camera.look_at({64.0f, 0.0f, 64.0f});
+
+	// Upload light-space matrices to both environments:
+	blue::Context::gpu_system().submit(UpdateEnvironmentEntity_Projection{ light_environment.environment, light_environment.camera.get_projection() });
+	blue::Context::gpu_system().submit(UpdateEnvironmentEntity_View{ light_environment.environment, light_environment.camera.get_view() });
+
+	blue::Context::gpu_system().submit(UpdateEnvironmentEntity_LightSpaceMatrix{ map_environment.environment, light_environment.camera.get_projection() * light_environment.camera.get_view() });
+	blue::Context::gpu_system().submit(UpdateEnvironmentEntity_LightPos{ map_environment.environment, light_environment.camera.get_position() });
 }

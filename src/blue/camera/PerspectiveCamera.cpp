@@ -21,10 +21,10 @@ void PerspectiveCamera::set_pos(const glm::vec3& pos)
 	_position = pos;
 }
 
-void PerspectiveCamera::set_rotation(const glm::vec3& euler)
+void PerspectiveCamera::add_rotation(float yaw, float pitch)
 {
-	_yaw += euler.x;
-	_pitch += euler.y;
+	_yaw += yaw;
+	_pitch += pitch;
 
 	// Make sure that when pitch is out of bounds, screen doesn't get flipped
 	if (_pitch > 89.0f)

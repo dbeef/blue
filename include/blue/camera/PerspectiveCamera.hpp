@@ -26,7 +26,7 @@ public:
 
 	void set_pos(const glm::vec3&);
 
-	void set_rotation(const glm::vec3& euler);
+	void add_rotation(float yaw, float pitch);
 
 	void set_near(float);
 

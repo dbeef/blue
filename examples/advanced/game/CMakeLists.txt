@@ -7,8 +7,10 @@ project(GameSample)
 set(SOURCES
         src/Main.cpp
         src/Game.cpp
+        src/Callbacks.cpp
         include/Game.hpp
-        )
+        include/Callbacks.hpp
+        include/Callbacks.hpp src/Callbacks.cpp)
 
 if(${BLUE_PLATFORM} STREQUAL "Android")
     add_library(GameSample SHARED ${SOURCES})
