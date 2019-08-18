@@ -22,6 +22,7 @@ namespace
 	const struct
 	{
 		GLint modelLoc = 0;
+		GLint samplerLoc = 9;
 	} uniform_locations;
 }
 
@@ -64,9 +65,7 @@ void Renderer::draw_render_entities()
 		{
 			cache.current_texture = entity.texture;
 			DebugGlCall(glBindTexture(GL_TEXTURE_2D, cache.current_texture));
-			// Right now, blue utilizes only one texture slot (GL_TEXTURE0).
-			auto loc = glGetUniformLocation(cache.current_shader, "sampler");
-			DebugGlCall(glUniform1i(loc, 0));
+			DebugGlCall(glUniform1i(uniform_locations.samplerLoc, 0));
 		}
 
 		if (cache.current_framebuffer != entity.framebuffer.framebuffer)
@@ -83,12 +82,8 @@ void Renderer::draw_render_entities()
 				// Started drawing to framebuffer.
 				DebugGlCall(glViewport(0, 0, entity.framebuffer.texture_width, entity.framebuffer.texture_height));
 				DebugGlCall(glBindFramebuffer(GL_FRAMEBUFFER, cache.current_framebuffer));
-
-				DebugGlCall(glActiveTexture(GL_TEXTURE0));
 				DebugGlCall(glBindTexture(GL_TEXTURE_2D, entity.framebuffer.texture));
-
 				DebugGlCall(glClear(GL_DEPTH_BUFFER_BIT));
-				DebugGlCall(glCullFace(GL_FRONT));
 			}
 		}
 

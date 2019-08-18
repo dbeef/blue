@@ -35,6 +35,12 @@ void Resources::load_shaders()
 		shaders.simple_depth_shader = shader_future.get();
 	}
 	{
+		auto compile_shader_entity = ShaderUtils::make_entity("resources/SimpleDepth_Instanced.vertex.glsl", "resources/SimpleDepth.fragment.glsl");
+		auto shader_future = blue::Context::gpu_system().submit(compile_shader_entity);
+		shader_future.wait();
+		shaders.simple_depth_instanced_shader = shader_future.get();
+	}
+	{
 		auto compile_shader_entity = ShaderUtils::make_entity("resources/Decoration.vertex.glsl", "resources/Decoration.fragment.glsl");
 		auto shader_future = blue::Context::gpu_system().submit(compile_shader_entity);
 		shader_future.wait();

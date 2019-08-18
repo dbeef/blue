@@ -288,7 +288,7 @@ void Map::upload_decoration()
 
 	RenderEntity shadow;
 	shadow.position = { 0, 0, 0 };
-	shadow.shader = Resources::instance().shaders.decoration_map_shader;
+	shadow.shader = Resources::instance().shaders.simple_depth_shader;
 	shadow.vertex_array = decoration_vertices_vertex_array;
 	shadow.scale = 1.0f;
 	shadow.rotation = glm::identity<glm::quat>();

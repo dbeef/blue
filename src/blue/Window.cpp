@@ -102,6 +102,9 @@ namespace blue
 		DebugGlCall(glEnable(GL_STENCIL_TEST));
 		DebugGlCall(glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE));
 
+		// Right now, blue utilizes only one texture slot (GL_TEXTURE0).
+		DebugGlCall(glActiveTexture(GL_TEXTURE0));
+
 		SDL_SetRelativeMouseMode(SDL_TRUE);
 		SDL_SetWindowGrab(_window_handle, SDL_TRUE);
 		SDL_WarpMouseInWindow(_window_handle, get_width() / 2, get_height() / 2);
