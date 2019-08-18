@@ -29,7 +29,7 @@ private:
 	struct ModelEntry
 	{
 		RenderEntityId id;
-		Model model;
+		Resources::Model model;
 		glm::vec3 position;
 		glm::vec3 euler;
 	};
@@ -49,7 +49,7 @@ private:
 	float _model_scale = 1.0f;
 	float _paint[3];
 	Mode _mode = Mode::ELEVATION;
-	Model _model = Model::PINE_TREE;
+	Resources::Model _model = Resources::Model::PINE_TREE;
 	MapIntersectionJob job;
 	ImGuiEntityId _window = 0;
 
