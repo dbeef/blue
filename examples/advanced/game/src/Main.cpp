@@ -41,7 +41,7 @@ int main(int argc, char* argv[])
 		static float x = 0.0f;
 		x += 0.05f;
 		float sin = std::sin(x) * 0.2f;
-		auto swing_update = UpdateUniformVariableEntity{ ShaderAttribute::Type::FLOAT, &sin, Resources::instance().shaders.swinging_shader, 1, "" };
+		auto swing_update = UpdateUniformVariableEntity{ ShaderAttribute::Type::FLOAT, &sin, Resources::instance().shaders.swinging, 1, "" };
 		blue::Context::gpu_system().submit(swing_update);
 
 		timestep.mark_end();

@@ -32,37 +32,37 @@ void Resources::load_shaders()
 		auto compile_shader_entity = ShaderUtils::make_entity("resources/SimpleDepth.vertex.glsl", "resources/SimpleDepth.fragment.glsl");
 		auto shader_future = blue::Context::gpu_system().submit(compile_shader_entity);
 		shader_future.wait();
-		shaders.simple_depth_shader = shader_future.get();
+		shaders.simple_depth = shader_future.get();
 	}
 	{
 		auto compile_shader_entity = ShaderUtils::make_entity("resources/SimpleDepth_Instanced.vertex.glsl", "resources/SimpleDepth.fragment.glsl");
 		auto shader_future = blue::Context::gpu_system().submit(compile_shader_entity);
 		shader_future.wait();
-		shaders.simple_depth_instanced_shader = shader_future.get();
+		shaders.simple_depth_instanced = shader_future.get();
 	}
 	{
 		auto compile_shader_entity = ShaderUtils::make_entity("resources/Decoration.vertex.glsl", "resources/Decoration.fragment.glsl");
 		auto shader_future = blue::Context::gpu_system().submit(compile_shader_entity);
 		shader_future.wait();
-		shaders.decoration_map_shader = shader_future.get();
+		shaders.decoration_map = shader_future.get();
 	}
 	{
 		auto compile_shader_entity = ShaderUtils::make_entity("resources/Model.vertex.glsl", "resources/Model.fragment.glsl");
 		auto shader_future = blue::Context::gpu_system().submit(compile_shader_entity);
 		shader_future.wait();
-		shaders.model_shader = shader_future.get();
+		shaders.model = shader_future.get();
 	}
 	{
 		auto compile_shader_entity = ShaderUtils::make_entity("resources/Model_Instanced.vertex.glsl", "resources/Model_Instanced.fragment.glsl");
 		auto shader_future = blue::Context::gpu_system().submit(compile_shader_entity);
 		shader_future.wait();
-		shaders.model_instanced_shader = shader_future.get();
+		shaders.model_instanced = shader_future.get();
 	}
 	{
 		auto compile_shader_entity = ShaderUtils::make_entity("resources/Swinging_Instanced.vertex.glsl", "resources/Swinging_Instanced.fragment.glsl");
 		auto shader_future = blue::Context::gpu_system().submit(compile_shader_entity);
 		shader_future.wait();
-		shaders.swinging_shader = shader_future.get();
+		shaders.swinging = shader_future.get();
 	}
 }
 

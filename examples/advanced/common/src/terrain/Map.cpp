@@ -166,7 +166,7 @@ void Map::upload_clickable_vertices()
 
 	RenderEntity entity;
 	entity.position = { 0, 0, 0 };
-	entity.shader = Resources::instance().shaders.clickable_map_shader;
+	entity.shader = Resources::instance().shaders.clickable_map;
 	entity.vertex_array = clickable_vertices_vertex_array;
 	entity.scale = 1.0f;
 	entity.rotation = glm::identity<glm::quat>();
@@ -236,7 +236,7 @@ void Map::upload_decoration_vertices()
 
 	RenderEntity entity;
 	entity.position = { 0, 0, 0 };
-	entity.shader = Resources::instance().shaders.decoration_map_shader;
+	entity.shader = Resources::instance().shaders.decoration_map;
 	entity.vertex_array = decoration_vertices_vertex_array;
 	entity.scale = 1.0f;
 	entity.rotation = glm::identity<glm::quat>();
@@ -277,7 +277,7 @@ void Map::upload_decoration()
 
 	RenderEntity entity;
 	entity.position = { 0, 0, 0 };
-	entity.shader = Resources::instance().shaders.decoration_map_shader;
+	entity.shader = Resources::instance().shaders.decoration_map;
 	entity.vertex_array = decoration_vertices_vertex_array;
 	entity.scale = 1.0f;
 	entity.rotation = glm::identity<glm::quat>();
@@ -288,7 +288,7 @@ void Map::upload_decoration()
 
 	RenderEntity shadow;
 	shadow.position = { 0, 0, 0 };
-	shadow.shader = Resources::instance().shaders.simple_depth_shader;
+	shadow.shader = Resources::instance().shaders.simple_depth;
 	shadow.vertex_array = decoration_vertices_vertex_array;
 	shadow.scale = 1.0f;
 	shadow.rotation = glm::identity<glm::quat>();

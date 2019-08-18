@@ -49,14 +49,13 @@ public:
 	} light_environment;
 
 	struct {
-		// TODO: Remove '_shader' postfix.
-		ShaderId clickable_map_shader;
-		ShaderId decoration_map_shader;
-		ShaderId model_shader;
-		ShaderId model_instanced_shader;
-		ShaderId simple_depth_shader;
-		ShaderId simple_depth_instanced_shader;
-		ShaderId swinging_shader;
+		ShaderId clickable_map;
+		ShaderId decoration_map;
+		ShaderId model;
+		ShaderId model_instanced;
+		ShaderId simple_depth;
+		ShaderId simple_depth_instanced;
+		ShaderId swinging;
 	} shaders;
 	
 	struct {
