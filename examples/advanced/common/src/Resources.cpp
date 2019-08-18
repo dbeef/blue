@@ -47,6 +47,12 @@ void Resources::load_shaders()
 		BLUE_ASSERT(shader > 0);
 	}
 	{
+		auto entity = ShaderUtils::make_entity("resources/Decoration.vertex.glsl", "resources/Decoration.fragment.glsl");
+		auto shader = blue::Context::gpu_system().submit(entity).get();
+		shaders.clickable_map = shader;
+		BLUE_ASSERT(shader > 0);
+	}
+	{
 		auto entity = ShaderUtils::make_entity("resources/Model.vertex.glsl", "resources/Model.fragment.glsl");
 		auto shader = blue::Context::gpu_system().submit(entity).get();
 		shaders.model = shader;

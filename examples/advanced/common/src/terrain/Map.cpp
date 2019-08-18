@@ -127,6 +127,7 @@ void Map::upload_clickable_vertices()
 
 			glm::vec3 clickable_color_1 = { 0.2f, 0.7f, 0.2f };
 			glm::vec3 clickable_color_2 = { 0.2f, 0.7f, 0.2f };
+			
 			int random_variable = 10 + std::rand() / ((RAND_MAX + 1u) / 16);  // Note: 1+rand()%6 is biased
 			float color_delta = 0.75f / random_variable;
 			if (random_variable % 2)
@@ -152,14 +153,15 @@ void Map::upload_clickable_vertices()
 		}
 	}
 
-	blue::Context::logger().info("Clickable vertices: {} Clickable indices: {}",
-	        clickable_vertices.size(), clickable_indices.size());
+	blue::Context::logger().info("Clickable vertices: {} Clickable indices: {}", clickable_vertices.size(), clickable_indices.size());
+	if (clickable_vertices.empty())
+	{
+		return;
+	}
 
 	auto attributes = Tile::get_attributes();
 
 	auto vertex_array_future = blue::Context::gpu_system().submit(CreateMeshEntity{ clickable_vertices, clickable_indices, attributes, tile_index * 6 });
-	vertex_array_future.wait();
-
 	VertexArray clickable_vertices_vertex_array = vertex_array_future.get();
 
 	// Submit render command consisting of compiled shader, uploaded mesh and following geometry properties:
