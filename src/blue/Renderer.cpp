@@ -244,6 +244,11 @@ void Renderer::invalidate_cache_uniform_buffer()
 	cache.current_environment = 0;
 }
 
+ShaderId Renderer::get_cached_shader() const
+{
+	return cache.current_shader;
+}
+
 void Renderer::set_cached_shader(ShaderId program)
 {
     cache.current_shader = 0;

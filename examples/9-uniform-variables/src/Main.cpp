@@ -34,9 +34,7 @@ int main(int argc, char* argv[])
 	// Issue the GPU thread with task of compiling shader program:
 
 	auto compile_shader_entity = ShaderUtils::make_entity("resources/Triangle.vertex.glsl", "resources/Triangle.fragment.glsl");
-	auto shader_future = blue::Context::gpu_system().submit(compile_shader_entity);
-	shader_future.wait();
-	auto shader = shader_future.get();
+	auto shader = blue::Context::gpu_system().submit(compile_shader_entity).get();
 
 	// Issue the GPU thread with task of uploading mesh:
 
@@ -53,15 +51,11 @@ int main(int argc, char* argv[])
 	unsigned int vertex_counter = 0;
 	auto vertices = models::parse_scene(scene_ptr, attributes, vertex_counter);
 
-	auto vertex_array_future = blue::Context::gpu_system().submit(CreateMeshEntity{ vertices, {}, attributes, vertex_counter});
-	vertex_array_future.wait();
-	auto vertex_array = vertex_array_future.get();
+	auto vertex_array = blue::Context::gpu_system().submit(CreateMeshEntity{ vertices, {}, attributes, vertex_counter}).get();
 
 	// Create environment
 
-	auto environment_future = blue::Context::gpu_system().submit(CreateEnvironmentEntity{});
-	environment_future.wait();
-	auto environment = environment_future.get();
+	auto environment = blue::Context::gpu_system().submit(CreateEnvironmentEntity{}).get();
 
 	PerspectiveCamera camera;
 

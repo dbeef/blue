@@ -29,40 +29,40 @@ void Resources::dispose()
 void Resources::load_shaders()
 {
 	{
-		auto compile_shader_entity = ShaderUtils::make_entity("resources/SimpleDepth.vertex.glsl", "resources/SimpleDepth.fragment.glsl");
-		auto shader_future = blue::Context::gpu_system().submit(compile_shader_entity);
-		shader_future.wait();
-		shaders.simple_depth = shader_future.get();
+		auto entity = ShaderUtils::make_entity("resources/SimpleDepth.vertex.glsl", "resources/SimpleDepth.fragment.glsl");
+		auto shader = blue::Context::gpu_system().submit(entity).get();
+		shaders.simple_depth = shader;
+		BLUE_ASSERT(shader > 0);
 	}
 	{
-		auto compile_shader_entity = ShaderUtils::make_entity("resources/SimpleDepth_Instanced.vertex.glsl", "resources/SimpleDepth.fragment.glsl");
-		auto shader_future = blue::Context::gpu_system().submit(compile_shader_entity);
-		shader_future.wait();
-		shaders.simple_depth_instanced = shader_future.get();
+		auto entity = ShaderUtils::make_entity("resources/SimpleDepth_Instanced.vertex.glsl", "resources/SimpleDepth.fragment.glsl");
+		auto shader = blue::Context::gpu_system().submit(entity).get();
+		shaders.simple_depth_instanced = shader;
+		BLUE_ASSERT(shader > 0);
 	}
 	{
-		auto compile_shader_entity = ShaderUtils::make_entity("resources/Decoration.vertex.glsl", "resources/Decoration.fragment.glsl");
-		auto shader_future = blue::Context::gpu_system().submit(compile_shader_entity);
-		shader_future.wait();
-		shaders.decoration_map = shader_future.get();
+		auto entity = ShaderUtils::make_entity("resources/Decoration.vertex.glsl", "resources/Decoration.fragment.glsl");
+		auto shader = blue::Context::gpu_system().submit(entity).get();
+		shaders.decoration_map = shader;
+		BLUE_ASSERT(shader > 0);
 	}
 	{
-		auto compile_shader_entity = ShaderUtils::make_entity("resources/Model.vertex.glsl", "resources/Model.fragment.glsl");
-		auto shader_future = blue::Context::gpu_system().submit(compile_shader_entity);
-		shader_future.wait();
-		shaders.model = shader_future.get();
+		auto entity = ShaderUtils::make_entity("resources/Model.vertex.glsl", "resources/Model.fragment.glsl");
+		auto shader = blue::Context::gpu_system().submit(entity).get();
+		shaders.model = shader;
+		BLUE_ASSERT(shader > 0);
 	}
 	{
-		auto compile_shader_entity = ShaderUtils::make_entity("resources/Model_Instanced.vertex.glsl", "resources/Model_Instanced.fragment.glsl");
-		auto shader_future = blue::Context::gpu_system().submit(compile_shader_entity);
-		shader_future.wait();
-		shaders.model_instanced = shader_future.get();
+		auto entity = ShaderUtils::make_entity("resources/Model_Instanced.vertex.glsl", "resources/Model_Instanced.fragment.glsl");
+		auto shader = blue::Context::gpu_system().submit(entity).get();
+		shaders.model_instanced = shader;
+		BLUE_ASSERT(shader > 0);
 	}
 	{
-		auto compile_shader_entity = ShaderUtils::make_entity("resources/Swinging_Instanced.vertex.glsl", "resources/Swinging_Instanced.fragment.glsl");
-		auto shader_future = blue::Context::gpu_system().submit(compile_shader_entity);
-		shader_future.wait();
-		shaders.swinging = shader_future.get();
+		auto entity = ShaderUtils::make_entity("resources/Swinging_Instanced.vertex.glsl", "resources/Swinging_Instanced.fragment.glsl");
+		auto shader = blue::Context::gpu_system().submit(entity).get();
+		shaders.swinging = shader;
+		BLUE_ASSERT(shader > 0);
 	}
 }
 
@@ -88,99 +88,88 @@ void Resources::load_models()
 		unsigned int vertex_counter = 0;
 		auto vertices = models::parse_scene(scene_ptr, swinging_attributes, vertex_counter);
 
-		auto vertex_array_future = blue::Context::gpu_system().submit(CreateMeshEntity{ vertices, {}, swinging_attributes, vertex_counter });
-		vertex_array_future.wait();
-		models.pine_tree = vertex_array_future.get();
+		auto vertex_array = blue::Context::gpu_system().submit(CreateMeshEntity{ vertices, {}, swinging_attributes, vertex_counter }).get();
+		models.pine_tree = vertex_array;
 	}
 	{
 		auto scene_ptr = models::load_scene("resources/Hurdle.fbx");
 		unsigned int vertex_counter = 0;
 		auto vertices = models::parse_scene(scene_ptr, attributes, vertex_counter);
 
-		auto vertex_array_future = blue::Context::gpu_system().submit(CreateMeshEntity{ vertices, {}, attributes, vertex_counter });
-		vertex_array_future.wait();
-		models.hurdle = vertex_array_future.get();
+		auto vertex_array = blue::Context::gpu_system().submit(CreateMeshEntity{ vertices, {}, attributes, vertex_counter }).get();
+		models.hurdle = vertex_array;
 	}
 	{
 		auto scene_ptr = models::load_scene("resources/Wheat.fbx");
 		unsigned int vertex_counter = 0;
 		auto vertices = models::parse_scene(scene_ptr, attributes, vertex_counter);
 
-		auto vertex_array_future = blue::Context::gpu_system().submit(CreateMeshEntity{ vertices, {}, attributes, vertex_counter });
-		vertex_array_future.wait();
-		models.wheat = vertex_array_future.get();
+		auto vertex_array = blue::Context::gpu_system().submit(CreateMeshEntity{ vertices, {}, attributes, vertex_counter }).get();
+		models.wheat = vertex_array;
 	}
 	{
 		auto scene_ptr = models::load_scene("resources/Boulder.fbx");
 		unsigned int vertex_counter = 0;
 		auto vertices = models::parse_scene(scene_ptr, attributes, vertex_counter);
 
-		auto vertex_array_future = blue::Context::gpu_system().submit(CreateMeshEntity{ vertices, {}, attributes, vertex_counter });
-		vertex_array_future.wait();
-		models.boulder = vertex_array_future.get();
+		auto vertex_array = blue::Context::gpu_system().submit(CreateMeshEntity{ vertices, {}, attributes, vertex_counter }).get();
+		models.boulder = vertex_array;
 	}
 	{
 		auto scene_ptr = models::load_scene("resources/SmallBoulder.fbx");
 		unsigned int vertex_counter = 0;
 		auto vertices = models::parse_scene(scene_ptr, attributes, vertex_counter);
 
-		auto vertex_array_future = blue::Context::gpu_system().submit(CreateMeshEntity{ vertices, {}, attributes, vertex_counter });
-		vertex_array_future.wait();
-		models.small_boulder = vertex_array_future.get();
+		auto vertex_array = blue::Context::gpu_system().submit(CreateMeshEntity{ vertices, {}, attributes, vertex_counter }).get();
+		models.small_boulder = vertex_array;
 	}
 	{
 		auto scene_ptr = models::load_scene("resources/Grass.fbx");
 		unsigned int vertex_counter = 0;
 		auto vertices = models::parse_scene(scene_ptr, attributes, vertex_counter);
 
-		auto vertex_array_future = blue::Context::gpu_system().submit(CreateMeshEntity{ vertices, {}, attributes, vertex_counter });
-		vertex_array_future.wait();
-		models.grass = vertex_array_future.get();
+		auto vertex_array = blue::Context::gpu_system().submit(CreateMeshEntity{ vertices, {}, attributes, vertex_counter }).get();
+		models.grass = vertex_array;
 	}
 	{
 		auto scene_ptr = models::load_scene("resources/Pylon.fbx");
 		unsigned int vertex_counter = 0;
 		auto vertices = models::parse_scene(scene_ptr, attributes, vertex_counter);
 
-		auto vertex_array_future = blue::Context::gpu_system().submit(CreateMeshEntity{ vertices, {}, attributes, vertex_counter });
-		vertex_array_future.wait();
-		models.pylon = vertex_array_future.get();
+		auto vertex_array = blue::Context::gpu_system().submit(CreateMeshEntity{ vertices, {}, attributes, vertex_counter }).get();
+		models.pylon = vertex_array;
 	}
 	{
 		auto scene_ptr = models::load_scene("resources/Bush.fbx");
 		unsigned int vertex_counter = 0;
 		auto vertices = models::parse_scene(scene_ptr, attributes, vertex_counter);
 
-		auto vertex_array_future = blue::Context::gpu_system().submit(CreateMeshEntity{ vertices, {}, attributes, vertex_counter });
-		vertex_array_future.wait();
-		models.bush = vertex_array_future.get();
+		auto vertex_array = blue::Context::gpu_system().submit(CreateMeshEntity{ vertices, {}, attributes, vertex_counter }).get();
+		models.bush = vertex_array;
 	}
 	{
 		auto scene_ptr = models::load_scene("resources/CutTree.fbx");
 		unsigned int vertex_counter = 0;
 		auto vertices = models::parse_scene(scene_ptr, attributes, vertex_counter);
 
-		auto vertex_array_future = blue::Context::gpu_system().submit(CreateMeshEntity{ vertices, {}, attributes, vertex_counter });
-		vertex_array_future.wait();
-		models.cut_tree = vertex_array_future.get();
+		auto vertex_array = blue::Context::gpu_system().submit(CreateMeshEntity{ vertices, {}, attributes, vertex_counter }).get();
+		models.cut_tree = vertex_array;
 	}
 	{
 		auto scene_ptr = models::load_scene("resources/Track.fbx");
 		unsigned int vertex_counter = 0;
 		auto vertices = models::parse_scene(scene_ptr, attributes, vertex_counter);
 
-		auto vertex_array_future = blue::Context::gpu_system().submit(CreateMeshEntity{ vertices, {}, attributes, vertex_counter });
-		vertex_array_future.wait();
-		models.track = vertex_array_future.get();
+		auto vertex_array = blue::Context::gpu_system().submit(CreateMeshEntity{ vertices, {}, attributes, vertex_counter }).get();
+		models.track = vertex_array;
 	}
 	{
 		auto scene_ptr = models::load_scene("resources/Bridge.fbx");
 		unsigned int vertex_counter = 0;
 		auto vertices = models::parse_scene(scene_ptr, attributes, vertex_counter);
 
-		auto vertex_array_future = blue::Context::gpu_system().submit(CreateMeshEntity{ vertices, {}, attributes, vertex_counter });
-		vertex_array_future.wait();
-		models.bridge = vertex_array_future.get();
+		auto vertex_array = blue::Context::gpu_system().submit(CreateMeshEntity{ vertices, {}, attributes, vertex_counter }).get();
+		models.bridge = vertex_array;
 	}
 }
 

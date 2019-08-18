@@ -28,9 +28,7 @@ int main(int argc, char* argv[])
 	// Issue the GPU thread with task of compiling shader program:
 
 	auto compile_shader_entity = ShaderUtils::make_entity("resources/Triangle.vertex.glsl", "resources/Triangle.fragment.glsl");
-	auto shader_future = blue::Context::gpu_system().submit(compile_shader_entity);
-	shader_future.wait();
-	auto shader = shader_future.get();
+	auto shader = blue::Context::gpu_system().submit(compile_shader_entity).get();
 
 	// Issue the GPU thread with task of uploading mesh:
 
@@ -53,22 +51,18 @@ int main(int argc, char* argv[])
 		{ ShaderAttribute::Type::VEC2, ShaderAttribute::Purpose::TEXTURE_COORDINATE, ShaderAttribute::Buffer::VERTEX}
 	};
 
-	auto vertex_array_future = blue::Context::gpu_system().submit(CreateMeshEntity{ vertices, indices, attributes, 6 });
-	vertex_array_future.wait();
-	auto vertex_array = vertex_array_future.get();
+	auto vertex_array = blue::Context::gpu_system().submit(CreateMeshEntity{ vertices, indices, attributes, 6 }).get();
 
 	// Create environment
 
-	auto environment_future = blue::Context::gpu_system().submit(CreateEnvironmentEntity{});
-	environment_future.wait();
-	auto environment_id = environment_future.get();
+	auto environment = blue::Context::gpu_system().submit(CreateEnvironmentEntity{}).get();
 
 	// Upload camera's matrices
 
 	OrthographicCamera camera(OrthographicCamera::Mode::SCREEN_SPACE);
 
-	blue::Context::gpu_system().submit(UpdateEnvironmentEntity_Projection{ environment_id, camera.get_projection() });
-	blue::Context::gpu_system().submit(UpdateEnvironmentEntity_View{ environment_id, camera.get_view() });
+	blue::Context::gpu_system().submit(UpdateEnvironmentEntity_Projection{ environment, camera.get_projection() });
+	blue::Context::gpu_system().submit(UpdateEnvironmentEntity_View{ environment, camera.get_view() });
 
 	// Create texture
 
@@ -85,7 +79,7 @@ int main(int argc, char* argv[])
 	entity.vertex_array = vertex_array;
 	entity.scale = 100.0f;
 	entity.rotation = glm::identity<glm::quat>();
-	entity.environment = environment_id;
+	entity.environment = environment;
 	entity.texture = texture;
 
 	RenderEntityId id = blue::Context::renderer().add(entity);

@@ -34,9 +34,7 @@ int main(int argc, char* argv[])
 	// Issue the GPU thread with task of compiling shader program:
 
 	auto compile_shader_entity = ShaderUtils::make_entity("resources/Triangle.vertex.glsl", "resources/Triangle.fragment.glsl");
-	auto shader_future = blue::Context::gpu_system().submit(compile_shader_entity);
-	shader_future.wait();
-	auto shader = shader_future.get();
+	auto shader = blue::Context::gpu_system().submit(compile_shader_entity).get();
 
 	// Issue the GPU thread with task of uploading mesh:
 

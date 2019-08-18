@@ -1,4 +1,4 @@
-uniform sampler2D sampler;
+layout(location = 9) uniform sampler2D sampler;
 
 in vec2 TexCoord;
 

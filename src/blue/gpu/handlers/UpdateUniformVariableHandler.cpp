@@ -19,12 +19,17 @@ void handle(const UpdateUniformVariableEntity& entity)
 		}
 	}
 
-	DebugGlCall(glUseProgram(entity.program));
-	blue::Context::renderer().set_cached_shader(entity.program);
+	auto& renderer = blue::Context::renderer();
+
+	if (renderer.get_cached_shader() != entity.program)
+	{
+		DebugGlCall(glUseProgram(entity.program));
+		renderer.set_cached_shader(entity.program);
+	}
 
 	switch (entity.type)
 	{
-	case(ShaderAttribute::Type::FLOAT):	
+	case(ShaderAttribute::Type::FLOAT):
 	{
 		DebugGlCall(glUniform1f(location, *reinterpret_cast<const GLfloat*>(entity.value)));
 		break;
