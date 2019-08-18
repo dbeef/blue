@@ -1,27 +1,27 @@
 #pragma once
 
 #include <blue/camera/OrthographicCamera.hpp>
-#include "blue/gpu/GpuEntities.hpp"
-#include "blue/camera/PerspectiveCamera.hpp"
-
-enum class Model : int
-{
-    PINE_TREE = 0,
-    HURDLE = 1,
-    WHEAT = 2,
-    BOULDER = 3,
-    SMALL_BOULDER = 4,
-    GRASS = 5,
-    PYLON = 6,
-    BUSH = 7,
-    CUT_TREE = 8,
-    TRACK = 9,
-    BRIDGE = 10,
-};
+#include <blue/camera/PerspectiveCamera.hpp>
+#include <blue/gpu/GpuEntities.hpp>
 
 class Resources
 {
 public:
+
+	enum class Model : int
+	{
+		PINE_TREE = 0,
+		HURDLE = 1,
+		WHEAT = 2,
+		BOULDER = 3,
+		SMALL_BOULDER = 4,
+		GRASS = 5,
+		PYLON = 6,
+		BUSH = 7,
+		CUT_TREE = 8,
+		TRACK = 9,
+		BRIDGE = 10,
+	};
 
 	static Resources& instance();
 
@@ -56,7 +56,7 @@ public:
 		ShaderId simple_depth;
 		ShaderId simple_depth_instanced;
 		ShaderId swinging;
-	} shaders;
+	} shaders{};
 	
 	struct {
 		VertexArray pine_tree;

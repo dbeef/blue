@@ -49,7 +49,7 @@ ModelingTerrain::ModelingTerrain(const bool map_imported) : _map_imported(map_im
 			ImGui::Begin("Models list");
 			const char* listbox_items[] = { "Pine tree", "Hurdle", "Wheat", "Boulder", "Small Boulder", "Grass", "Pylon", "Bush", "Cut tree", "Track", "Bridge" };
 			ImGui::ListBox("", reinterpret_cast<int*>(&_model), listbox_items, IM_ARRAYSIZE(listbox_items), 4);
-			ImGui::SliderFloat("Model scale", &_model_scale, 0.01f, 5.0f);
+			ImGui::SliderFloat("Resources::Modelscale", &_model_scale, 0.01f, 5.0f);
 			ImGui::End();
 
 			if (last_entity.entity.id)

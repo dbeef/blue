@@ -11,51 +11,51 @@
 
 namespace
 {
-	float get_default_scale(Model model)
+	float get_default_scale(Resources::Model model)
 	{
 		switch (model)
 		{
-		case (Model::PINE_TREE):
+		case (Resources::Model::PINE_TREE):
 		{
 			return 0.294f;
 		}
-		case (Model::HURDLE):
+		case (Resources::Model::HURDLE):
 		{
 			return 0.139f;
 		}
-		case (Model::WHEAT):
+		case (Resources::Model::WHEAT):
 		{
 			return 1.0;
 		}
-		case (Model::BOULDER):
+		case (Resources::Model::BOULDER):
 		{
 			return 0.372f;
 		}
-		case (Model::SMALL_BOULDER):
+		case (Resources::Model::SMALL_BOULDER):
 		{
 			return 0.200f;
 		}
-		case (Model::GRASS):
+		case (Resources::Model::GRASS):
 		{
 			return 0.185f;
 		}
-		case (Model::PYLON):
+		case (Resources::Model::PYLON):
 		{
 			return 0.25f;
 		}
-		case (Model::BUSH):
+		case (Resources::Model::BUSH):
 		{
 			return 0.55f;
 		}
-		case (Model::CUT_TREE):
+		case (Resources::Model::CUT_TREE):
 		{
 			return 0.180f;
 		}
-		case (Model::TRACK):
+		case (Resources::Model::TRACK):
 		{
 			return 0.180f;
 		}
-		case (Model::BRIDGE):
+		case (Resources::Model::BRIDGE):
 		{
 			return 0.35f;
 		}
@@ -105,7 +105,7 @@ void Flora::import_from_file(const std::string &filename)
 
     for (std::size_t index = 0; index < number_of_entries; index++)
     {
-        const Model model = *reinterpret_cast<Model *>(&data[offset]);
+        const Resources::Model model = *reinterpret_cast<Resources::Model*>(&data[offset]);
         offset += sizeof(model);
 
         const glm::vec3 position = *reinterpret_cast<glm::vec3 *>(&data[offset]);
@@ -126,7 +126,7 @@ void Flora::import_from_file(const std::string &filename)
         return first.model > second.model;
     });
 
-	Model current_model{};
+	Resources::Model current_model{};
     Instances current_instances{};
 	std::uint32_t instances_count = 0;
 
@@ -152,11 +152,11 @@ void Flora::import_from_file(const std::string &filename)
 		const glm::mat4 ScaleMatrix = glm::scale(glm::identity<glm::mat4>(), glm::vec3(get_default_scale(entry.model)));
 		const glm::mat4 RotationMatrix = glm::toMat4(entry.entity.rotation);
 		const glm::mat4 TranslationMatrix = glm::translate(glm::identity<glm::mat4>(), entry.entity.position);
-		const glm::mat4 Model = TranslationMatrix * RotationMatrix * ScaleMatrix;
+		const glm::mat4 ModelMatrix = TranslationMatrix * RotationMatrix * ScaleMatrix;
 
         for (std::size_t index = 0; index < 16; index++)
         {
-            current_instances.push_back(glm::value_ptr(Model)[index]);
+            current_instances.push_back(glm::value_ptr(ModelMatrix)[index]);
         }
     }
 }
@@ -193,7 +193,7 @@ void Flora::remove_entry(const RenderEntity &render_entity)
     );
 }
 
-RenderEntity Flora::add_entry(Model model, const glm::vec3 &position, const glm::vec3 &rotation)
+RenderEntity Flora::add_entry(Resources::Model model, const glm::vec3 &position, const glm::vec3 &rotation)
 {
     RenderEntity entity;
     const auto &environment = Resources::instance().map_environment.environment;
@@ -207,57 +207,57 @@ RenderEntity Flora::add_entry(Model model, const glm::vec3 &position, const glm:
 
     switch (model)
     {
-        case (Model::PINE_TREE):
+        case (Resources::Model::PINE_TREE):
         {
             entity.vertex_array = Resources::instance().models.pine_tree;
             break;
         }
-        case (Model::HURDLE):
+        case (Resources::Model::HURDLE):
         {
             entity.vertex_array = Resources::instance().models.hurdle;
             break;
         }
-        case (Model::WHEAT):
+        case (Resources::Model::WHEAT):
         {
             entity.vertex_array = Resources::instance().models.wheat;
             break;
         }
-        case (Model::BOULDER):
+        case (Resources::Model::BOULDER):
         {
             entity.vertex_array = Resources::instance().models.boulder;
             break;
         }
-        case (Model::SMALL_BOULDER):
+        case (Resources::Model::SMALL_BOULDER):
         {
             entity.vertex_array = Resources::instance().models.small_boulder;
             break;
         }
-        case (Model::GRASS):
+        case (Resources::Model::GRASS):
         {
             entity.vertex_array = Resources::instance().models.grass;
             break;
         }
-        case (Model::PYLON):
+        case (Resources::Model::PYLON):
         {
             entity.vertex_array = Resources::instance().models.pylon;
             break;
         }
-        case (Model::BUSH):
+        case (Resources::Model::BUSH):
         {
             entity.vertex_array = Resources::instance().models.bush;
             break;
         }
-        case (Model::CUT_TREE):
+        case (Resources::Model::CUT_TREE):
         {
             entity.vertex_array = Resources::instance().models.cut_tree;
             break;
         }
-        case (Model::TRACK):
+        case (Resources::Model::TRACK):
         {
             entity.vertex_array = Resources::instance().models.track;
             break;
         }
-        case (Model::BRIDGE):	
+        case (Resources::Model::BRIDGE):	
         {
             entity.vertex_array = Resources::instance().models.bridge;
             break;
@@ -274,7 +274,7 @@ RenderEntity Flora::add_entry(Model model, const glm::vec3 &position, const glm:
     return entity;
 }
 
-RenderEntity Flora::add_instanced_rendering_entry(Model model, const Instances& instances, std::uint32_t instances_count)
+RenderEntity Flora::add_instanced_rendering_entry(Resources::Model model, const Instances& instances, std::uint32_t instances_count)
 {
 	Attributes attributes =
 	{
@@ -313,68 +313,68 @@ RenderEntity Flora::add_instanced_rendering_entry(Model model, const Instances& 
 
     switch (model)
     {
-        case (Model::PINE_TREE):
+        case (Resources::Model::PINE_TREE):
         {
             entity.shader = Resources::instance().shaders.swinging;
             auto instanced_vertex_array = blue::Context::gpu_system().submit(CreateInstancedMeshEntity{ Resources::instance().models.pine_tree, swinging_attributes, instances, instances_count }).get();
             entity.vertex_array = instanced_vertex_array;
 			break;
         }
-        case (Model::HURDLE):
+        case (Resources::Model::HURDLE):
         {
             auto instanced_vertex_array = blue::Context::gpu_system().submit(CreateInstancedMeshEntity{ Resources::instance().models.hurdle, attributes, instances, instances_count }).get();
             entity.vertex_array = instanced_vertex_array;
             break;
         }
-        case (Model::WHEAT):
+        case (Resources::Model::WHEAT):
         {
             auto instanced_vertex_array = blue::Context::gpu_system().submit(CreateInstancedMeshEntity{ Resources::instance().models.wheat, attributes, instances, instances_count }).get();
             entity.vertex_array = instanced_vertex_array;
             break;
         }
-        case (Model::BOULDER):
+        case (Resources::Model::BOULDER):
         {
             auto instanced_vertex_array = blue::Context::gpu_system().submit(CreateInstancedMeshEntity{ Resources::instance().models.boulder, attributes, instances, instances_count }).get();
             entity.vertex_array = instanced_vertex_array;
             break;
         }
-        case (Model::SMALL_BOULDER):
+        case (Resources::Model::SMALL_BOULDER):
         {
             auto instanced_vertex_array = blue::Context::gpu_system().submit(CreateInstancedMeshEntity{ Resources::instance().models.small_boulder, attributes, instances, instances_count }).get();
             entity.vertex_array = instanced_vertex_array;
             break;
         }
-        case (Model::GRASS):
+        case (Resources::Model::GRASS):
         {
             auto instanced_vertex_array = blue::Context::gpu_system().submit(CreateInstancedMeshEntity{ Resources::instance().models.grass, attributes, instances, instances_count }).get();
             entity.vertex_array = instanced_vertex_array;
             break;
         }
-        case (Model::PYLON):
+        case (Resources::Model::PYLON):
         {
             auto instanced_vertex_array = blue::Context::gpu_system().submit(CreateInstancedMeshEntity{ Resources::instance().models.pylon, attributes, instances, instances_count }).get();
             entity.vertex_array = instanced_vertex_array;
             break;
         }
-        case (Model::BUSH):
+        case (Resources::Model::BUSH):
         {
             auto instanced_vertex_array = blue::Context::gpu_system().submit(CreateInstancedMeshEntity{ Resources::instance().models.bush, attributes, instances, instances_count }).get();
             entity.vertex_array = instanced_vertex_array;
             break;
         }
-        case (Model::CUT_TREE):
+        case (Resources::Model::CUT_TREE):
         {
             auto instanced_vertex_array = blue::Context::gpu_system().submit(CreateInstancedMeshEntity{ Resources::instance().models.cut_tree, attributes, instances, instances_count }).get();
             entity.vertex_array = instanced_vertex_array;
             break;
         }
-        case (Model::TRACK):
+        case (Resources::Model::TRACK):
         {
             auto instanced_vertex_array = blue::Context::gpu_system().submit(CreateInstancedMeshEntity{ Resources::instance().models.track, attributes, instances, instances_count }).get();
             entity.vertex_array = instanced_vertex_array;
             break;
         }
-        case (Model::BRIDGE):
+        case (Resources::Model::BRIDGE):
         {
             auto instanced_vertex_array = blue::Context::gpu_system().submit(CreateInstancedMeshEntity{ Resources::instance().models.bridge, attributes, instances, instances_count }).get();
             entity.vertex_array = instanced_vertex_array;
