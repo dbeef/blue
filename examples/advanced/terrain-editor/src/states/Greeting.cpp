@@ -41,6 +41,8 @@ std::shared_ptr<BaseState> Greeting::update()
 	{
 		Application::instance().get_map().import_from_file("resources/map.bin");
 		Application::instance().get_flora().import_from_file("resources/flora.bin");
+		Application::instance().get_water().import_from_file("resources/water.bin");
+		Application::instance().get_water().create_water(Application::instance().get_map());
 		return std::make_shared<ModelingTerrain>(true);
 	}
 	else

@@ -20,6 +20,7 @@ ModelingTerrain::ModelingTerrain(const bool map_imported) : _map_imported(map_im
 		{
 			Application::instance().get_map().export_to_file("resources/map.bin");
 			Application::instance().get_flora().export_to_file("resources/flora.bin");
+			Application::instance().get_water().export_to_file("resources/water.bin");
 		}
 
 		ImGui::RadioButton("Elevation", reinterpret_cast<int*>(&_mode), 0);
@@ -108,7 +109,8 @@ std::shared_ptr<BaseState> ModelingTerrain::update()
 
 	if (created_water)
 	{
-		Application::instance().get_water().create_water(Application::instance().get_map(), _water_level);
+		Application::instance().get_water().set_water_level_y(_water_level);
+		Application::instance().get_water().create_water(Application::instance().get_map());
 		created_water.store(false);
 	}
 
