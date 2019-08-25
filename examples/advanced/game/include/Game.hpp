@@ -1,10 +1,11 @@
 #pragma once
 
 #include "terrain/Map.hpp"
+#include "terrain/Flora.hpp"
+#include "terrain/Water.hpp"
 
 #include <atomic>
 #include <memory>
-#include <terrain/Flora.hpp>
 
 class Game
 {
@@ -26,6 +27,8 @@ public:
 
 	Flora& get_flora();
 
+	Water& get_water();
+
 	struct {
 		std::atomic_bool gesture{ false };
 		std::atomic<std::uint32_t> press_x{ 0 };
@@ -39,6 +42,7 @@ public:
 private:
 
 	std::shared_ptr<Map> _map = std::make_shared<Map>();
+	std::shared_ptr<Water> _water = std::make_shared<Water>();
 	std::shared_ptr<Flora> _flora = std::make_shared<Flora>();
 	std::atomic_bool _running{ true };
 	static Game* _instance;

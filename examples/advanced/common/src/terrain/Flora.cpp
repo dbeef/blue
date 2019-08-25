@@ -394,7 +394,7 @@ RenderEntity Flora::add_instanced_rendering_entry(Resources::Model model, const 
 
     RenderEntity shadow;
     shadow.position = entity.position;
-	shadow.shader = Resources::instance().shaders.simple_depth_instanced;
+	shadow.shader = entity.shader;
     shadow.vertex_array = entity.vertex_array;
     shadow.scale = entity.scale;
     shadow.rotation = entity.rotation;

@@ -30,6 +30,8 @@ int main(int argc, char* argv[])
 	// Game::instance().get_map().upload_clickable_vertices();
     Game::instance().get_map().upload_decoration();
     Game::instance().get_flora().import_from_file("resources/flora.bin");
+    Game::instance().get_water().import_from_file("resources/water.bin");
+	Game::instance().get_water().create_water(Game::instance().get_map());
 
 	Timestep timestep(30);
 

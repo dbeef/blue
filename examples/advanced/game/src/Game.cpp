@@ -46,8 +46,12 @@ Map& Game::get_map()
 	return *_map.get();
 }
 
-
 Flora &Game::get_flora()
 {
     return *_flora;
+}
+
+Water& Game::get_water()
+{
+	return *_water;
 }
