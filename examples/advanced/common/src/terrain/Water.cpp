@@ -15,7 +15,7 @@ void Water::export_to_file(const std::string& filename)
 void Water::create_water(const Map& map, float water_level_y)
 {
 	bool tile_has_water[Map::CHUNK_DIMENSION][Map::CHUNK_DIMENSION] = { false };
-	const glm::vec3 water_color = {0.1f, 0.3f, 0.8f};
+	const glm::vec3 water_color = { 0.20f, 0.35f, 1.0f };
 	_vertices.clear();
 	_indices.clear();
 
@@ -101,7 +101,7 @@ void Water::create_water(const Map& map, float water_level_y)
 
 	RenderEntity entity;
 	entity.position = { 0, 0, 0 };
-	entity.shader = Resources::instance().shaders.decoration_map;
+	entity.shader = Resources::instance().shaders.water;
 	entity.vertex_array = clickable_vertices_vertex_array;
 	entity.scale = 1.0f;
 	entity.rotation = glm::identity<glm::quat>();

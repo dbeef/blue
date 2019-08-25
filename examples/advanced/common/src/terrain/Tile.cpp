@@ -40,10 +40,10 @@ Vertices Tile::get_vertices_translated(float x_pos, float y_pos, float z_pos, co
 
 	Vertices vertices =
 	{
-		/* Vertex pos */  0.0f + x_pos, y_pos,  1.0f + z_pos, /* Normal */normal.x, normal.y, normal.z,/* Color */ color.x, color.y, color.z,
-		/* Vertex pos */  1.0f + x_pos, y_pos,  1.0f + z_pos, /* Normal */normal.x, normal.y, normal.z,/* Color */ color.x, color.y, color.z,
-		/* Vertex pos */  1.0f + x_pos, y_pos,  0.0f + z_pos, /* Normal */normal.x, normal.y, normal.z,/* Color */ color.x, color.y, color.z,
-		/* Vertex pos */  0.0f + x_pos, y_pos,  0.0f + z_pos, /* Normal */normal.x, normal.y, normal.z,/* Color */ color.x, color.y, color.z,
+		/* Vertex pos */  0.0f + x_pos, y_pos,  1.0f + z_pos, /* Normal */ normal.x, normal.y, normal.z,/* Color */ color.x, color.y, color.z,
+		/* Vertex pos */  1.0f + x_pos, y_pos,  1.0f + z_pos, /* Normal */ normal.x, normal.y, normal.z,/* Color */ color.x, color.y, color.z,
+		/* Vertex pos */  1.0f + x_pos, y_pos,  0.0f + z_pos, /* Normal */ normal.x, normal.y, normal.z,/* Color */ color.x, color.y, color.z,
+		/* Vertex pos */  0.0f + x_pos, y_pos,  0.0f + z_pos, /* Normal */ normal.x, normal.y, normal.z,/* Color */ color.x, color.y, color.z,
 	};
 	return vertices;
 }

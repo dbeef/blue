@@ -56,6 +56,7 @@ public:
 		ShaderId simple_depth;
 		ShaderId simple_depth_instanced;
 		ShaderId swinging;
+		ShaderId water;
 	} shaders{};
 	
 	struct {

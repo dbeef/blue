@@ -53,6 +53,12 @@ void Resources::load_shaders()
 		BLUE_ASSERT(shader > 0);
 	}
 	{
+		auto entity = ShaderUtils::make_entity("resources/Water.vertex.glsl", "resources/Water.fragment.glsl");
+		auto shader = blue::Context::gpu_system().submit(entity).get();
+		shaders.water = shader;
+		BLUE_ASSERT(shader > 0);
+	}
+	{
 		auto entity = ShaderUtils::make_entity("resources/Model.vertex.glsl", "resources/Model.fragment.glsl");
 		auto shader = blue::Context::gpu_system().submit(entity).get();
 		shaders.model = shader;
