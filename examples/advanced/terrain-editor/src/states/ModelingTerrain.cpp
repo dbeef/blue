@@ -29,6 +29,8 @@ ModelingTerrain::ModelingTerrain(const bool map_imported) : _map_imported(map_im
 		ImGui::RadioButton("Adding models", reinterpret_cast<int*>(&_mode), 2);
 		ImGui::SameLine();
 		ImGui::RadioButton("Vertex paint shuffle", reinterpret_cast<int*>(&_mode), 3);
+		ImGui::SameLine();
+		ImGui::RadioButton("Water", reinterpret_cast<int*>(&_mode), 4);
 
 		if (_mode == Mode::VERTEX_PAINT || _mode == Mode::ELEVATION || _mode == Mode::VERTEX_PAINT_SHUFFLE)
 		{
@@ -43,7 +45,6 @@ ModelingTerrain::ModelingTerrain(const bool map_imported) : _map_imported(map_im
 			ImGui::ColorPicker3("", _paint);
 			ImGui::End();
 		}
-
 		else if (_mode == Mode::ADDING_MODELS)
 		{
 			ImGui::Begin("Models list");
@@ -77,6 +78,15 @@ ModelingTerrain::ModelingTerrain(const bool map_imported) : _map_imported(map_im
 				ImGui::End();
 			}
 		}
+		else if (_mode == Mode::WATER)
+		{
+			ImGui::SliderFloat("Water level", &_water_level, -5.0f, 0.0f);
+			bool create_water = ImGui::Button("Create water");
+			if (create_water)
+			{
+				created_water.store(true);
+			}
+		}
 
 		});
 }
@@ -94,6 +104,12 @@ std::shared_ptr<BaseState> ModelingTerrain::update()
 	{
 		blue::Context::renderer().update(last_entity.entity);
 		updated_model.store(false);
+	}
+
+	if (created_water)
+	{
+		Application::instance().get_water().create_water(Application::instance().get_map(), _water_level);
+		created_water.store(false);
 	}
 
 	if (Application::instance().input.intersection.load())

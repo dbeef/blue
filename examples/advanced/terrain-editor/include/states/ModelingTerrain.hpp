@@ -17,6 +17,7 @@ public:
 		VERTEX_PAINT = 1,
 		ADDING_MODELS = 2,
 		VERTEX_PAINT_SHUFFLE = 3,
+		WATER = 4,
 	};
 
 	explicit ModelingTerrain(const bool map_imported);
@@ -44,7 +45,9 @@ private:
 	} last_entity;
 
 	std::atomic_bool updated_model{false};
+	std::atomic_bool created_water{ false };
 
+	float _water_level = -1.0f;
 	float _radius = 0.2f;
 	float _model_scale = 1.0f;
 	float _paint[3];

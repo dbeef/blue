@@ -2,10 +2,11 @@
 
 #include "states/BaseState.hpp"
 #include "terrain/Map.hpp"
+#include "terrain/Water.hpp"
+#include "terrain/Flora.hpp"
 
 #include <atomic>
 #include <memory>
-#include <terrain/Flora.hpp>
 
 class Application
 {
@@ -27,6 +28,7 @@ public:
 
 	Map& get_map();
     Flora& get_flora();
+    Water& get_water();
 
 	struct {
 		std::atomic_bool clicked{ false };
@@ -44,6 +46,7 @@ private:
 	void register_callbacks();
 
     std::shared_ptr<Flora> _flora = std::make_shared<Flora>();
+    std::shared_ptr<Water> _water = std::make_shared<Water>();
     std::shared_ptr<Map> _map = std::make_shared<Map>();
 	std::shared_ptr<BaseState> _current_state = nullptr;
 	std::atomic_bool _running{ true };

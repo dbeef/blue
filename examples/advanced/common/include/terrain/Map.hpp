@@ -8,6 +8,7 @@
 class Map
 {
 	friend class MapIntersectionJob;
+	friend class Water;
 
 public:
 

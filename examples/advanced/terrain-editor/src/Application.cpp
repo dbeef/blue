@@ -177,3 +177,8 @@ Flora &Application::get_flora()
 {
     return *_flora;
 }
+
+Water &Application::get_water()
+{
+    return *_water;
+}
