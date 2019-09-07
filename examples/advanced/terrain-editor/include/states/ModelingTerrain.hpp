@@ -3,6 +3,7 @@
 #include "states/BaseState.hpp"
 #include "blue/Renderer.h"
 #include "jobs/MapIntersectionJob.hpp"
+#include "terrain/Tile.hpp"
 
 #include <atomic>
 #include <Resources.hpp>
@@ -14,10 +15,8 @@ public:
 	enum class Mode : int
 	{
 		ELEVATION = 0,
-		VERTEX_PAINT = 1,
-		ADDING_MODELS = 2,
-		VERTEX_PAINT_SHUFFLE = 3,
-		WATER = 4,
+		ADDING_MODELS = 1,
+		WATER = 2,
 	};
 
 	explicit ModelingTerrain(const bool map_imported);
@@ -50,7 +49,7 @@ private:
 	float _water_level = -1.0f;
 	float _radius = 0.2f;
 	float _model_scale = 1.0f;
-	float _paint[3];
+	
 	Mode _mode = Mode::ELEVATION;
 	Resources::Model _model = Resources::Model::PINE_TREE;
 	MapIntersectionJob job;

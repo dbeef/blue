@@ -18,7 +18,7 @@ layout (std140) uniform Matrices
         mat4 lightSpaceMatrix;
 };
 
-flat out lowp vec3 ColorRGB;
+out lowp vec3 ColorRGB;
 out vec3 vertex;
 
 void main()

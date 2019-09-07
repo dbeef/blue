@@ -13,7 +13,7 @@ layout (std140) uniform Matrices
 };
 
 // flat so it would not interpolate color
-flat in lowp vec3 ColorRGB;
+in lowp vec3 ColorRGB;
 in vec3 vertex;
 
 out vec4 color;

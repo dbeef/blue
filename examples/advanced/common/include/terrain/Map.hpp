@@ -4,6 +4,7 @@
 #include "blue/camera/PerspectiveCamera.hpp"
 #include "terrain/Tile.hpp"
 #include <mutex>
+#include <utility>
 
 class Map
 {
@@ -23,8 +24,8 @@ public:
 	void upload_decoration();
 
 	void elevate_points(float x, float y, float R, float elevation);
-	void color_points(float x, float y, float R, const glm::vec3& color);
-	void shuffle_color_points(float x, float y, float R);
+	void color_tile(std::uint16_t x, std::uint16_t y, InterpolationDirection direction, const glm::vec3& color_1, const glm::vec3& color_2);
+	std::pair<glm::vec3, glm::vec3> get_color(std::uint16_t x, std::uint16_t y);
 
 	void import_from_file(const std::string& filename);
 	void export_to_file(const std::string& filename);

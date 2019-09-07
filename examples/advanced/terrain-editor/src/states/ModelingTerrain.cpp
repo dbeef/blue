@@ -25,28 +25,18 @@ ModelingTerrain::ModelingTerrain(const bool map_imported) : _map_imported(map_im
 
 		ImGui::RadioButton("Elevation", reinterpret_cast<int*>(&_mode), 0);
 		ImGui::SameLine();
-		ImGui::RadioButton("Vertex paint", reinterpret_cast<int*>(&_mode), 1);
+		ImGui::RadioButton("Adding models", reinterpret_cast<int*>(&_mode), 1);
 		ImGui::SameLine();
-		ImGui::RadioButton("Adding models", reinterpret_cast<int*>(&_mode), 2);
-		ImGui::SameLine();
-		ImGui::RadioButton("Vertex paint shuffle", reinterpret_cast<int*>(&_mode), 3);
-		ImGui::SameLine();
-		ImGui::RadioButton("Water", reinterpret_cast<int*>(&_mode), 4);
+		ImGui::RadioButton("Water", reinterpret_cast<int*>(&_mode), 2);
 
-		if (_mode == Mode::VERTEX_PAINT || _mode == Mode::ELEVATION || _mode == Mode::VERTEX_PAINT_SHUFFLE)
+		if (_mode == Mode::ELEVATION)
 		{
 			ImGui::SliderFloat("Radius", &_radius, 0.01f, 32.0f);
 		}
 
 		ImGui::End();
 
-		if (_mode == Mode::VERTEX_PAINT)
-		{
-			ImGui::Begin("Vertex paint");
-			ImGui::ColorPicker3("", _paint);
-			ImGui::End();
-		}
-		else if (_mode == Mode::ADDING_MODELS)
+		if (_mode == Mode::ADDING_MODELS)
 		{
 			ImGui::Begin("Models list");
 			const char* listbox_items[] = { "Pine tree", "Hurdle", "Wheat", "Boulder", "Small Boulder", "Grass", "Pylon", "Bush", "Cut tree", "Track", "Bridge" };
@@ -119,6 +109,9 @@ std::shared_ptr<BaseState> ModelingTerrain::update()
 		const auto& x = Application::instance().input.intersection_point_x;
 		const auto& y = Application::instance().input.intersection_point_y;
 
+		const auto& x_tile = Application::instance().input.intersection_tile_x;
+		const auto& y_tile = Application::instance().input.intersection_tile_y;
+
 		if (_mode == Mode::ELEVATION)
 		{
 			// Ascend points in radius R from xy point:
@@ -130,18 +123,6 @@ std::shared_ptr<BaseState> ModelingTerrain::update()
 			{
 				Application::instance().get_map().elevate_points(x, y, _radius, -0.25f);
 			}
-		}
-		else if (_mode == Mode::VERTEX_PAINT)
-		{
-			// Color points in radius R from xy point:
-			float R = 5.25f;
-			Application::instance().get_map().color_points(x, y, _radius, { _paint[0], _paint[1], _paint[2] });
-		}
-		else if (_mode == Mode::VERTEX_PAINT_SHUFFLE)
-		{
-			// Color points in radius R from xy point:
-			float R = 5.25f;
-			Application::instance().get_map().shuffle_color_points(x, y, _radius);
 		}
 		else if (_mode == Mode::ADDING_MODELS)
         {

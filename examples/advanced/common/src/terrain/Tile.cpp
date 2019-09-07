@@ -48,6 +48,94 @@ Vertices Tile::get_vertices_translated(float x_pos, float y_pos, float z_pos, co
 	return vertices;
 }
 
+Vertices Tile::get_vertices_translated(float x_pos, float y_pos, float z_pos)
+{
+	glm::vec3 normal = { 0.0, 1.0f, 0.0f };
+
+	switch (interpolation)
+	{
+	case InterpolationDirection::CORNER_LEFT_UP:
+	{
+		Vertices vertices =
+		{
+			/* Vertex pos */  0.0f + x_pos, 0.0f,  1.0f + y_pos, /* Normal */normal.x, normal.y, normal.z,/* Color */ color_1.x, color_1.y, color_1.z,
+			/* Vertex pos */  1.0f + x_pos, 0.0f,  1.0f + y_pos, /* Normal */normal.x, normal.y, normal.z,/* Color */ color_2.x, color_2.y, color_2.z,
+			/* Vertex pos */  1.0f + x_pos, 0.0f,  0.0f + y_pos, /* Normal */normal.x, normal.y, normal.z,/* Color */ color_1.x, color_1.y, color_1.z,
+			/* Vertex pos */  0.0f + x_pos, 0.0f,  0.0f + y_pos, /* Normal */normal.x, normal.y, normal.z,/* Color */ color_1.x, color_1.y, color_1.z,
+		};
+		return vertices;
+	}
+	case InterpolationDirection::CORNER_RIGHT_DOWN:
+	{
+		Vertices vertices =
+		{
+			/* Vertex pos */  0.0f + x_pos, 0.0f,  1.0f + y_pos, /* Normal */normal.x, normal.y, normal.z,/* Color */ color_1.x, color_1.y, color_1.z,
+			/* Vertex pos */  1.0f + x_pos, 0.0f,  1.0f + y_pos, /* Normal */normal.x, normal.y, normal.z,/* Color */ color_1.x, color_1.y, color_1.z,
+			/* Vertex pos */  1.0f + x_pos, 0.0f,  0.0f + y_pos, /* Normal */normal.x, normal.y, normal.z,/* Color */ color_1.x, color_1.y, color_1.z,
+			/* Vertex pos */  0.0f + x_pos, 0.0f,  0.0f + y_pos, /* Normal */normal.x, normal.y, normal.z,/* Color */ color_2.x, color_2.y, color_2.z,
+		};
+		return vertices;
+	}
+	case InterpolationDirection::CORNER_LEFT_DOWN:
+	{
+		Vertices vertices =
+		{
+			/* Vertex pos */  0.0f + x_pos, 0.0f,  0.0f + y_pos, /* Normal */normal.x, normal.y, normal.z,/* Color */ color_2.x, color_2.y, color_2.z,
+			/* Vertex pos */  0.0f + x_pos, 0.0f,  1.0f + y_pos, /* Normal */normal.x, normal.y, normal.z,/* Color */ color_1.x, color_1.y, color_1.z,
+			/* Vertex pos */  1.0f + x_pos, 0.0f,  1.0f + y_pos, /* Normal */normal.x, normal.y, normal.z,/* Color */ color_2.x, color_2.y, color_2.z,
+			/* Vertex pos */  1.0f + x_pos, 0.0f,  0.0f + y_pos, /* Normal */normal.x, normal.y, normal.z,/* Color */ color_2.x, color_2.y, color_2.z,
+		};
+		return vertices;
+	}
+	case InterpolationDirection::CORNER_RIGHT_UP:
+	{
+		Vertices vertices =
+		{
+			/* Vertex pos */  0.0f + x_pos, 0.0f,  0.0f + y_pos, /* Normal */normal.x, normal.y, normal.z,/* Color */ color_2.x, color_2.y, color_2.z,
+			/* Vertex pos */  0.0f + x_pos, 0.0f,  1.0f + y_pos, /* Normal */normal.x, normal.y, normal.z,/* Color */ color_2.x, color_2.y, color_2.z,
+			/* Vertex pos */  1.0f + x_pos, 0.0f,  1.0f + y_pos, /* Normal */normal.x, normal.y, normal.z,/* Color */ color_2.x, color_2.y, color_2.z,
+			/* Vertex pos */  1.0f + x_pos, 0.0f,  0.0f + y_pos, /* Normal */normal.x, normal.y, normal.z,/* Color */ color_1.x, color_1.y, color_1.z,
+		};
+		return vertices;
+	}
+	case InterpolationDirection::HORIZONTAL_LEFT_RIGHT:
+	{
+		Vertices vertices =
+		{
+			/* Vertex pos */  0.0f + x_pos, 0.0f,  0.0f + y_pos, /* Normal */normal.x, normal.y, normal.z,/* Color */ color_1.x, color_1.y, color_1.z,
+			/* Vertex pos */  0.0f + x_pos, 0.0f,  1.0f + y_pos, /* Normal */normal.x, normal.y, normal.z,/* Color */ color_1.x, color_1.y, color_1.z,
+			/* Vertex pos */  1.0f + x_pos, 0.0f,  1.0f + y_pos, /* Normal */normal.x, normal.y, normal.z,/* Color */ color_2.x, color_2.y, color_2.z,
+			/* Vertex pos */  1.0f + x_pos, 0.0f,  0.0f + y_pos, /* Normal */normal.x, normal.y, normal.z,/* Color */ color_2.x, color_2.y, color_2.z,
+		};
+		return vertices;
+	}
+	case InterpolationDirection::VERTICAL_UP_DOWN:
+	{
+		Vertices vertices =
+		{
+			/* Vertex pos */  0.0f + x_pos, 0.0f,  0.0f + y_pos, /* Normal */normal.x, normal.y, normal.z,/* Color */ color_1.x, color_1.y, color_1.z,
+			/* Vertex pos */  0.0f + x_pos, 0.0f,  1.0f + y_pos, /* Normal */normal.x, normal.y, normal.z,/* Color */ color_2.x, color_2.y, color_2.z,
+			/* Vertex pos */  1.0f + x_pos, 0.0f,  1.0f + y_pos, /* Normal */normal.x, normal.y, normal.z,/* Color */ color_2.x, color_2.y, color_2.z,
+			/* Vertex pos */  1.0f + x_pos, 0.0f,  0.0f + y_pos, /* Normal */normal.x, normal.y, normal.z,/* Color */ color_1.x, color_1.y, color_1.z,
+		};
+		return vertices;
+	}
+	case InterpolationDirection::FULL:
+	default:
+	{
+		// Use only color 1.
+		Vertices vertices =
+		{
+			/* Vertex pos */  0.0f + x_pos, 0.0f,  0.0f + y_pos, /* Normal */normal.x, normal.y, normal.z,/* Color */ color_1.x, color_1.y, color_1.z,
+			/* Vertex pos */  0.0f + x_pos, 0.0f,  1.0f + y_pos, /* Normal */normal.x, normal.y, normal.z,/* Color */ color_1.x, color_1.y, color_1.z,
+			/* Vertex pos */  1.0f + x_pos, 0.0f,  1.0f + y_pos, /* Normal */normal.x, normal.y, normal.z,/* Color */ color_1.x, color_1.y, color_1.z,
+			/* Vertex pos */  1.0f + x_pos, 0.0f,  0.0f + y_pos, /* Normal */normal.x, normal.y, normal.z,/* Color */ color_1.x, color_1.y, color_1.z,
+		};
+		return vertices;
+	}
+	}
+}
+
 Attributes Tile::get_attributes()
 {
 	Attributes attributes =
