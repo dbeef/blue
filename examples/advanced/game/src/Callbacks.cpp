@@ -120,12 +120,20 @@ void Callbacks::register_callbacks()
         {
             glm::vec2 origin = { Game::instance().input.last_x.load() , Game::instance().input.last_y.load() };
             glm::vec2 target = { xpos, ypos };
-            glm::vec2 delta = glm::normalize(origin - target);
+			glm::vec2 delta = glm::normalize(origin - target);
+
+			const auto front = glm::normalize(map_environment.camera.get_front());
+			const auto up = glm::normalize(glm::cross(front, map_environment.camera.get_up()));
+			auto left = glm::normalize(glm::cross(front, up));
 
             auto pos = map_environment.camera.get_position();
-            pos.x += 0.2f * delta.x;
-            pos.z += 0.2f * delta.y;
-            map_environment.camera.set_pos(pos);
+			
+			glm::vec3 cam_delta = pos;
+			cam_delta += delta.x * up;
+			cam_delta += delta.y * left;
+			cam_delta.y = pos.y;
+
+			map_environment.camera.set_pos(cam_delta);
 
             blue::Context::gpu_system().submit(UpdateEnvironmentEntity_View{ map_environment.environment, map_environment.camera.get_view() });
             blue::Context::gpu_system().submit(UpdateEnvironmentEntity_CameraPos{ map_environment.environment, map_environment.camera.get_position() });
