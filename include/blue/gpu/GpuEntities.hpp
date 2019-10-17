@@ -79,6 +79,18 @@ using InstanceBufferId = GLuint;
 using UniformBufferId = GLuint;
 using FramebufferId = GLuint;
 
+enum class FramebufferAttachmentType
+{
+	// For rendering only depth component of scene:
+	DEPTH_ATTACHMENT,
+	// For discarding fragments based on some condition:
+	STENCIL_ATTACHMENT,
+	// For both stencil/depth attachment.
+	DEPTH_STENCIL_ATTACHMENT,
+	// For rendering color component of scene:
+	COLOR_ATTACHMENT,
+};
+
 struct Environment
 {
 	glm::mat4 view;
@@ -106,6 +118,8 @@ struct Framebuffer
 struct CreateFramebufferEntity
 {
 	bool with_texture;
+	// If with_texture passed with true, following will be used:
+	FramebufferAttachmentType attachmentType;
 	std::uint16_t texture_width;
 	std::uint16_t texture_height;
 };
@@ -145,7 +159,14 @@ struct CreateInstancedMeshEntity
 
 struct CreateTextureEntity
 {
+	// Will not attempt to fill with data if empty vector passed.
 	std::shared_ptr<std::vector<char>> data;
+	// Optional, used when data empty.
+	std::uint16_t width;
+	std::uint16_t height;
+	// TODO: Texture format
+	// TODO: Filtering
+	// TODO: Wrapping
 };
 
 struct DisposeShaderEntity

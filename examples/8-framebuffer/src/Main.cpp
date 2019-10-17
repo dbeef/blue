@@ -71,9 +71,9 @@ int main(int argc, char* argv[])
 
 	auto floor_vertex_array = blue::Context::gpu_system().submit(CreateMeshEntity{ floor_vertices, floor_indices, attributes, 6 }).get();
 
-	// Create framebuffer with depth component only (TODO: Create other framebuffers too, i.e with single-pass gaussian blur example)
+	// Create framebuffer with depth component only
 
-	auto framebuffer = blue::Context::gpu_system().submit(CreateFramebufferEntity{ true, 1024, 1024 }).get();
+	auto framebuffer = blue::Context::gpu_system().submit(CreateFramebufferEntity{ true, FramebufferAttachmentType::DEPTH_ATTACHMENT, 1024, 1024 }).get();
 
 	// Create environment
 
