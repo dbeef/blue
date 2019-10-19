@@ -206,10 +206,10 @@ std::future<Framebuffer> GpuCommandSystem::submit(const CreateFramebufferEntity&
 	return future;
 }
 
-std::future<TextureId> GpuCommandSystem::submit(const CreateTextureEntity& entity)
+std::future<Texture> GpuCommandSystem::submit(const CreateTextureEntity& entity)
 {
-	std::promise<TextureId> promise;
-	std::future<TextureId> future = promise.get_future();
+	std::promise<Texture> promise;
+	std::future<Texture> future = promise.get_future();
 
 	auto pair = std::make_pair(std::move(promise), entity);
 	lock();

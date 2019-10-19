@@ -16,6 +16,7 @@ struct ShaderAttribute
 		VEC2,
 		VEC3,
 		VEC4,
+		INT
 	};
 
 	enum class Purpose
@@ -72,6 +73,7 @@ using Attributes = std::vector<ShaderAttribute>;
 
 using ShaderId = GLuint;
 using TextureId = GLuint;
+using TextureSlot = GLuint;
 using VertexArrayId = GLuint;
 using IndexBufferId = GLuint;
 using VertexBufferId = GLuint;
@@ -89,6 +91,12 @@ enum class FramebufferAttachmentType
 	DEPTH_STENCIL_ATTACHMENT,
 	// For rendering color component of scene:
 	COLOR_ATTACHMENT,
+};
+
+struct Texture
+{
+    TextureSlot slot = 0;
+    TextureId id = 0;
 };
 
 struct Environment
@@ -130,7 +138,7 @@ struct UpdateUniformVariableEntity
 	const void* value;
 	ShaderId program;
 	// If explicit uniform location is used, one can specify location:
-	GLint location;
+	GLint location = -1;
 	// Used to query GPU for uniform location, if `location` is zero:
 	std::string name;
 };
@@ -164,6 +172,7 @@ struct CreateTextureEntity
 	// Optional, used when data empty.
 	std::uint16_t width;
 	std::uint16_t height;
+	TextureSlot slot = 0;
 	// TODO: Texture format
 	// TODO: Filtering
 	// TODO: Wrapping
