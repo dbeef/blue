@@ -10,29 +10,37 @@ namespace
         Texture texture;
         texture.slot = entity.slot;
 
-        int width;
-        int height;
-        int bits_per_pixel;
+        stbi_uc *buffer = nullptr;
 
-        constexpr int DESIRED_CHANNELS = 4;
-
-        stbi_uc *buffer = stbi_load_from_memory(
-                reinterpret_cast<const stbi_uc *>(entity.data->data()),
-                entity.data->size(),
-                &width,
-                &height,
-                &bits_per_pixel,
-                DESIRED_CHANNELS
-        );
-
-        if (buffer == nullptr)
+        if (!entity.data->empty())
         {
-            blue::Context::logger().error("Failed to create texture.s");
-            return texture;
-        }
-        else
-        {
+            int width;
+            int height;
+            int bits_per_pixel;
+            int desiredChannels = 4;
+
+            buffer = stbi_load_from_memory(
+                    reinterpret_cast<const stbi_uc *>(entity.data->data()),
+                    entity.data->size(),
+                    &width,
+                    &height,
+                    &bits_per_pixel,
+                    desiredChannels
+            );
+
+            if (buffer == nullptr)
+            {
+                blue::Context::logger().error("Failed to create texture from passed data.");
+                return texture;
+            }
+
             blue::Context::logger().info("Created texture: {}/{}, {} bpp.", width, height, bits_per_pixel);
+
+            texture.width = static_cast<uint16_t>(width);
+            texture.height = static_cast<uint16_t>(height);
+            texture.storingFormat = TextureStoringFormat::RGBA8;
+            texture.passedDataFormat = TexturePassedDataFormat::RGBA;
+            texture.passedDataComponentSize = TexturePassedDataComponentSize::UNSIGNED_BYTE;
         }
 
         // init texture on GPU
@@ -40,7 +48,10 @@ namespace
         // Slots are consecutive numbers so we can just add:
         DebugGlCall(glActiveTexture(GL_TEXTURE0 + entity.slot));
         DebugGlCall(glBindTexture(GL_TEXTURE_2D, texture.id));
-        DebugGlCall(glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, buffer));
+        DebugGlCall(glTexImage2D(GL_TEXTURE_2D, 0,
+                                 static_cast<GLenum>(texture.storingFormat), texture.width, texture.height, 0,
+                                 static_cast<GLenum>(texture.passedDataFormat),
+                                 static_cast<GLenum>(texture.passedDataComponentSize), buffer));
         DebugGlCall(glGenerateMipmap(GL_TEXTURE_2D));
         DebugGlCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR));
         DebugGlCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR));
@@ -65,7 +76,6 @@ namespace
         }
 
         stbi_image_free(buffer);
-
         blue::Context::logger().info("Created texture with id: {}", texture.id);
 
         return texture;
