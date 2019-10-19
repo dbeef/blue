@@ -26,7 +26,8 @@ struct RenderEntity
 	glm::quat rotation{};
 	float scale{};
 	UniformBufferId environment{};
-	Texture texture{};
+	Texture texture1{};
+	Texture texture2{};
 	//
 	GLenum stencil_function = GL_ALWAYS;
 	GLuint stencil_mask = 0xFF;
