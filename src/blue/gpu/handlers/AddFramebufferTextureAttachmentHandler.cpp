@@ -61,6 +61,11 @@ void handle(AddFramebufferTextureAttachmentEntity &entity)
         DebugGlCall(glDrawBuffer(GL_NONE));
         DebugGlCall(glReadBuffer(GL_NONE));
     }
+	else
+	{
+		DebugGlCall(glDrawBuffer(GL_COLOR_ATTACHMENT0));
+		DebugGlCall(glReadBuffer(GL_COLOR_ATTACHMENT0));
+	}
 
     auto framebufferStatus = glCheckFramebufferStatus(GL_FRAMEBUFFER);
     if (framebufferStatus == GL_FRAMEBUFFER_COMPLETE)

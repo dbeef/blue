@@ -20,6 +20,7 @@ public:
 	std::future<Framebuffer> submit(const CreateFramebufferEntity&);
 	std::future<UniformBufferId> submit(const CreateEnvironmentEntity&);
 	std::future<Texture> submit(const CreateTextureEntity&);
+	std::future<std::vector<char>> submit(const ReadFramebufferEntity&);
 
 	void submit(const UpdateUniformVariableEntity&);
 	void submit(const DisposeShaderEntity&);
@@ -44,6 +45,7 @@ private:
 	std::queue<std::pair<std::promise<Texture>, CreateTextureEntity>> create_texture_entities;
 	std::queue<std::pair<std::promise<Framebuffer>, CreateFramebufferEntity>> create_framebuffer_entities;
 	std::queue<std::pair<std::promise<UniformBufferId>, CreateEnvironmentEntity>> create_env_entities;
+	std::queue<std::pair<std::promise<std::vector<char>>, ReadFramebufferEntity>> read_framebuffer_entities;
 
 	std::queue<UpdateUniformVariableEntity> update_uniform_variable_entities;
 	std::queue<SetClearColorEntity> set_clear_color_entities;

@@ -119,6 +119,7 @@ void Renderer::draw_render_entities()
                 DebugGlCall(glBindFramebuffer(GL_FRAMEBUFFER, cache.current_framebuffer));
                 DebugGlCall(glActiveTexture(GL_TEXTURE0 + entity.framebuffer.texture.slot));
                 DebugGlCall(glBindTexture(GL_TEXTURE_2D, entity.framebuffer.texture.id));
+				// FIXME: This needs different GL_*_BUFFER_BIT, depending on texture attachment.
                 DebugGlCall(glClear(GL_DEPTH_BUFFER_BIT));
                 set_cached_texture(entity.framebuffer.texture.slot, entity.framebuffer.texture.id);
             }
