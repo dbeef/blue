@@ -10,7 +10,7 @@
 int main(int argc, char* argv[])
 {
 	blue::Context::init();
-	blue::Context::window().create(800, 600);
+	blue::Context::window().create(512, 512);
 	blue::Context::gpu_thread().run();
 
 	// Register ESC key callback:
@@ -32,6 +32,10 @@ int main(int argc, char* argv[])
 	auto compile_shader_entity = ShaderUtils::make_entity("resources/Triangle.vertex.glsl",
 		"resources/Triangle.fragment.glsl");
 	auto shader = blue::Context::gpu_system().submit(compile_shader_entity).get();
+	
+	auto kernel_blur_compile_shader_entity = ShaderUtils::make_entity("resources/KernelBlur.vertex.glsl",
+		"resources/KernelBlur.fragment.glsl");
+	auto kernel_blur_shader = blue::Context::gpu_system().submit(kernel_blur_compile_shader_entity).get();
 
 	// Issue the GPU thread with task of uploading mesh:
 
@@ -93,6 +97,10 @@ int main(int argc, char* argv[])
 	// Now set used texture slot in shader:
 	blue::Context::gpu_system().submit(
 		UpdateUniformVariableEntity{ ShaderAttribute::Type::INT, &create_texture_entity.slot, shader, 9, "" });
+	
+	// Now set used texture slot in shader:
+	blue::Context::gpu_system().submit(
+		UpdateUniformVariableEntity{ ShaderAttribute::Type::INT, &create_texture_entity.slot, kernel_blur_shader, 9, "" });
 
 	// Submit render command consisting of compiled shader, uploaded mesh and following geometry properties:
 
@@ -100,7 +108,7 @@ int main(int argc, char* argv[])
 	entity.position = { blue::Context::window().get_width()/ 2, blue::Context::window().get_height() / 2, 0.0f };
 	entity.shader = shader;
 	entity.vertex_array = vertex_array;
-	entity.scale = 100.0f;
+	entity.scale = 256.0f;
 	entity.rotation = glm::identity<glm::quat>();
 	entity.environment = environment;
 	entity.texture1 = texture;
@@ -115,9 +123,47 @@ int main(int argc, char* argv[])
 	using namespace std::chrono_literals;
 	std::this_thread::sleep_for(250ms);
 
+	auto secondPassTexture = blue::Context::gpu_system().submit(CreateTextureEntity{
+	std::make_shared<std::vector<char>>(), true,
+	TextureFiltering::LINEAR,
+	TextureWrapping::CLAMP_TO_EDGE,
+	blue::Context::window().get_width(),
+	blue::Context::window().get_height(),
+	3,
+	TexturePassedDataFormat::RGB,
+	TextureStoringFormat::RGB8,
+	TexturePassedDataComponentSize::UNSIGNED_BYTE
+		}).get();
+	framebuffer.texture = secondPassTexture;
+	blue::Context::gpu_system().submit(AddFramebufferTextureAttachmentEntity{ framebuffer, FramebufferAttachmentType::COLOR_ATTACHMENT });
+
+	using namespace std::chrono_literals;
+	std::this_thread::sleep_for(250ms);
+
+	blue::Context::renderer().remove_render_entity(id);
+
+	using namespace std::chrono_literals;
+	std::this_thread::sleep_for(250ms);
+
+	RenderEntity secondPassEntity;
+	secondPassEntity.position = { blue::Context::window().get_width() / 2, blue::Context::window().get_height() / 2, 0.0f };
+	secondPassEntity.shader = kernel_blur_shader;
+	secondPassEntity.vertex_array = vertex_array;
+	secondPassEntity.scale = 256.0f;
+	secondPassEntity.rotation = glm::identity<glm::quat>();
+	secondPassEntity.environment = environment;
+	secondPassEntity.texture1 = depthTexture;
+	secondPassEntity.framebuffer = framebuffer;
+
+	RenderEntityId secondPassEntityId = blue::Context::renderer().add(secondPassEntity);
+
+	using namespace std::chrono_literals;
+	std::this_thread::sleep_for(250ms);
+
 	ReadFramebufferEntity readFramebufferEntity{ framebuffer, TextureReadDataFormat::RGB, TextureReadDataComponentSize::UNSIGNED_BYTE};
 	auto framebufferData = blue::Context::gpu_system().submit(readFramebufferEntity).get();
 
+	//stbi_flip_vertically_on_write(true); // As glReadPixels will return flipped image.
 	stbi_write_bmp("dupsko.bmp", blue::Context::window().get_width(), blue::Context::window().get_height(), 3, framebufferData.data());
 
 	// Start logics loop with timestep limited to 30 times per second:
