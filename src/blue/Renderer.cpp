@@ -88,15 +88,18 @@ void Renderer::draw_render_entities()
             {
                 // Finished drawing to framebuffer:
                 DebugGlCall(glBindFramebuffer(GL_FRAMEBUFFER, 0));
-                DebugGlCall(glViewport(0, 0, blue::Context::window().get_width(), blue::Context::window().get_height()));
+                DebugGlCall(
+                        glViewport(0, 0, blue::Context::window().get_width(), blue::Context::window().get_height()));
             }
             else
             {
                 // Started drawing to framebuffer.
-                DebugGlCall(glViewport(0, 0, entity.framebuffer.texture_width, entity.framebuffer.texture_height));
+                DebugGlCall(glViewport(0, 0, entity.framebuffer.texture.width, entity.framebuffer.texture.height));
                 DebugGlCall(glBindFramebuffer(GL_FRAMEBUFFER, cache.current_framebuffer));
-                DebugGlCall(glBindTexture(GL_TEXTURE_2D, entity.framebuffer.texture));
+                DebugGlCall(glActiveTexture(GL_TEXTURE0 + entity.framebuffer.texture.slot));
+                DebugGlCall(glBindTexture(GL_TEXTURE_2D, entity.framebuffer.texture.id));
                 DebugGlCall(glClear(GL_DEPTH_BUFFER_BIT));
+                set_cached_texture(entity.framebuffer.texture.slot, entity.framebuffer.texture.id);
             }
         }
 
@@ -163,8 +166,6 @@ RenderEntityId Renderer::add(const RenderEntity &entity)
     {
         e.framebuffer.framebuffer = entity.framebuffer.framebuffer;
         e.framebuffer.texture = entity.framebuffer.texture;
-        e.framebuffer.texture_width = entity.framebuffer.texture_width;
-        e.framebuffer.texture_height = entity.framebuffer.texture_height;
     }
     render_entities.push_back(e);
 
@@ -274,11 +275,28 @@ ShaderId Renderer::get_cached_shader() const
 
 void Renderer::set_cached_shader(ShaderId program)
 {
-    cache.current_shader = 0;
     cache.current_shader = program;
 }
 
 std::map<TextureSlot, TextureId> &Renderer::get_cached_textures()
 {
     return cache.textures;
+}
+
+void Renderer::set_cached_framebuffer(FramebufferId framebufferId)
+{
+    cache.current_framebuffer = framebufferId;
+}
+
+void Renderer::set_cached_texture(TextureSlot textureSlot, TextureId textureId)
+{
+    auto mapEntry = cache.textures.find(textureSlot);
+    if (mapEntry != cache.textures.end())
+    {
+        mapEntry->second = textureId;
+    }
+    else
+    {
+        cache.textures.insert({textureSlot, textureId});
+    }
 }

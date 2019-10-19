@@ -38,6 +38,7 @@ add_library(
         src/blue/InputHandler.cpp
         src/blue/Timestep.cpp
         src/blue/gpu/handlers/CompileShaderHandler.cpp
+        src/blue/gpu/handlers/AddFramebufferTextureAttachmentHandler.cpp
         src/blue/gpu/handlers/CreateFramebufferHandler.cpp
         src/blue/gpu/handlers/CreateTextureHandler.cpp
         src/blue/gpu/handlers/DisposeShaderHandler.cpp
@@ -68,6 +69,7 @@ add_library(
         include/blue/gpu/handlers/CompileShaderHandler.hpp
         include/blue/gpu/handlers/CreateTextureHandler.hpp
         include/blue/gpu/handlers/DisposeShaderHandler.hpp
+        include/blue/gpu/handlers/AddFramebufferTextureAttachmentHandler.hpp
         include/blue/gpu/handlers/CreateMeshHandler.hpp
         include/blue/gpu/handlers/CreateInstancedMeshHandler.hpp
         include/blue/gpu/handlers/DisposeMeshHandler.hpp
@@ -85,7 +87,7 @@ add_library(
         include/blue/camera/PerspectiveCamera.hpp
         include/blue/camera/OrthographicCamera.hpp
         include/blue/camera/Camera.hpp
-)
+        src/blue/gpu/handlers/AddFramebufferTextureAttachmentHandler.cpp)
 
 target_include_directories(
         blue

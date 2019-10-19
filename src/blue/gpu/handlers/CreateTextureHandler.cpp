@@ -8,7 +8,6 @@ namespace
     Texture create(const CreateTextureEntity &entity)
     {
         Texture texture;
-        texture.slot = entity.slot;
 
         stbi_uc *buffer = nullptr;
 
@@ -42,6 +41,16 @@ namespace
             texture.passedDataFormat = TexturePassedDataFormat::RGBA;
             texture.passedDataComponentSize = TexturePassedDataComponentSize::UNSIGNED_BYTE;
         }
+        else
+        {
+            texture.width = entity.width;
+            texture.height = entity.height;
+            texture.storingFormat = entity.storingFormat;
+            texture.passedDataFormat = entity.passedDataFormat;
+            texture.passedDataComponentSize = entity.passedDataComponentSize;
+        }
+
+        texture.slot = entity.slot;
 
         // init texture on GPU
         DebugGlCall(glGenTextures(1, &texture.id));
@@ -65,18 +74,8 @@ namespace
         DebugGlCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, static_cast<GLenum>(entity.wrapping)));
         DebugGlCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, static_cast<GLenum>(entity.wrapping)));
 
-        // Update renderer cache:
         auto &renderer = blue::Context::renderer();
-        auto &textures = renderer.get_cached_textures();
-        auto slot = textures.find(entity.slot);
-        if (slot != textures.end())
-        {
-            slot->second = texture.id;
-        }
-        else
-        {
-            textures.insert({texture.slot, texture.id});
-        }
+        renderer.set_cached_texture(entity.slot, texture.id);
 
         stbi_image_free(buffer);
         blue::Context::logger().info("Created texture with id: {}", texture.id);
@@ -85,9 +84,9 @@ namespace
     }
 }
 
-void handle(std::pair <std::promise<Texture>, CreateTextureEntity> &pair)
+void handle(std::pair<std::promise<Texture>, CreateTextureEntity> &pair)
 {
-    std::promise <Texture> &promise = pair.first;
+    std::promise<Texture> &promise = pair.first;
     const CreateTextureEntity &entity = pair.second;
 
     Texture texture = create(entity);

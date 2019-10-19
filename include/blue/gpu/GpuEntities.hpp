@@ -144,6 +144,7 @@ enum class TextureWrapping : GLenum
 enum class TexturePassedDataComponentSize : GLenum
 {
     UNSIGNED_BYTE = GL_UNSIGNED_BYTE,
+    FLOAT = GL_FLOAT,
 };
 
 enum class FramebufferAttachmentType
@@ -188,18 +189,17 @@ struct VertexArray
 struct Framebuffer
 {
     FramebufferId framebuffer = 0;
-    TextureId texture = 0;
-    std::uint16_t texture_width = 0;
-    std::uint16_t texture_height = 0;
+    Texture texture{};
 };
 
 struct CreateFramebufferEntity
 {
-    bool with_texture;
-    // If with_texture passed with true, following will be used:
+};
+
+struct AddFramebufferTextureAttachmentEntity
+{
+    const Framebuffer &framebuffer;
     FramebufferAttachmentType attachmentType;
-    std::uint16_t texture_width;
-    std::uint16_t texture_height;
 };
 
 struct UpdateUniformVariableEntity
@@ -248,6 +248,7 @@ struct CreateTextureEntity
     TextureSlot slot = 0;
     TexturePassedDataFormat passedDataFormat;
     TextureStoringFormat storingFormat;
+    TexturePassedDataComponentSize passedDataComponentSize;
 };
 
 struct DisposeShaderEntity

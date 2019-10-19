@@ -30,6 +30,7 @@ public:
 	void submit(const UpdateEnvironmentEntity_CameraPos&);
 	void submit(const UpdateEnvironmentEntity_LightPos&);
 	void submit(const SetClearColorEntity&);
+	void submit(const AddFramebufferTextureAttachmentEntity&);
 
 private:
 	
@@ -46,6 +47,7 @@ private:
 
 	std::queue<UpdateUniformVariableEntity> update_uniform_variable_entities;
 	std::queue<SetClearColorEntity> set_clear_color_entities;
+	std::queue<AddFramebufferTextureAttachmentEntity> add_framebuffer_texture_attachment_entities;
 	std::queue<DisposeMeshEntity> dispose_mesh_entities;
 	std::queue<DisposeShaderEntity> dispose_shader_entities;
 	std::queue<UpdateEnvironmentEntity_CameraPos> update_environment_camera_pos_entities;

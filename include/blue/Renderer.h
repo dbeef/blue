@@ -53,6 +53,8 @@ public:
 
     void invalidate_cache_uniform_buffer();
 	void set_cached_shader(ShaderId);
+	void set_cached_framebuffer(FramebufferId);
+	void set_cached_texture(TextureSlot, TextureId);
 	std::map<TextureSlot, TextureId>& get_cached_textures();
 	ShaderId get_cached_shader() const;
 

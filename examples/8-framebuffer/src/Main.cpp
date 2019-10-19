@@ -73,7 +73,21 @@ int main(int argc, char* argv[])
 
 	// Create framebuffer with depth component only
 
-	auto framebuffer = blue::Context::gpu_system().submit(CreateFramebufferEntity{ true, FramebufferAttachmentType::DEPTH_ATTACHMENT, 1024, 1024 }).get();
+	auto framebuffer = blue::Context::gpu_system().submit(CreateFramebufferEntity{}).get();
+	auto depthTexture = blue::Context::gpu_system().submit(CreateTextureEntity{
+			std::make_shared<std::vector<char>>(), true,
+			TextureFiltering::LINEAR,
+			TextureWrapping::REPEAT,
+			1024,
+			1024,
+			1,
+			TexturePassedDataFormat::DEPTH_COMPONENT,
+			TextureStoringFormat::DEPTH_COMPONENT,
+			TexturePassedDataComponentSize::FLOAT
+	}).get();
+
+	framebuffer.texture = depthTexture;
+	blue::Context::gpu_system().submit(AddFramebufferTextureAttachmentEntity{framebuffer});
 
 	// Create environment
 
@@ -121,7 +135,7 @@ int main(int argc, char* argv[])
 	tree_shadow_entity.rotation = { 0, 0, 0, 0 };
 	tree_shadow_entity.framebuffer = framebuffer;
 	tree_shadow_entity.environment = light_environment;
-	tree_shadow_entity.texture = 0;
+	tree_shadow_entity.texture.id = 0;
 	tree_shadow_entity.id = blue::Context::renderer().add(tree_shadow_entity);
 
 	RenderEntity floor_entity;

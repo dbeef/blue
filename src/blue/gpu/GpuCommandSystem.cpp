@@ -1,3 +1,6 @@
+
+#include <blue/gpu/GpuCommandSystem.hpp>
+
 #include "blue/gpu/GpuCommandSystem.hpp"
 #include "blue/gpu/handlers/CompileShaderHandler.hpp"
 #include "blue/gpu/handlers/DisposeShaderHandler.hpp"
@@ -8,6 +11,7 @@
 #include "blue/gpu/handlers/CreateTextureHandler.hpp"
 #include "blue/gpu/handlers/CreateEnvironmentHandler.hpp"
 #include "blue/gpu/handlers/UpdateEnvironmentHandler.hpp"
+#include "blue/gpu/handlers/AddFramebufferTextureAttachmentHandler.hpp"
 #include "blue/gpu/handlers/SetClearColorHandler.hpp"
 #include "blue/gpu/handlers/UpdateUniformVariableHandler.hpp"
 #include "blue/Context.hpp"
@@ -118,6 +122,13 @@ bool GpuCommandSystem::execute()
 	{
 		handle(set_clear_color_entities.front());
 		set_clear_color_entities.pop();
+		executed_some_work = true;
+	}
+
+	while (!add_framebuffer_texture_attachment_entities.empty())
+	{
+		handle(add_framebuffer_texture_attachment_entities.front());
+		add_framebuffer_texture_attachment_entities.pop();
 		executed_some_work = true;
 	}
 
@@ -279,5 +290,12 @@ void GpuCommandSystem::submit(const SetClearColorEntity& entity)
 {
 	lock();
 	set_clear_color_entities.push(entity);
+	unlock();
+}
+
+void GpuCommandSystem::submit(const AddFramebufferTextureAttachmentEntity &entity)
+{
+	lock();
+	add_framebuffer_texture_attachment_entities.push(entity);
 	unlock();
 }
