@@ -92,14 +92,14 @@ using FramebufferId = GLuint;
 enum class TextureStoringFormat : GLenum
 {
     // Base formats (the GL will choose an internal representation that closely approximates to requested):
-    DEPTH_COMPONENT = GL_DEPTH_COMPONENT,
+            DEPTH_COMPONENT = GL_DEPTH_COMPONENT,
     DEPTH_STENCIL = GL_DEPTH_STENCIL,
     RED = GL_RED,
     RG = GL_RG,
     RGB = GL_RGB,
     RGBA = GL_RGBA,
     // Sized formats:
-    RGB8 = GL_RGB8,
+            RGB8 = GL_RGB8,
     RGBA8 = GL_RGBA8,
     RGBA16 = GL_RGBA16
 };
@@ -123,6 +123,24 @@ enum class TexturePassedDataFormat : GLenum
     DEPTH_STENCIL = GL_DEPTH_STENCIL
 };
 
+enum class TextureFiltering : GLenum
+{
+    NEAREST = GL_NEAREST,
+    LINEAR = GL_LINEAR,
+    NEAREST_MIPMAP_NEAREST = GL_NEAREST_MIPMAP_NEAREST,
+    LINEAR_MIPMAP_NEAREST = GL_LINEAR_MIPMAP_NEAREST,
+    NEAREST_MIPMAP_LINEAR = GL_NEAREST_MIPMAP_LINEAR,
+    LINEAR_MIPMAP_LINEAR = GL_LINEAR_MIPMAP_LINEAR,
+};
+
+enum class TextureWrapping : GLenum
+{
+    CLAMP_TO_EDGE = GL_CLAMP_TO_EDGE,
+    CLAMP_TO_BORDER = GL_CLAMP_TO_BORDER,
+    MIRRORED_REPEAT = GL_MIRRORED_REPEAT,
+    REPEAT = GL_REPEAT
+};
+
 enum class TexturePassedDataComponentSize : GLenum
 {
     UNSIGNED_BYTE = GL_UNSIGNED_BYTE,
@@ -131,13 +149,13 @@ enum class TexturePassedDataComponentSize : GLenum
 enum class FramebufferAttachmentType
 {
     // For rendering only depth component of scene:
-    DEPTH_ATTACHMENT,
+            DEPTH_ATTACHMENT,
     // For discarding fragments based on some condition:
-    STENCIL_ATTACHMENT,
+            STENCIL_ATTACHMENT,
     // For both stencil/depth attachment.
-    DEPTH_STENCIL_ATTACHMENT,
+            DEPTH_STENCIL_ATTACHMENT,
     // For rendering color component of scene:
-    COLOR_ATTACHMENT,
+            COLOR_ATTACHMENT,
 };
 
 struct Texture
@@ -221,14 +239,15 @@ struct CreateTextureEntity
 {
     // Will not attempt to fill with data if empty vector passed.
     std::shared_ptr<std::vector<char>> data;
-    // Optional, used when data empty.
-    std::uint16_t width;
-    std::uint16_t height;
+    bool withMipMaps = true;
+    TextureFiltering filtering = TextureFiltering::LINEAR;
+    TextureWrapping wrapping = TextureWrapping::REPEAT;
+    // Used when data empty; otherwise deduced from passed data:
+    std::uint16_t width = 0;
+    std::uint16_t height = 0;
     TextureSlot slot = 0;
     TexturePassedDataFormat passedDataFormat;
     TextureStoringFormat storingFormat;
-    // TODO: Filtering
-    // TODO: Wrapping
 };
 
 struct DisposeShaderEntity

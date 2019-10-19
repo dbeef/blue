@@ -52,15 +52,18 @@ namespace
                                  static_cast<GLenum>(texture.storingFormat), texture.width, texture.height, 0,
                                  static_cast<GLenum>(texture.passedDataFormat),
                                  static_cast<GLenum>(texture.passedDataComponentSize), buffer));
-        DebugGlCall(glGenerateMipmap(GL_TEXTURE_2D));
-        DebugGlCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR));
-        DebugGlCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR));
-        //s/t are coordinates like x/y but for textures
 
-        // Failed to run on ubuntu because GL_CLAMP, fixed by GL_CLAMP_TO_EDGE.
-        // https://www.khronos.org/opengl/wiki/Common_Mistakes
-        DebugGlCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT));
-        DebugGlCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT));
+        if (entity.withMipMaps)
+        {
+            DebugGlCall(glGenerateMipmap(GL_TEXTURE_2D));
+        }
+
+        DebugGlCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, static_cast<GLenum>(entity.filtering)));
+        DebugGlCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, static_cast<GLenum>(entity.filtering)));
+
+        // S/T are X/Y coordinates but for textures:
+        DebugGlCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, static_cast<GLenum>(entity.wrapping)));
+        DebugGlCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, static_cast<GLenum>(entity.wrapping)));
 
         // Update renderer cache:
         auto &renderer = blue::Context::renderer();
@@ -82,9 +85,9 @@ namespace
     }
 }
 
-void handle(std::pair<std::promise<Texture>, CreateTextureEntity> &pair)
+void handle(std::pair <std::promise<Texture>, CreateTextureEntity> &pair)
 {
-    std::promise<Texture> &promise = pair.first;
+    std::promise <Texture> &promise = pair.first;
     const CreateTextureEntity &entity = pair.second;
 
     Texture texture = create(entity);
