@@ -19,7 +19,9 @@ public:
 	std::future<VertexArray> submit(const CreateInstancedMeshEntity&);
 	std::future<Framebuffer> submit(const CreateFramebufferEntity&);
 	std::future<UniformBufferId> submit(const CreateEnvironmentEntity&);
-	std::future<TextureId> submit(const CreateTextureEntity&);
+	std::future<Texture> submit(const CreateTextureEntity&);
+	std::future<std::vector<char>> submit(const ReadFramebufferEntity&);
+	std::future<bool> submit(const AddFramebufferTextureAttachmentEntity&);
 
 	void submit(const UpdateUniformVariableEntity&);
 	void submit(const DisposeShaderEntity&);
@@ -40,12 +42,14 @@ private:
 	std::queue<std::pair<std::promise<VertexArray>, CreateMeshEntity>> create_mesh_entities;
 	std::queue<std::pair<std::promise<VertexArray>, CreateInstancedMeshEntity>> create_instanced_mesh_entities;
 	std::queue<std::pair<std::promise<ShaderId>, CompileShaderEntity>> compile_shader_entities;
-	std::queue<std::pair<std::promise<TextureId>, CreateTextureEntity>> create_texture_entities;
+	std::queue<std::pair<std::promise<Texture>, CreateTextureEntity>> create_texture_entities;
 	std::queue<std::pair<std::promise<Framebuffer>, CreateFramebufferEntity>> create_framebuffer_entities;
 	std::queue<std::pair<std::promise<UniformBufferId>, CreateEnvironmentEntity>> create_env_entities;
+	std::queue<std::pair<std::promise<std::vector<char>>, ReadFramebufferEntity>> read_framebuffer_entities;
 
 	std::queue<UpdateUniformVariableEntity> update_uniform_variable_entities;
 	std::queue<SetClearColorEntity> set_clear_color_entities;
+	std::queue<std::pair<std::promise<bool>, AddFramebufferTextureAttachmentEntity>> add_framebuffer_texture_attachment_entities;
 	std::queue<DisposeMeshEntity> dispose_mesh_entities;
 	std::queue<DisposeShaderEntity> dispose_shader_entities;
 	std::queue<UpdateEnvironmentEntity_CameraPos> update_environment_camera_pos_entities;

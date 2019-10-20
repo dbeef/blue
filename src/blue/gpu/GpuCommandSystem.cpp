@@ -1,3 +1,6 @@
+
+#include <blue/gpu/GpuCommandSystem.hpp>
+
 #include "blue/gpu/GpuCommandSystem.hpp"
 #include "blue/gpu/handlers/CompileShaderHandler.hpp"
 #include "blue/gpu/handlers/DisposeShaderHandler.hpp"
@@ -7,7 +10,9 @@
 #include "blue/gpu/handlers/CreateInstancedMeshHandler.hpp"
 #include "blue/gpu/handlers/CreateTextureHandler.hpp"
 #include "blue/gpu/handlers/CreateEnvironmentHandler.hpp"
+#include "blue/gpu/handlers/ReadFramebufferHandler.hpp"
 #include "blue/gpu/handlers/UpdateEnvironmentHandler.hpp"
+#include "blue/gpu/handlers/AddFramebufferTextureAttachmentHandler.hpp"
 #include "blue/gpu/handlers/SetClearColorHandler.hpp"
 #include "blue/gpu/handlers/UpdateUniformVariableHandler.hpp"
 #include "blue/Context.hpp"
@@ -41,6 +46,13 @@ bool GpuCommandSystem::execute()
 	{
 		handle(create_instanced_mesh_entities.front());
 		create_instanced_mesh_entities.pop();
+		executed_some_work = true;
+	}
+	
+	while (!read_framebuffer_entities.empty())
+	{
+		handle(read_framebuffer_entities.front());
+		read_framebuffer_entities.pop();
 		executed_some_work = true;
 	}
 
@@ -118,6 +130,13 @@ bool GpuCommandSystem::execute()
 	{
 		handle(set_clear_color_entities.front());
 		set_clear_color_entities.pop();
+		executed_some_work = true;
+	}
+
+	while (!add_framebuffer_texture_attachment_entities.empty())
+	{
+		handle(add_framebuffer_texture_attachment_entities.front());
+		add_framebuffer_texture_attachment_entities.pop();
 		executed_some_work = true;
 	}
 
@@ -206,14 +225,27 @@ std::future<Framebuffer> GpuCommandSystem::submit(const CreateFramebufferEntity&
 	return future;
 }
 
-std::future<TextureId> GpuCommandSystem::submit(const CreateTextureEntity& entity)
+std::future<Texture> GpuCommandSystem::submit(const CreateTextureEntity& entity)
 {
-	std::promise<TextureId> promise;
-	std::future<TextureId> future = promise.get_future();
+	std::promise<Texture> promise;
+	std::future<Texture> future = promise.get_future();
 
 	auto pair = std::make_pair(std::move(promise), entity);
 	lock();
 	create_texture_entities.push(std::move(pair));
+	unlock();
+
+	return future;
+}
+
+std::future<std::vector<char>> GpuCommandSystem::submit(const ReadFramebufferEntity& entity)
+{
+	std::promise<std::vector<char>> promise;
+	std::future<std::vector<char>> future = promise.get_future();
+
+	auto pair = std::make_pair(std::move(promise), entity);
+	lock();
+	read_framebuffer_entities.push(std::move(pair));
 	unlock();
 
 	return future;
@@ -280,4 +312,17 @@ void GpuCommandSystem::submit(const SetClearColorEntity& entity)
 	lock();
 	set_clear_color_entities.push(entity);
 	unlock();
+}
+
+std::future<bool> GpuCommandSystem::submit(const AddFramebufferTextureAttachmentEntity &entity)
+{
+	std::promise<bool> promise;
+	std::future<bool> future = promise.get_future();
+
+	auto pair = std::make_pair(std::move(promise), entity);
+	lock();
+	add_framebuffer_texture_attachment_entities.push(std::move(pair));
+	unlock();
+
+	return future;
 }

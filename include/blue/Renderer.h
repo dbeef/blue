@@ -4,6 +4,7 @@
 
 #include <vector>
 #include <atomic>
+#include <map>
 #include <utility>
 #include <functional>
 
@@ -25,7 +26,8 @@ struct RenderEntity
 	glm::quat rotation{};
 	float scale{};
 	UniformBufferId environment{};
-	TextureId texture{};
+	Texture texture1{};
+	Texture texture2{};
 	//
 	GLenum stencil_function = GL_ALWAYS;
 	GLuint stencil_mask = 0xFF;
@@ -52,6 +54,9 @@ public:
 
     void invalidate_cache_uniform_buffer();
 	void set_cached_shader(ShaderId);
+	void set_cached_framebuffer(FramebufferId);
+	void set_cached_texture(TextureSlot, TextureId);
+	std::map<TextureSlot, TextureId>& get_cached_textures();
 	ShaderId get_cached_shader() const;
 
 private:
@@ -59,10 +64,10 @@ private:
     struct
     {
         ShaderId current_shader = 0;
-        TextureId current_texture = 0;
         UniformBufferId current_environment = 0;
 		FramebufferId current_framebuffer = 0;
-    } cache;
+		std::map<TextureSlot, TextureId> textures;
+	} cache;
 
 	void draw_render_entities();
 	void draw_imgui_entities();

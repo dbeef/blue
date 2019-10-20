@@ -38,9 +38,11 @@ add_library(
         src/blue/InputHandler.cpp
         src/blue/Timestep.cpp
         src/blue/gpu/handlers/CompileShaderHandler.cpp
+        src/blue/gpu/handlers/AddFramebufferTextureAttachmentHandler.cpp
         src/blue/gpu/handlers/CreateFramebufferHandler.cpp
         src/blue/gpu/handlers/CreateTextureHandler.cpp
         src/blue/gpu/handlers/DisposeShaderHandler.cpp
+        src/blue/gpu/handlers/ReadFramebufferHandler.cpp
         src/blue/gpu/handlers/CreateMeshHandler.cpp
         src/blue/gpu/handlers/CreateInstancedMeshHandler.cpp
         src/blue/gpu/handlers/DisposeMeshHandler.cpp
@@ -67,7 +69,9 @@ add_library(
         # TODO: Remove "Handler" postfix; they're already in "handlers" directory.
         include/blue/gpu/handlers/CompileShaderHandler.hpp
         include/blue/gpu/handlers/CreateTextureHandler.hpp
+        include/blue/gpu/handlers/ReadFramebufferHandler.hpp
         include/blue/gpu/handlers/DisposeShaderHandler.hpp
+        include/blue/gpu/handlers/AddFramebufferTextureAttachmentHandler.hpp
         include/blue/gpu/handlers/CreateMeshHandler.hpp
         include/blue/gpu/handlers/CreateInstancedMeshHandler.hpp
         include/blue/gpu/handlers/DisposeMeshHandler.hpp
@@ -85,7 +89,7 @@ add_library(
         include/blue/camera/PerspectiveCamera.hpp
         include/blue/camera/OrthographicCamera.hpp
         include/blue/camera/Camera.hpp
-)
+        src/blue/gpu/handlers/AddFramebufferTextureAttachmentHandler.cpp)
 
 target_include_directories(
         blue

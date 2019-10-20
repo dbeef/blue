@@ -2,4 +2,4 @@
 
 #include "blue/gpu/GpuCommandSystem.hpp"
 
-void handle(std::pair<std::promise<TextureId>, CreateTextureEntity>& pair);
+void handle(std::pair<std::promise<Texture>, CreateTextureEntity>& pair);

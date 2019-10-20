@@ -81,7 +81,7 @@ int main(int argc, char* argv[])
 	environment_future.wait();
 	auto environment = environment_future.get();
 
-	PerspectiveCamera camera;
+	PerspectiveCamera camera(blue::Context::window().get_width(), blue::Context::window().get_height());
 
 	blue::Context::gpu_system().submit(UpdateEnvironmentEntity_Projection{ environment, camera.get_projection() });
 	blue::Context::gpu_system().submit(UpdateEnvironmentEntity_View{ environment, camera.get_view() });

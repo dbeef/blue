@@ -34,6 +34,11 @@ void handle(const UpdateUniformVariableEntity& entity)
 		DebugGlCall(glUniform1f(location, *reinterpret_cast<const GLfloat*>(entity.value)));
 		break;
 	}
+	case(ShaderAttribute::Type::INT):
+	{
+		DebugGlCall(glUniform1i(location, *reinterpret_cast<const GLint*>(entity.value)));
+		break;
+	}
 	default: break;
 	}
 }

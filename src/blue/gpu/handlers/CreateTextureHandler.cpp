@@ -5,69 +5,91 @@
 
 namespace
 {
-	TextureId create(const CreateTextureEntity& entity)
-	{
-		int width;
-		int height;
-		int size;
-		int bits_per_pixel;
+    Texture create(const CreateTextureEntity &entity)
+    {
+        Texture texture;
 
-		constexpr int DESIRED_CHANNELS = 4;
+        stbi_uc *buffer = nullptr;
 
-		stbi_uc* buffer = stbi_load_from_memory(
-			reinterpret_cast<const stbi_uc*>(entity.data->data()),
-			entity.data->size(),
-			&width,
-			&height,
-			&bits_per_pixel,
-			DESIRED_CHANNELS
-		);
+        if (!entity.data->empty())
+        {
+            int width;
+            int height;
+            int bits_per_pixel;
+            int desiredChannels = 4;
 
-		if (buffer == nullptr)
-		{
-			blue::Context::logger().error("Failed to create texture.s");
-			return 0;
-		}
-		else
-		{
-			blue::Context::logger().info("Created texture: {}/{}, {} bpp.", width, height, bits_per_pixel);
-		}
+            buffer = stbi_load_from_memory(
+                    reinterpret_cast<const stbi_uc *>(entity.data->data()),
+                    entity.data->size(),
+                    &width,
+                    &height,
+                    &bits_per_pixel,
+                    desiredChannels
+            );
 
-		TextureId texture = 0;
+            if (buffer == nullptr)
+            {
+                blue::Context::logger().error("Failed to create texture from passed data.");
+                return texture;
+            }
 
-		// init texture on GPU
-		DebugGlCall(glGenTextures(1, &texture));
-		// Slots are consecutive numbers so we can just add:
-		DebugGlCall(glActiveTexture(GL_TEXTURE0 + 0));
-		DebugGlCall(glBindTexture(GL_TEXTURE_2D, texture));
-		DebugGlCall(glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, buffer));
-		DebugGlCall(glGenerateMipmap(GL_TEXTURE_2D));
-		DebugGlCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR));
-		DebugGlCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR));
-		//s/t are coordinates like x/y but for textures
+            blue::Context::logger().info("Created texture: {}/{}, {} bpp.", width, height, bits_per_pixel);
 
-		// Failed to run on ubuntu because GL_CLAMP, fixed by GL_CLAMP_TO_EDGE.
-		// https://www.khronos.org/opengl/wiki/Common_Mistakes
-		DebugGlCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT));
-		DebugGlCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT));
+            texture.width = static_cast<uint16_t>(width);
+            texture.height = static_cast<uint16_t>(height);
+            texture.storingFormat = TextureStoringFormat::RGBA8;
+            texture.passedDataFormat = TexturePassedDataFormat::RGBA;
+            texture.passedDataComponentSize = TexturePassedDataComponentSize::UNSIGNED_BYTE;
+        }
+        else
+        {
+            texture.width = entity.width;
+            texture.height = entity.height;
+            texture.storingFormat = entity.storingFormat;
+            texture.passedDataFormat = entity.passedDataFormat;
+            texture.passedDataComponentSize = entity.passedDataComponentSize;
+        }
 
-		// send data from RAM to video RAM
-		DebugGlCall(glBindTexture(GL_TEXTURE_2D, 0));
+        texture.slot = entity.slot;
 
-		stbi_image_free(buffer);
+        // init texture on GPU
+        DebugGlCall(glGenTextures(1, &texture.id));
+        // Slots are consecutive numbers so we can just add:
+        DebugGlCall(glActiveTexture(GL_TEXTURE0 + entity.slot));
+        DebugGlCall(glBindTexture(GL_TEXTURE_2D, texture.id));
+        DebugGlCall(glTexImage2D(GL_TEXTURE_2D, 0,
+                                 static_cast<GLenum>(texture.storingFormat), texture.width, texture.height, 0,
+                                 static_cast<GLenum>(texture.passedDataFormat),
+                                 static_cast<GLenum>(texture.passedDataComponentSize), buffer));
 
-		blue::Context::logger().info("Created texture with id: {}", texture);
+        if (entity.withMipMaps)
+        {
+            DebugGlCall(glGenerateMipmap(GL_TEXTURE_2D));
+        }
 
-		return texture;
-	}
+        DebugGlCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, static_cast<GLenum>(entity.filtering)));
+        DebugGlCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, static_cast<GLenum>(entity.filtering)));
+
+        // S/T are X/Y coordinates but for textures:
+        DebugGlCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, static_cast<GLenum>(entity.wrapping)));
+        DebugGlCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, static_cast<GLenum>(entity.wrapping)));
+
+        auto &renderer = blue::Context::renderer();
+        renderer.set_cached_texture(entity.slot, texture.id);
+
+        stbi_image_free(buffer);
+        blue::Context::logger().info("Created texture with id: {}", texture.id);
+
+        return texture;
+    }
 }
 
-void handle(std::pair<std::promise<TextureId>, CreateTextureEntity>& pair)
+void handle(std::pair<std::promise<Texture>, CreateTextureEntity> &pair)
 {
-	std::promise<ShaderId>& promise = pair.first;
-	const CreateTextureEntity& entity = pair.second;
+    std::promise<Texture> &promise = pair.first;
+    const CreateTextureEntity &entity = pair.second;
 
-	TextureId texture = create(entity);
+    Texture texture = create(entity);
 
-	promise.set_value(texture);
+    promise.set_value(texture);
 }
