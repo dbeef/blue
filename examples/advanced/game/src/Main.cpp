@@ -29,6 +29,8 @@ int main(int argc, char* argv[])
 
 	Timestep timestep(30);
 
+	blue::Context::gpu_system().submit(SetClearColorEntity{ {1.0f, 1.0f, 1.0f} });
+
 	while (Game::instance().is_running())
 	{
 		timestep.mark_start();

@@ -107,7 +107,6 @@ const aiScene* models::load_scene(const std::string& path)
 		return nullptr;
 	}
 
-
 	const aiScene* scene;
 	scene = aiImportFileFromMemory(data.data(), size, aiProcessPreset_TargetRealtime_MaxQuality, "fbx");
 
@@ -124,7 +123,39 @@ const aiScene* models::load_scene(const std::string& path)
 		blue::Context::logger().info("Number of lights: {}", scene->mNumLights);
 		blue::Context::logger().info("Number of meshes: {}", scene->mNumMeshes);
 		blue::Context::logger().info("Number of textures: {}", scene->mNumTextures);
+
+		for (std::size_t index = 0; index < scene->mNumTextures; index++)
+		{
+			blue::Context::logger().info("Texture {} name {}", index, scene->mTextures[index]->mFilename.C_Str());
+		}
+
 		blue::Context::logger().info("Number of materials: {}", scene->mNumMaterials);
+
+
+		for (std::size_t index = 0; index < scene->mNumMaterials; index++)
+		{
+			blue::Context::logger().info("Material {} name {}", index, scene->mMaterials[index]->GetName().C_Str());
+
+			for (std::size_t textureType = 0; textureType < 12; textureType++) {
+
+				unsigned int textureCount = scene->mMaterials[index]->GetTextureCount(static_cast<aiTextureType>(aiTextureType_NONE + textureType));
+				if (textureCount != 0)
+				{
+					blue::Context::logger().info("{} texture count: {}", textureType, textureCount);
+
+					for (int ambientTextureIndex = 0; ambientTextureIndex < textureCount; ambientTextureIndex++)
+					{
+						aiString outPath;
+						aiReturn tex = scene->mMaterials[index]->GetTexture(static_cast<aiTextureType>(aiTextureType_NONE + textureType), ambientTextureIndex, &outPath);
+						if (tex == aiReturn_SUCCESS)
+						{
+							blue::Context::logger().info("{}", outPath.C_Str());
+						}
+					}
+				}
+			}
+		}
+
 		return scene;
 	}
 }
@@ -152,6 +183,8 @@ std::vector<VertexType> models::parse_scene(const aiScene*& scene, const Attribu
 	std::vector<VertexType> vertices;
 	for (unsigned long mesh_index = 0; mesh_index < scene->mNumMeshes; mesh_index++) {
 		const auto& mesh = scene->mMeshes[mesh_index];
+
+		blue::Context::logger().info("Mesh: {}", mesh->mName.C_Str());
 
 		for (unsigned long t = 0; t < mesh->mNumFaces; ++t) {
 			const struct aiFace* face = &mesh->mFaces[t];
@@ -206,6 +239,27 @@ std::vector<VertexType> models::parse_scene(const aiScene*& scene, const Attribu
 						}
 						break;
 					}
+					case(ShaderAttribute::Purpose::TEXTURE_COORDINATE):
+					{
+						if (mesh->mTextureCoords[0] != nullptr) {
+
+							// mesh->mMaterialIndex; !!!
+							// Obchodz¹  mnie tylko diffuse tekstury 
+
+							auto uv = mesh->mTextureCoords[0][index];
+							vertices.push_back(uv.x);
+							vertices.push_back(uv.y);
+
+							// TODO: Push texture index?
+
+							// Ignore Z component, will be 0.
+						}
+						else {
+							vertices.push_back(0);
+							vertices.push_back(0);
+						}
+						break;
+					}
 					case(ShaderAttribute::Purpose::NORMAL):
 					{
 						if (mesh->mNormals != nullptr) {
@@ -233,7 +287,6 @@ std::vector<VertexType> models::parse_scene(const aiScene*& scene, const Attribu
 				}
 			}
 		}
-
-		return vertices;
 	}
+	return vertices;
 }
