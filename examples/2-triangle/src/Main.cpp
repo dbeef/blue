@@ -61,7 +61,7 @@ int main(int argc, char* argv[])
 
 	// Upload camera's matrices
 
-	PerspectiveCamera camera;
+	PerspectiveCamera camera(blue::Context::window().get_width(), blue::Context::window().get_height());
 
 	blue::Context::gpu_system().submit(UpdateEnvironmentEntity_Projection{ environment, camera.get_projection() });
 	blue::Context::gpu_system().submit(UpdateEnvironmentEntity_View{ environment, camera.get_view() });
@@ -73,7 +73,7 @@ int main(int argc, char* argv[])
 	entity.shader = shader;
 	entity.vertex_array = vertex_array;
 	entity.scale = 2.0f;
-	entity.rotation = { 1.0f, 1.0f, 0, 0};
+	entity.rotation = { 1.0f, 1.0f, 0, 0 };
 	entity.environment = environment;
 
 	RenderEntityId id = blue::Context::renderer().add(entity);

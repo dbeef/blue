@@ -2,6 +2,8 @@
 #include "blue/Context.hpp"
 #include "blue/Timestep.hpp"
 
+#include <mutex>
+
 #include "imgui/imgui.h"
 #include "imgui/imgui_impl_sdl.h"
 #include "imgui/imgui_impl_opengl3.h"
@@ -35,6 +37,13 @@ namespace
 		ImGui::Render();
 		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 	}
+}
+
+void GpuThread::wait_for_render_pass()
+{
+	std::unique_lock<std::mutex> lk(render_pass_mtx);
+	render_pass_cv.wait(lk);
+	lk.unlock();
 }
 
 bool GpuThread::is_running()
@@ -111,6 +120,10 @@ void GpuThread::render_thread_loop()
 		gpu_system.lock();
 		gpu_system.execute();
 		gpu_system.unlock();
+
+		std::unique_lock<std::mutex> lk(render_pass_mtx);
+		render_pass_cv.notify_all();
+		lk.unlock();
 
 		timestep.mark_end();
 		timestep.delay();

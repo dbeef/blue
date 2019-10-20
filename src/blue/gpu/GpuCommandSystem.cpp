@@ -314,9 +314,15 @@ void GpuCommandSystem::submit(const SetClearColorEntity& entity)
 	unlock();
 }
 
-void GpuCommandSystem::submit(const AddFramebufferTextureAttachmentEntity &entity)
+std::future<bool> GpuCommandSystem::submit(const AddFramebufferTextureAttachmentEntity &entity)
 {
+	std::promise<bool> promise;
+	std::future<bool> future = promise.get_future();
+
+	auto pair = std::make_pair(std::move(promise), entity);
 	lock();
-	add_framebuffer_texture_attachment_entities.push(entity);
+	add_framebuffer_texture_attachment_entities.push(std::move(pair));
 	unlock();
+
+	return future;
 }

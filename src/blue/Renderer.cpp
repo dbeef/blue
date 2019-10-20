@@ -109,8 +109,7 @@ void Renderer::draw_render_entities()
             {
                 // Finished drawing to framebuffer:
                 DebugGlCall(glBindFramebuffer(GL_FRAMEBUFFER, 0));
-                DebugGlCall(
-                        glViewport(0, 0, blue::Context::window().get_width(), blue::Context::window().get_height()));
+                DebugGlCall(glViewport(0, 0, blue::Context::window().get_width(), blue::Context::window().get_height()));
             }
             else
             {

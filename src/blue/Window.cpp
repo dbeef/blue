@@ -41,7 +41,7 @@ namespace blue
 		_height = display_h;
 	}
 
-	bool Window::create()
+	bool Window::create_fullscreen()
 	{
 		_fullscreen = true;
 		return _create();
@@ -54,6 +54,17 @@ namespace blue
 		_height = height;
 		return _create();
 	}
+	
+	bool Window::create_hidden()
+	{
+		_fullscreen = false;
+		// Leaving it as 1x1 window, as zero width/height may lead to
+		// RenderDoc not being able to inject into process.
+		_width = 1;
+		_height = 1;
+		_hidden = true;
+		return _create();
+	}
 
 	bool Window::_create()
 	{
@@ -64,6 +75,11 @@ namespace blue
 		if (_fullscreen)
 		{
 			flags = flags | SDL_WINDOW_FULLSCREEN_DESKTOP;
+		}
+		
+		if (_hidden)
+		{
+			flags = flags | SDL_WINDOW_HIDDEN;
 		}
 
 		_window_handle = SDL_CreateWindow(
@@ -101,9 +117,6 @@ namespace blue
 		DebugGlCall(glEnable(GL_DEPTH_TEST));
 		DebugGlCall(glEnable(GL_STENCIL_TEST));
 		DebugGlCall(glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE));
-
-		// Right now, blue utilizes only one texture slot (GL_TEXTURE0).
-		DebugGlCall(glActiveTexture(GL_TEXTURE0));
 
 		SDL_SetRelativeMouseMode(SDL_TRUE);
 		SDL_SetWindowGrab(_window_handle, SDL_TRUE);

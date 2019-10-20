@@ -13,9 +13,11 @@ namespace blue
 
 		~Window();
 
-		bool create();
-
 		bool create(std::uint16_t width, std::uint16_t height);
+
+		bool create_fullscreen();
+
+		bool create_hidden();
 
 		bool init_gl_context();
 
@@ -56,5 +58,6 @@ namespace blue
 		std::atomic<std::uint16_t> _last_x{ 0 };
 		std::atomic<std::uint16_t> _last_y{ 0 };
 		bool _fullscreen = false;
+		bool _hidden = false;
 	};
 }

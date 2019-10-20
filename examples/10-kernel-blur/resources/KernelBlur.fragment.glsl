@@ -2,7 +2,7 @@ layout(location = 9) uniform sampler2D sampler;
 
 in vec2 TexCoord;
 out vec4 color;
-const float offset = 2.0 / 300.0;  
+const float offset = 1.0 / 300.0;  
 
 void main()
 {

@@ -12,7 +12,8 @@ public:
         SCREEN_SPACE // for 2d rendering
     };
 
-	explicit OrthographicCamera(Mode mode) : _mode(mode)
+	explicit OrthographicCamera(Mode mode, std::uint16_t viewport_width, std::uint16_t viewport_height) : 
+		_mode(mode), Camera(viewport_width, viewport_height)
 	{
 		reset();
 	}

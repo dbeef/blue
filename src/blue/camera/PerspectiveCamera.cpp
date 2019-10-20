@@ -55,12 +55,12 @@ void PerspectiveCamera::reset()
 	// so we initially rotate a bit to the left.
 	_yaw = -90.0f;
 	_pitch = 0;
-	_lastX = static_cast<GLfloat>(blue::Context::window().get_width() / 2.0);
-	_lastY = static_cast<GLfloat>(blue::Context::window().get_height() / 2.0);
+	_lastX = static_cast<GLfloat>(_viewport_width / 2.0);
+	_lastY = static_cast<GLfloat>(_viewport_height / 2.0);
 	_fov = 45.0f;
 
 	// For calculating right-vector.
-	_aspect = static_cast<float>(blue::Context::window().get_width()) / static_cast<float>(blue::Context::window().get_height());
+	_aspect = static_cast<float>(_viewport_width) / static_cast<float>(_viewport_height);
 }
 
 void PerspectiveCamera::go_forward(float distance)
@@ -85,8 +85,8 @@ void PerspectiveCamera::go_right(float distance)
 
 void PerspectiveCamera::mouse_rotation(double xpos, double ypos)
 {
-	GLfloat xoffset = xpos - static_cast<GLfloat>(blue::Context::window().get_width() / 2.0);
-	GLfloat yoffset = static_cast<GLfloat>(blue::Context::window().get_height() / 2.0) - ypos; // Reversed since y-coordinates go from bottom to left
+	GLfloat xoffset = xpos - static_cast<GLfloat>(_viewport_width / 2.0);
+	GLfloat yoffset = static_cast<GLfloat>(_viewport_height / 2.0) - ypos; // Reversed since y-coordinates go from bottom to left
 
 	GLfloat sensitivity = 0.25;    // Change this value to your liking
 	xoffset *= sensitivity;

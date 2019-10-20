@@ -11,7 +11,8 @@ class PerspectiveCamera : public Camera {
 
 public:
 
-	PerspectiveCamera()
+	PerspectiveCamera(std::uint16_t viewport_width, std::uint16_t viewport_height)
+		: Camera(viewport_width, viewport_height)
 	{
 		reset();
 	}

@@ -116,7 +116,7 @@ int main(int argc, char* argv[])
 
 	auto environment = blue::Context::gpu_system().submit(CreateEnvironmentEntity{}).get();
 
-	PerspectiveCamera camera;
+	PerspectiveCamera camera(blue::Context::window().get_width(), blue::Context::window().get_height());
 	camera.set_far(500.0f);
 	camera.set_near(0.1f);
 	camera.set_pos({ 0, 0, 10.0f });
@@ -128,7 +128,7 @@ int main(int argc, char* argv[])
 
 	auto light_environment = blue::Context::gpu_system().submit(CreateEnvironmentEntity{}).get();
 
-	OrthographicCamera ortho(OrthographicCamera::Mode::CLIP_SPACE);
+	OrthographicCamera ortho(OrthographicCamera::Mode::CLIP_SPACE, blue::Context::window().get_width(), blue::Context::window().get_height());
 	ortho.set_far(500.0f);
 	ortho.set_near(-100.0f);
 
