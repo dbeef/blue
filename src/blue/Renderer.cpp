@@ -61,44 +61,28 @@ void Renderer::draw_render_entities()
         }
 
         // If entity utilizes texture (and only one is allowed to be passed in an entity, at least for now):
-        if (entity.texture1.id != 0)
+        for (std::size_t index = 0; index < BLUE_AVAILABLE_TEXTURE_SLOTS; index++)
         {
-            auto requestedSlot = cache.textures.find(entity.texture1.slot);
-            if (requestedSlot != cache.textures.end())
-            {
-                if (requestedSlot->second != entity.texture1.id)
-                {
-                    requestedSlot->second = entity.texture1.id;
-                    DebugGlCall(glActiveTexture(GL_TEXTURE0 + entity.texture1.slot));
-                    DebugGlCall(glBindTexture(GL_TEXTURE_2D, entity.texture1.id));
-                }
-            }
-            else
-            {
-                cache.textures.insert({entity.texture1.slot, entity.texture1.id});
-                DebugGlCall(glActiveTexture(GL_TEXTURE0 + entity.texture1.slot));
-                DebugGlCall(glBindTexture(GL_TEXTURE_2D, entity.texture1.id));
-            }
-        }
+            const auto& texture = entity.textures[index];
 
-        // If entity utilizes texture (and only one is allowed to be passed in an entity, at least for now):
-        if (entity.texture2.id != 0)
-        {
-            auto requestedSlot = cache.textures.find(entity.texture2.slot);
-            if (requestedSlot != cache.textures.end())
+            if (texture.id != 0)
             {
-                if (requestedSlot->second != entity.texture2.id)
+                auto requestedSlot = cache.textures.find(texture.slot);
+                if (requestedSlot != cache.textures.end())
                 {
-                    requestedSlot->second = entity.texture2.id;
-                    DebugGlCall(glActiveTexture(GL_TEXTURE0 + entity.texture2.slot));
-                    DebugGlCall(glBindTexture(GL_TEXTURE_2D, entity.texture2.id));
+                    if (requestedSlot->second != texture.id)
+                    {
+                        requestedSlot->second = texture.id;
+                        DebugGlCall(glActiveTexture(GL_TEXTURE0 + texture.slot));
+                        DebugGlCall(glBindTexture(GL_TEXTURE_2D, texture.id));
+                    }
                 }
-            }
-            else
-            {
-                cache.textures.insert({entity.texture2.slot, entity.texture2.id});
-                DebugGlCall(glActiveTexture(GL_TEXTURE0 + entity.texture2.slot));
-                DebugGlCall(glBindTexture(GL_TEXTURE_2D, entity.texture2.id));
+                else
+                {
+                    cache.textures.insert({texture.slot, texture.id});
+                    DebugGlCall(glActiveTexture(GL_TEXTURE0 + texture.slot));
+                    DebugGlCall(glBindTexture(GL_TEXTURE_2D, texture.id));
+                }
             }
         }
 
@@ -183,8 +167,8 @@ RenderEntityId Renderer::add(const RenderEntity &entity)
     e.rotation = entity.rotation;
     e.scale = entity.scale;
     e.environment = entity.environment;
-    e.texture1 = entity.texture1;
-    e.texture2 = entity.texture2;
+    std::memcpy(&e.textures[0], &entity.textures[0], sizeof(RenderEntity::textures));
+
     {
         e.framebuffer.framebuffer = entity.framebuffer.framebuffer;
         e.framebuffer.texture = entity.framebuffer.texture;

@@ -146,7 +146,7 @@ int main(int argc, char* argv[])
 	tree_entity.scale = 0.5f;
 	tree_entity.rotation = { 0, 0, 0, 0 };
 	tree_entity.environment = environment;
-	tree_entity.texture1 = framebuffer.texture;
+	tree_entity.textures[0] = framebuffer.texture;
 	tree_entity.framebuffer.framebuffer = 0;
 	tree_entity.id = blue::Context::renderer().add(tree_entity);
 
@@ -158,7 +158,7 @@ int main(int argc, char* argv[])
 	tree_shadow_entity.rotation = { 0, 0, 0, 0 };
 	tree_shadow_entity.framebuffer = framebuffer;
 	tree_shadow_entity.environment = light_environment;
-	tree_shadow_entity.texture1.id = 0;
+	tree_shadow_entity.textures[0].id = 0;
 	tree_shadow_entity.id = blue::Context::renderer().add(tree_shadow_entity);
 
 	RenderEntity floor_entity;
@@ -168,8 +168,8 @@ int main(int argc, char* argv[])
 	floor_entity.scale = 100.0f;
 	floor_entity.rotation = { 0, 0, 0, 0 };
 	floor_entity.environment = environment;
-	floor_entity.texture1 = framebuffer.texture;
-	floor_entity.texture2 = texture;
+	floor_entity.textures[0] = framebuffer.texture;
+	floor_entity.textures[1] = texture;
 	floor_entity.framebuffer.framebuffer = 0;
 	floor_entity.id = blue::Context::renderer().add(floor_entity);
 

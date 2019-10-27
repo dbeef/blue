@@ -94,7 +94,7 @@ int main(int argc, char* argv[])
 	entity.scale = 256.0f; // FIXME: Scale x, scale y, scale z? 
 	entity.rotation = glm::identity<glm::quat>();
 	entity.environment = environment;
-	entity.texture1 = texture; // FIXME: Array of textures?
+	entity.textures[0] = texture; // FIXME: Array of textures?
 	entity.framebuffer = framebuffer;
 
 	RenderEntityId id = blue::Context::renderer().add(entity);
@@ -124,7 +124,7 @@ int main(int argc, char* argv[])
 	secondPassEntity.scale = 256.0f;
 	secondPassEntity.rotation = glm::identity<glm::quat>();
 	secondPassEntity.environment = environment;
-	secondPassEntity.texture1 = renderTexture;
+	secondPassEntity.textures[0] = renderTexture;
 	secondPassEntity.framebuffer = framebuffer;
 
 	RenderEntityId secondPassEntityId = blue::Context::renderer().add(secondPassEntity);

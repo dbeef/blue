@@ -87,7 +87,7 @@ int main(int argc, char *argv[])
     entity.scale = 100.0f;
     entity.rotation = glm::identity<glm::quat>();
     entity.environment = environment;
-    entity.texture1 = texture;
+    entity.textures[0] = texture;
 
     RenderEntityId id = blue::Context::renderer().add(entity);
 

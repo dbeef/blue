@@ -13,6 +13,8 @@
 #include "blue/gpu/GpuEntities.hpp"
 #include "glad/glad.h"
 
+static const std::uint32_t BLUE_AVAILABLE_TEXTURE_SLOTS = 8;
+
 using ImGuiEntity = std::function<void()>;
 using RenderEntityId = std::uint32_t;
 using ImGuiEntityId = std::uint32_t;
@@ -26,12 +28,7 @@ struct RenderEntity
 	glm::quat rotation{};
 	float scale{};
 	UniformBufferId environment{};
-	Texture texture1{};
-	Texture texture2{};
-	//
-	GLenum stencil_function = GL_ALWAYS;
-	GLuint stencil_mask = 0xFF;
-	//
+	Texture textures[BLUE_AVAILABLE_TEXTURE_SLOTS];
 	Framebuffer framebuffer{};
 };
 
