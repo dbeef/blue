@@ -170,10 +170,9 @@ void Map::upload_clickable_vertices()
 	entity.position = { 0, 0, 0 };
 	entity.shader = Resources::instance().shaders.clickable_map;
 	entity.vertex_array = clickable_vertices_vertex_array;
-	entity.scale = 1.0f;
+	entity.scale = {1.0f,1.0f,1.0f};
 	entity.rotation = glm::identity<glm::quat>();
 	entity.environment = Resources::instance().map_environment.environment;
-	entity.texture = 0;
 
 	clickable_vertices_render_entity = blue::Context::renderer().add(entity);
 }
@@ -240,10 +239,9 @@ void Map::upload_decoration_vertices()
 	entity.position = { 0, 0, 0 };
 	entity.shader = Resources::instance().shaders.decoration_map;
 	entity.vertex_array = decoration_vertices_vertex_array;
-	entity.scale = 1.0f;
+	entity.scale = {1.0f,1.0f,1.0f};
 	entity.rotation = glm::identity<glm::quat>();
 	entity.environment = Resources::instance().map_environment.environment;
-	entity.texture = 0;
 
 	decoration_vertices_render_entity = blue::Context::renderer().add(entity);
 }
@@ -281,21 +279,20 @@ void Map::upload_decoration()
 	entity.position = { 0, 0, 0 };
 	entity.shader = Resources::instance().shaders.decoration_map;
 	entity.vertex_array = decoration_vertices_vertex_array;
-	entity.scale = 1.0f;
+	entity.scale = {1.0f,1.0f,1.0f};
 	entity.rotation = glm::identity<glm::quat>();
 //    entity.environment = Resources::instance().light_environment.environment;
 	entity.environment = Resources::instance().map_environment.environment;
-	entity.texture = Resources::instance().light_environment.depth.texture;
+	entity.textures[0] = Resources::instance().light_environment.depth.texture;
 	entity.framebuffer.framebuffer = 0;
 
 	RenderEntity shadow;
 	shadow.position = { 0, 0, 0 };
 	shadow.shader = Resources::instance().shaders.simple_depth;
 	shadow.vertex_array = decoration_vertices_vertex_array;
-	shadow.scale = 1.0f;
+	shadow.scale = {1.0f, 1.0f, 1.0f};
 	shadow.rotation = glm::identity<glm::quat>();
 	shadow.environment = Resources::instance().light_environment.environment;
-	shadow.texture = 0;
 	shadow.framebuffer = Resources::instance().light_environment.depth;
 
 	shadow.id = blue::Context::renderer().add(shadow);

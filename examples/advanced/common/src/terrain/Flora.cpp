@@ -202,7 +202,7 @@ RenderEntity Flora::add_entry(Resources::Model model, const glm::vec3 &position,
     entity.shader = Resources::instance().shaders.model;
     entity.rotation = glm::quat(rotation);
     entity.environment = environment;
-	entity.scale = get_default_scale(model);
+	entity.scale = glm::vec3(get_default_scale(model));
     entity.framebuffer.framebuffer = 0;
 
     switch (model)
@@ -386,8 +386,8 @@ RenderEntity Flora::add_instanced_rendering_entry(Resources::Model model, const 
         }
     }
 
-	entity.scale = 1.0f;
-	entity.texture = Resources::instance().light_environment.depth.texture;
+	entity.scale = {1.0f,1.0f,1.0f};
+	entity.textures[0] = Resources::instance().light_environment.depth.texture;
 //    entity.environment = Resources::instance().light_environment.environment;
 
     entity.id = blue::Context::renderer().add(entity);
@@ -399,7 +399,6 @@ RenderEntity Flora::add_instanced_rendering_entry(Resources::Model model, const 
     shadow.scale = entity.scale;
     shadow.rotation = entity.rotation;
     shadow.environment = Resources::instance().light_environment.environment;
-    shadow.texture = 0;
     shadow.framebuffer = Resources::instance().light_environment.depth;
     shadow.id = blue::Context::renderer().add(shadow);
 

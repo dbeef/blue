@@ -66,7 +66,7 @@ public:
 
 private:
 
-    const Mode _mode;
+    Mode _mode;
 
 	// roll is always 0
 	GLfloat _yaw = 0;

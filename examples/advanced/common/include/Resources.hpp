@@ -39,12 +39,12 @@ public:
 
 	struct {
 		UniformBufferId environment = 0;
-		PerspectiveCamera camera;
+		PerspectiveCamera camera = PerspectiveCamera(0, 0);
 	} map_environment;
 
 	struct {
 		UniformBufferId environment = 0;
-		OrthographicCamera camera = OrthographicCamera(OrthographicCamera::Mode::CLIP_SPACE);
+		OrthographicCamera camera = OrthographicCamera(OrthographicCamera::Mode::CLIP_SPACE, 0, 0);
 		Framebuffer depth;
 	} light_environment;
 

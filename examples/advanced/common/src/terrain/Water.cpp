@@ -149,10 +149,9 @@ void Water::create_water(const Map& map)
 	entity.position = { 0, 0, 0 };
 	entity.shader = Resources::instance().shaders.water;
 	entity.vertex_array = clickable_vertices_vertex_array;
-	entity.scale = 1.0f;
+	entity.scale = {1.0f,1.0f,1.0f};
 	entity.rotation = glm::identity<glm::quat>();
 	entity.environment = Resources::instance().map_environment.environment;
-	entity.texture = 0;
 
 	_render_entity = blue::Context::renderer().add(entity);
 }

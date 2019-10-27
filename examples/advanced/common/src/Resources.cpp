@@ -2,6 +2,7 @@
 #include <blue/ShaderUtils.h>
 #include <blue/ModelLoader.h>
 #include <blue/Context.hpp>
+#include <Resources.hpp>
 
 #include "Resources.hpp"
 
@@ -192,8 +193,25 @@ void Resources::load_textures()
 
 void Resources::load_environment()
 {
+	light_environment.camera = OrthographicCamera(OrthographicCamera::Mode::CLIP_SPACE, blue::Context::window().get_width(), blue::Context::window().get_height());
+	map_environment.camera = PerspectiveCamera(blue::Context::window().get_width(), blue::Context::window().get_height());
+
 	// Create framebuffer with only depth component for shadows:
-	light_environment.depth = blue::Context::gpu_system().submit(CreateFramebufferEntity{ true, 1024, 1024 }).get();
+	light_environment.depth = blue::Context::gpu_system().submit(CreateFramebufferEntity{}).get();
+
+	auto renderTexture = blue::Context::gpu_system().submit(CreateTextureEntity{
+			std::make_shared<std::vector<char>>(), true,
+			TextureFiltering::LINEAR,
+			TextureWrapping::CLAMP_TO_EDGE,
+			1024,
+			1024,
+			0,
+			TexturePassedDataFormat::DEPTH_COMPONENT,
+			TextureStoringFormat::DEPTH_COMPONENT,
+			TexturePassedDataComponentSize::UNSIGNED_BYTE
+	}).get();
+	light_environment.depth.texture = renderTexture;
+	blue::Context::gpu_system().submit(AddFramebufferTextureAttachmentEntity{ light_environment.depth, FramebufferAttachmentType::DEPTH_ATTACHMENT }).wait();
 
 	// Create map_environment
 	map_environment.environment = blue::Context::gpu_system().submit(CreateEnvironmentEntity{}).get();
