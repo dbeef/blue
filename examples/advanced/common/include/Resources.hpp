@@ -3,6 +3,7 @@
 #include <blue/camera/OrthographicCamera.hpp>
 #include <blue/camera/PerspectiveCamera.hpp>
 #include <blue/gpu/GpuEntities.hpp>
+#include <blue/gui/Button.hpp>
 
 class Resources
 {
@@ -38,9 +39,18 @@ public:
 	void load_textures();
 
 	struct {
+		Button somebutton;
+	} controls;
+
+	struct {
 		UniformBufferId environment = 0;
 		PerspectiveCamera camera = PerspectiveCamera(0, 0);
 	} map_environment;
+
+	struct {
+		OrthographicCamera camera = OrthographicCamera(OrthographicCamera::Mode::SCREEN_SPACE, 0, 0);
+		UniformBufferId environment = 0;
+	} gui_environment;
 
 	struct {
 		UniformBufferId environment = 0;
@@ -72,6 +82,11 @@ public:
 		VertexArray track;
 		VertexArray bridge;
 	} models;
+
+	struct {
+		Texture clicked;
+		Texture idle;
+	} textures;
 
 private:
 

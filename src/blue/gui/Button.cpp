@@ -8,7 +8,7 @@
 namespace
 {
     // Generic texture rendering shader, utilizing
-    // slot 0 for clicked and slot 1 for idle texture.
+    // slot 5 for clicked and slot 6 for idle texture.
     ShaderId shader_program_clicked{};
     ShaderId shader_program_idle{};
     VertexArray vertex_array{};
@@ -144,8 +144,8 @@ void Button::init()
 
     vertex_array = blue::Context::gpu_system().submit(CreateMeshEntity{vertices, indices, attributes, 6}).get();
 
-    GLint clicked_slot = 0;
-    GLint idle_slot = 1;
+    GLint clicked_slot = 5;
+    GLint idle_slot = 6;
 
     blue::Context::gpu_system().submit(
             UpdateUniformVariableEntity{ShaderAttribute::Type::INT, &clicked_slot, shader_program_clicked, 9, ""});

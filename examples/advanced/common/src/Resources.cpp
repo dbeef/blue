@@ -3,8 +3,8 @@
 #include <blue/ModelLoader.h>
 #include <blue/Context.hpp>
 #include <Resources.hpp>
+#include <blue/TextureUtils.hpp>
 
-#include "Resources.hpp"
 
 Resources* Resources::_instance = nullptr;
 
@@ -188,13 +188,47 @@ void Resources::load_models()
 
 void Resources::load_textures()
 {
-	// No textures so far.
+	auto clicked_entity = CreateTextureEntity{ImageUtils::read("resources/clicked.png")};
+	clicked_entity.slot = 5;
+	textures.clicked = blue::Context::gpu_system().submit(clicked_entity).get();
+
+	auto idle_entity = CreateTextureEntity{ImageUtils::read("resources/idle.png")};
+	idle_entity.slot = 6;
+	textures.idle = blue::Context::gpu_system().submit(idle_entity).get();
+
+	Button::init();
+	PlacingRules rules;
+	rules.width_in_screen_percent = 8;
+	rules.height_in_screen_percent = 10;
+	rules.x_in_screen_percent_from_left = 90;
+	rules.y_in_screen_percent_from_up = 10;
+	controls.somebutton.update_placing_rules(rules);
+    controls.somebutton.create(gui_environment.environment, textures.clicked, textures.idle);
+
+	MouseKeyCallback down_callback;
+	down_callback.key_type = SDL_BUTTON_LEFT;
+	down_callback.action = SDL_MOUSEBUTTONDOWN;
+	down_callback.callback = [](double x, double y) {
+		bool clicked = Resources::instance().controls.somebutton.is_clicked(x, y);
+		if(clicked) Resources::instance().controls.somebutton.set_clicked(true);
+	};
+
+	MouseKeyCallback release_callback;
+	release_callback.key_type = SDL_BUTTON_LEFT;
+	release_callback.action = SDL_MOUSEBUTTONUP;
+	release_callback.callback = [](double x, double y) {
+        Resources::instance().controls.somebutton.set_clicked(false);
+	};
+
+	blue::Context::input().registerMouseKeyCallback({down_callback});
+	blue::Context::input().registerMouseKeyCallback({release_callback});
 }
 
 void Resources::load_environment()
 {
 	light_environment.camera = OrthographicCamera(OrthographicCamera::Mode::CLIP_SPACE, blue::Context::window().get_width(), blue::Context::window().get_height());
 	map_environment.camera = PerspectiveCamera(blue::Context::window().get_width(), blue::Context::window().get_height());
+	gui_environment.camera = OrthographicCamera(OrthographicCamera::Mode::SCREEN_SPACE, blue::Context::window().get_width(), blue::Context::window().get_height());
 
 	// Create framebuffer with only depth component for shadows:
 	light_environment.depth = blue::Context::gpu_system().submit(CreateFramebufferEntity{}).get();
@@ -216,10 +250,15 @@ void Resources::load_environment()
 	// Create map_environment
 	map_environment.environment = blue::Context::gpu_system().submit(CreateEnvironmentEntity{}).get();
 	light_environment.environment = blue::Context::gpu_system().submit(CreateEnvironmentEntity{}).get();
+	gui_environment.environment = blue::Context::gpu_system().submit(CreateEnvironmentEntity{}).get();
 
 	// Upload map environment camera matrices
 	blue::Context::gpu_system().submit(UpdateEnvironmentEntity_Projection{ map_environment.environment, map_environment.camera.get_projection() });
 	blue::Context::gpu_system().submit(UpdateEnvironmentEntity_View{ map_environment.environment, map_environment.camera.get_view() });
+
+	// Same for gui
+	blue::Context::gpu_system().submit(UpdateEnvironmentEntity_Projection{gui_environment.environment, gui_environment.camera.get_projection()});
+	blue::Context::gpu_system().submit(UpdateEnvironmentEntity_View{gui_environment.environment, gui_environment.camera.get_view()});
 
 	// Set pale blue clear color
 	blue::Context::gpu_system().submit(SetClearColorEntity{ {0.25f, 0.45f, 0.8f} });

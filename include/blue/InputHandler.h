@@ -52,14 +52,14 @@ public:
 	
 	inline void registerMouseKeyCallback(const MouseKeyCallback& callback)
 	{
-		auto iterator = std::remove_if(mouseButtonCommands.begin(), mouseButtonCommands.end(), [callback](const MouseKeyCallback& list_callback) -> bool {
-			return callback.key_type == list_callback.key_type && callback.action == list_callback.action;
-			});
-
-		if (iterator != mouseButtonCommands.end())
-		{
-			mouseButtonCommands.erase(iterator);
-		}
+//		auto iterator = std::remove_if(mouseButtonCommands.begin(), mouseButtonCommands.end(), [callback](const MouseKeyCallback& list_callback) -> bool {
+//			return callback.key_type == list_callback.key_type && callback.action == list_callback.action;
+//			});
+//
+//		if (iterator != mouseButtonCommands.end())
+//		{
+//			mouseButtonCommands.erase(iterator);
+//		}
 
 		mouseButtonCommands.emplace_back(callback);
 	}
