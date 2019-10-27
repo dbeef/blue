@@ -91,7 +91,7 @@ int main(int argc, char* argv[])
 	entity.position = { viewport_width / 2, viewport_height / 2, 0.0f };
 	entity.shader = shader;
 	entity.vertex_array = vertex_array;
-	entity.scale = 256.0f; // FIXME: Scale x, scale y, scale z? 
+	entity.scale = {256.0f,256.0f,256.0f}; // FIXME: Scale x, scale y, scale z?
 	entity.rotation = glm::identity<glm::quat>();
 	entity.environment = environment;
 	entity.textures[0] = texture; // FIXME: Array of textures?
@@ -121,7 +121,7 @@ int main(int argc, char* argv[])
 	secondPassEntity.position = { viewport_width / 2, viewport_height / 2, 0.0f };
 	secondPassEntity.shader = kernel_blur_shader;
 	secondPassEntity.vertex_array = vertex_array;
-	secondPassEntity.scale = 256.0f;
+	secondPassEntity.scale = {256.0f,256.0f,256.0f};
 	secondPassEntity.rotation = glm::identity<glm::quat>();
 	secondPassEntity.environment = environment;
 	secondPassEntity.textures[0] = renderTexture;

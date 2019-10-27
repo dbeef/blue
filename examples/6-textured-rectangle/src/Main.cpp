@@ -9,7 +9,7 @@
 int main(int argc, char *argv[])
 {
     blue::Context::init();
-    blue::Context::window().create(800, 600);
+    blue::Context::window().create(100, 100);
     blue::Context::gpu_thread().run();
 
     // Register ESC key callback:
@@ -36,10 +36,10 @@ int main(int argc, char *argv[])
 
     Vertices vertices =
             {
-                    /* Vertex pos */ -1.0f, -1.0f, /* Tex coord */ 0.0f, 0.0f,
-                    /* Vertex pos */ -1.0f, 1.0f,  /* Tex coord */ 0.0f, 1.0f,
-                    /* Vertex pos */ 1.0f, 1.0f,   /* Tex coord */ 1.0f, 1.0f,
-                    /* Vertex pos */ 1.0f, -1.0f,  /* Tex coord */ 1.0f, 0.0f,
+                    /* Vertex pos */ -0.5f, -0.5f, /* Tex coord */ 0.0f, 0.0f,
+                    /* Vertex pos */ -0.5f, 0.5f,  /* Tex coord */ 0.0f, 1.0f,
+                    /* Vertex pos */ 0.5f, 0.5f,   /* Tex coord */ 1.0f, 1.0f,
+                    /* Vertex pos */ 0.5f, -0.5f,  /* Tex coord */ 1.0f, 0.0f,
             };
 
     Indices indices =
@@ -84,7 +84,7 @@ int main(int argc, char *argv[])
     entity.position = {blue::Context::window().get_width() / 2, blue::Context::window().get_height() / 2, 0.0f};
     entity.shader = shader;
     entity.vertex_array = vertex_array;
-    entity.scale = 100.0f;
+    entity.scale = {100.0f,100.0f,100.0f};
     entity.rotation = glm::identity<glm::quat>();
     entity.environment = environment;
     entity.textures[0] = texture;

@@ -72,7 +72,7 @@ int main(int argc, char* argv[])
 	entity.position = { 0, 0, -2.5f };
 	entity.shader = shader;
 	entity.vertex_array = vertex_array;
-	entity.scale = 2.0f;
+	entity.scale = {2.0f, 2.0f, 2.0f};
 	entity.rotation = { 1.0f, 1.0f, 0, 0 };
 	entity.environment = environment;
 

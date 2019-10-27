@@ -86,10 +86,13 @@ add_library(
         include/blue/ResourcesPath.h
         include/blue/InputHandler.h
         include/blue/Window.hpp
+        include/blue/gui/PlacingRules.h
+        include/blue/gui/Button.hpp
+        src/blue/gui/Button.cpp
         include/blue/camera/PerspectiveCamera.hpp
         include/blue/camera/OrthographicCamera.hpp
         include/blue/camera/Camera.hpp
-        src/blue/gpu/handlers/AddFramebufferTextureAttachmentHandler.cpp)
+        src/blue/gpu/handlers/AddFramebufferTextureAttachmentHandler.cpp include/blue/gui/PlacingRules.h)
 
 target_include_directories(
         blue

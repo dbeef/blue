@@ -117,11 +117,6 @@ namespace blue
 		DebugGlCall(glEnable(GL_DEPTH_TEST));
 		DebugGlCall(glEnable(GL_STENCIL_TEST));
 		DebugGlCall(glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE));
-
-		SDL_SetRelativeMouseMode(SDL_TRUE);
-		SDL_SetWindowGrab(_window_handle, SDL_TRUE);
-		SDL_WarpMouseInWindow(_window_handle, get_width() / 2, get_height() / 2);
-
 		DebugGlCall(glViewport(0, 0, get_width(), get_height()));
 
 		return true;

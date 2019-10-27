@@ -109,7 +109,7 @@ void Renderer::draw_render_entities()
         }
 
         const glm::mat4 RotationMatrix = glm::toMat4(entity.rotation);
-        const glm::mat4 ScaleMatrix = glm::scale(glm::identity<glm::mat4>(), glm::vec3(entity.scale));
+        const glm::mat4 ScaleMatrix = glm::scale(glm::identity<glm::mat4>(), entity.scale);
         const glm::mat4 TranslationMatrix = glm::translate(glm::identity<glm::mat4>(), entity.position);
 
         // FIXME: This does not need to be updated every frame - possible optimization.

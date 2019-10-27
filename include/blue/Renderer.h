@@ -26,7 +26,7 @@ struct RenderEntity
 	VertexArray vertex_array{};
 	glm::vec3 position{};
 	glm::quat rotation{};
-	float scale{};
+	glm::vec3 scale{};
 	UniformBufferId environment{};
 	Texture textures[BLUE_AVAILABLE_TEXTURE_SLOTS];
 	Framebuffer framebuffer{};

@@ -143,7 +143,7 @@ int main(int argc, char* argv[])
 	tree_entity.position = { 0.0f, -2.5f, -5.5f };
 	tree_entity.shader = shader;
 	tree_entity.vertex_array = tree_vertex_array;
-	tree_entity.scale = 0.5f;
+	tree_entity.scale = {0.5f, 0.5f, 0.5f};
 	tree_entity.rotation = { 0, 0, 0, 0 };
 	tree_entity.environment = environment;
 	tree_entity.textures[0] = framebuffer.texture;
@@ -154,7 +154,7 @@ int main(int argc, char* argv[])
 	tree_shadow_entity.position = tree_entity.position;
 	tree_shadow_entity.shader = depth_shader;
 	tree_shadow_entity.vertex_array = tree_vertex_array;
-	tree_shadow_entity.scale = 0.5f;
+	tree_shadow_entity.scale = {0.5f,0.5f,0.5f};
 	tree_shadow_entity.rotation = { 0, 0, 0, 0 };
 	tree_shadow_entity.framebuffer = framebuffer;
 	tree_shadow_entity.environment = light_environment;
@@ -165,7 +165,7 @@ int main(int argc, char* argv[])
 	floor_entity.position = { 0.0f, 0.0f, -25.0f };
 	floor_entity.shader = floor_shader;
 	floor_entity.vertex_array = floor_vertex_array;
-	floor_entity.scale = 100.0f;
+	floor_entity.scale = {100.0f,100.0f,100.0f};
 	floor_entity.rotation = { 0, 0, 0, 0 };
 	floor_entity.environment = environment;
 	floor_entity.textures[0] = framebuffer.texture;
