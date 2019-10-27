@@ -92,5 +92,17 @@ void main()
     float shadow = ShadowCalculation(FragPosLightSpace);
     vec3 lighting = (ambient + (1.0 - shadow) * (diffuse + specular)) * lightColor;
 
-    color = vec4(lighting, 1.0f);
+    //float camDistX = abs(cameraPos.x - FragPos.x); 
+    //float camDistZ = abs(cameraPos.z - FragPos.z);
+
+    vec2 point = FragPos.xz;
+    vec2 center = cameraPos.xz;
+    float radius = 20.0f;
+      
+    float distance = sqrt(pow(point.x - center.x, 2.0) + pow(point.y - center.y, 2.0));
+
+    if (distance < radius)
+        color = vec4(lighting, 1.0f);
+    else
+        color = vec4(lighting + (0.1 * vec3(distance - radius)), 1.0f);
 }

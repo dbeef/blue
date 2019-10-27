@@ -114,6 +114,10 @@ namespace blue
 		assert(gladLoadGLLoader((GLADloadproc)SDL_GL_GetProcAddress));
 #endif
 
+		// Enable blending
+		glEnable(GL_BLEND);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
 		DebugGlCall(glEnable(GL_DEPTH_TEST));
 		DebugGlCall(glEnable(GL_STENCIL_TEST));
 		DebugGlCall(glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE));

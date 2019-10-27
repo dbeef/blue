@@ -7,10 +7,12 @@ project(GameSample)
 set(SOURCES
         src/Main.cpp
         src/Game.cpp
+        src/jobs/MapIntersectionJob.cpp
+        include/jobs/MapIntersectionJob.h
         src/Callbacks.cpp
         include/Game.hpp
         include/Callbacks.hpp
-        include/Callbacks.hpp src/Callbacks.cpp)
+        include/Callbacks.hpp src/Callbacks.cpp include/jobs/MapIntersectionJob.h src/jobs/MapIntersectionJob.cpp)
 
 if(${BLUE_PLATFORM} STREQUAL "Android")
     add_library(GameSample SHARED ${SOURCES})

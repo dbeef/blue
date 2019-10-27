@@ -36,6 +36,12 @@ void Resources::load_shaders()
 		BLUE_ASSERT(shader > 0);
 	}
 	{
+		auto entity = ShaderUtils::make_entity("resources/TileHighlight.vertex.glsl", "resources/TileHighlight.fragment.glsl");
+		auto shader = blue::Context::gpu_system().submit(entity).get();
+		shaders.tile_highlight = shader;
+		BLUE_ASSERT(shader > 0);
+	}
+	{
 		auto entity = ShaderUtils::make_entity("resources/SimpleDepth_Instanced.vertex.glsl", "resources/SimpleDepth.fragment.glsl");
 		auto shader = blue::Context::gpu_system().submit(entity).get();
 		shaders.simple_depth_instanced = shader;
@@ -48,7 +54,7 @@ void Resources::load_shaders()
 		BLUE_ASSERT(shader > 0);
 	}
 	{
-		auto entity = ShaderUtils::make_entity("resources/Decoration.vertex.glsl", "resources/Decoration.fragment.glsl");
+		auto entity = ShaderUtils::make_entity("resources/Clickable.vertex.glsl", "resources/Clickable.fragment.glsl");
 		auto shader = blue::Context::gpu_system().submit(entity).get();
 		shaders.clickable_map = shader;
 		BLUE_ASSERT(shader > 0);
@@ -77,6 +83,25 @@ void Resources::load_shaders()
 		shaders.swinging = shader;
 		BLUE_ASSERT(shader > 0);
 	}
+}
+
+void Resources::load_render_entities()
+{
+    {
+        RenderEntity entity;
+        const auto& environment = Resources::instance().map_environment.environment;
+
+        entity.position = { 100.0f, 100.0f, 100.0f };
+        entity.shader = Resources::instance().shaders.tile_highlight;
+        entity.rotation = {};
+        entity.environment = environment;
+        entity.scale = {1.0f,1.0f,1.0f};
+        entity.framebuffer.framebuffer = 0;
+        entity.vertex_array = Resources::instance().models.square;
+        entity.id = blue::Context::renderer().add(entity);
+
+        render_entities.selected_tile_highlight = entity;
+    }
 }
 
 void Resources::load_models()
@@ -184,6 +209,28 @@ void Resources::load_models()
 		auto vertex_array = blue::Context::gpu_system().submit(CreateMeshEntity{ vertices, {}, attributes, vertex_counter }).get();
 		models.bridge = vertex_array;
 	}
+
+    {
+        Vertices vertices =
+                {
+                        /* Vertex pos */ -0.0f, 0.0f,  -0.0f,
+                        /* Vertex pos */ -0.0f, 0.0f,  1.0f,
+                        /* Vertex pos */ 1.0f,  0.0f,  1.0f,
+                        /* Vertex pos */ 1.0f,  0.0f, -0.0f,
+                };
+
+        Indices indices =
+                {
+                        0, 1, 2, 2, 3, 0
+                };
+
+        Attributes attributes =
+                {
+                        { ShaderAttribute::Type::VEC3, ShaderAttribute::Purpose::VERTEX_POSITION, ShaderAttribute::Buffer::VERTEX},
+                };
+
+        models.square = blue::Context::gpu_system().submit(CreateMeshEntity{ vertices, indices, attributes, 6 }).get();
+    }
 }
 
 void Resources::load_textures()
@@ -198,8 +245,8 @@ void Resources::load_textures()
 
 	Button::init();
 	PlacingRules rules;
-	rules.width_in_screen_percent = 8;
-	rules.height_in_screen_percent = 10;
+	rules.width_in_screen_percent = 9;
+	rules.height_in_screen_percent = 6;
 	rules.x_in_screen_percent_from_left = 90;
 	rules.y_in_screen_percent_from_up = 10;
 	controls.somebutton.update_placing_rules(rules);
@@ -264,9 +311,9 @@ void Resources::load_environment()
 	blue::Context::gpu_system().submit(SetClearColorEntity{ {0.25f, 0.45f, 0.8f} });
 
 	// Move camera to initial position
-	map_environment.camera.set_pos({ 7.78816, 28.7423, 22.3805 });
-	map_environment.camera.add_rotation(- 68.5f, - 44.25f);
-
+	map_environment.camera.add_rotation(-68.5f, -60.25f);
+	map_environment.camera.set_pos({ 32, 22, 32 });
+	//map_environment.camera.look_at({ 0, 0, 0 });
 	blue::Context::gpu_system().submit(UpdateEnvironmentEntity_View{ map_environment.environment, map_environment.camera.get_view() });
 	blue::Context::gpu_system().submit(UpdateEnvironmentEntity_CameraPos{ map_environment.environment, map_environment.camera.get_position() });
 

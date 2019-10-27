@@ -32,7 +32,7 @@ float ShadowCalculation(vec4 fragPosLightSpace)
     projCoords = projCoords * 0.5 + 0.5;
 
     if(projCoords.z > 1.0)
-    return 0.0f;
+        return 0.0f;
 
     // get closest depth value from light's perspective (using [0,1] range fragPosLight as coords)
     float closestDepth = texture(sampler, projCoords.xy).r;
@@ -62,26 +62,26 @@ float ShadowCalculation(vec4 fragPosLightSpace)
 
 void main()
 {
-    /*
-        float ambientStrengthTemp = 0.15f;
+/*
+    float ambientStrengthTemp = 0.15f;
 
-        vec3 lightColor = vec3(1.0f, 1.0f, 1.0f);
-        vec3 ambient = ambientStrengthTemp * lightColor;
+    vec3 lightColor = vec3(1.0f, 1.0f, 1.0f);
+    vec3 ambient = ambientStrengthTemp * lightColor;
 
-        vec3 norm = normalize(Normal);
-        vec3 lightDir = normalize(lightPos - FragPos);
+    vec3 norm = normalize(Normal);
+    vec3 lightDir = normalize(lightPos - FragPos);
 
-        float diff = max(dot(norm, lightDir), 0.0);
-        vec3 diffuse = diff * lightColor;
+    float diff = max(dot(norm, lightDir), 0.0);
+    vec3 diffuse = diff * lightColor;
 
-        color = vec4(ambient + diffuse, 1.0f) * vec4(ColorRGB, 1.0f);
-    */
-
+    color = vec4(ambient + diffuse, 1.0f) * vec4(ColorRGB, 1.0f);
+*/
+   
     vec3 lightColor = vec3(1.0f, 1.0f, 1.0f) * ColorRGB;
 
     vec3 normal = normalize(Normal);
     // ambient
-    vec3 ambient = 0.75 * lightColor;
+    vec3 ambient = 0.75  * lightColor;
     // diffuse
     vec3 lightDir = normalize(lightPos - FragPos);
     float diff = max(dot(lightDir, normal), 0.0);
@@ -92,13 +92,17 @@ void main()
     float shadow = ShadowCalculation(FragPosLightSpace);
     vec3 lighting = (ambient + (1.0 - shadow) * (diffuse + specular)) * lightColor;
 
-    vec2 point = FragPos.xz;
-    vec2 center = cameraPos.xz;                                                                                                                                                                  
-    float radius = 25.0f;
-    float distance = sqrt(pow(point.x - center.x, 2.0) + pow(point.y - center.y, 2.0));
-    if (distance < radius)                                                                                                                                               
-        color = vec4(lighting, 1.0f);
-    else                                                                                                                                                                           
-        color = vec4(lighting + (0.1 * vec3(distance - radius)), 1.0f);
 
+  // Pick a coordinate to visualize in a grid
+  vec2 coord = FragPos.xz;
+
+  // Compute anti-aliased world-space grid lines
+  vec2 grid = abs(fract(coord - 0.5) - 0.5) / fwidth(coord);
+  float line = min(grid.x, grid.y);
+
+  // Just visualize the grid lines directly
+  vec3 gridColor = vec3(1.0 - min(line, 1.0));
+    
+
+  color = vec4(lighting + gridColor, 1.0f);
 }

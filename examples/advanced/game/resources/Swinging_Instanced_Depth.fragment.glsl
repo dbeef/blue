@@ -62,21 +62,6 @@ float ShadowCalculation(vec4 fragPosLightSpace)
 
 void main()
 {
-    /*
-        float ambientStrengthTemp = 0.15f;
-
-        vec3 lightColor = vec3(1.0f, 1.0f, 1.0f);
-        vec3 ambient = ambientStrengthTemp * lightColor;
-
-        vec3 norm = normalize(Normal);
-        vec3 lightDir = normalize(lightPos - FragPos);
-
-        float diff = max(dot(norm, lightDir), 0.0);
-        vec3 diffuse = diff * lightColor;
-
-        color = vec4(ambient + diffuse, 1.0f) * vec4(ColorRGB, 1.0f);
-    */
-
     vec3 lightColor = vec3(1.0f, 1.0f, 1.0f) * ColorRGB;
 
     vec3 normal = normalize(Normal);
@@ -92,13 +77,5 @@ void main()
     float shadow = ShadowCalculation(FragPosLightSpace);
     vec3 lighting = (ambient + (1.0 - shadow) * (diffuse + specular)) * lightColor;
 
-    vec2 point = FragPos.xz;
-    vec2 center = cameraPos.xz;                                                                                                                                                                  
-    float radius = 25.0f;
-    float distance = sqrt(pow(point.x - center.x, 2.0) + pow(point.y - center.y, 2.0));
-    if (distance < radius)                                                                                                                                               
-        color = vec4(lighting, 1.0f);
-    else                                                                                                                                                                           
-        color = vec4(lighting + (0.1 * vec3(distance - radius)), 1.0f);
-
+    color = vec4(lighting, 1.0f);
 }

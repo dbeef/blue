@@ -9,6 +9,29 @@ static const float CAMERA_SPEED = 0.25f;
 
 Callbacks* Callbacks::_instance = nullptr;
 
+namespace
+{
+    void limit_cam_boundaries(glm::vec3& pos)
+    {
+        float radius = 20.0f;
+        glm::vec3 center = { 32.0f, pos.y, 32.0f };
+
+        const auto distance = glm::distance(pos, center);
+        if (distance <= radius)
+        {
+            // OK, still in boundaries
+        }
+        else
+        {
+            // Calculate direction, set position to be direction times radius.
+            const auto direction = glm::normalize(pos - center);
+            pos = center + (direction * radius);
+            //pos = direction * radius;
+            //pos.y = center.y;
+        }
+    }
+}
+
 Callbacks &Callbacks::instance()
 {
     BLUE_ASSERT(_instance);
@@ -65,6 +88,7 @@ void Callbacks::register_callbacks()
         Game::instance().input.last_x = xpos;
         Game::instance().input.last_y = ypos;
         Game::instance().input.gesture.store(true);
+        Game::instance().intersection.requested.store(true);
     };
     blue::Context::input().registerMouseKeyCallback({ mouse_left_press_callback, SDL_BUTTON_LEFT, SDL_MOUSEBUTTONDOWN });
 
@@ -104,6 +128,24 @@ void Callbacks::register_callbacks()
     };
     blue::Context::input().registerKeyCallback({ d_callback, SDLK_d, SDL_KEYDOWN });
 
+    auto left_arrow_callback = [this]()
+    {
+        const float& delta_rotation_rad = 2.5f;
+        auto& map_environment = Resources::instance().map_environment;
+        map_environment.camera.add_rotation(delta_rotation_rad, 0);
+        blue::Context::gpu_system().submit(UpdateEnvironmentEntity_View{ map_environment.environment, map_environment.camera.get_view() });
+    };
+    blue::Context::input().registerKeyCallback({ left_arrow_callback, SDLK_LEFT, SDL_KEYDOWN });
+
+    auto right_arrow_callback = [this]()
+    {
+        const float& delta_rotation_rad = -2.5f;
+        auto& map_environment = Resources::instance().map_environment;
+        map_environment.camera.add_rotation(delta_rotation_rad, 0);
+        blue::Context::gpu_system().submit(UpdateEnvironmentEntity_View{ map_environment.environment, map_environment.camera.get_view() });
+    };
+    blue::Context::input().registerKeyCallback({ right_arrow_callback, SDLK_RIGHT, SDL_KEYDOWN });
+
     auto mouse_move_callback = [this](double xpos, double ypos)
     {
         auto& map_environment = Resources::instance().map_environment;
@@ -129,11 +171,13 @@ void Callbacks::register_callbacks()
             auto pos = map_environment.camera.get_position();
 			
 			glm::vec3 cam_delta = pos;
-			cam_delta += delta.x * up;
-			cam_delta += delta.y * left;
+            cam_delta += 0.25f * delta.x * up;
+            cam_delta += 0.25f * delta.y * left;
 			cam_delta.y = pos.y;
 
-			map_environment.camera.set_pos(cam_delta);
+            limit_cam_boundaries(cam_delta);
+
+            map_environment.camera.set_pos(cam_delta);
 
             blue::Context::gpu_system().submit(UpdateEnvironmentEntity_View{ map_environment.environment, map_environment.camera.get_view() });
             blue::Context::gpu_system().submit(UpdateEnvironmentEntity_CameraPos{ map_environment.environment, map_environment.camera.get_position() });

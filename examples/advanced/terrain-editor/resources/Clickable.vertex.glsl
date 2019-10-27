@@ -19,14 +19,18 @@ layout (std140) uniform Matrices
 };
 
 flat out lowp vec3 ColorRGB;
+out vec3 Normal;
 out vec3 FragPos;
+out lowp vec4 FragPosLightSpace;
 
 void main()
 {
         gl_Position = projection * view * model * vec4(position, 1.0f);
         // Forwarding values to fragment shader
-        FragPos = vec3(model * vec4(position, 1.0f));
         ColorRGB = color;
+        Normal = normal;
+        FragPos = vec3(model * vec4(position, 1.0f));
+        FragPosLightSpace = lightSpaceMatrix * vec4(FragPos, 1.0);
 }
 
 

@@ -7,6 +7,7 @@
 #include "Resources.hpp"
 
 #include <cmath>
+#include <jobs/MapIntersectionJob.h>
 
 int main(int argc, char* argv[])
 {
@@ -24,16 +25,21 @@ int main(int argc, char* argv[])
 	Resources::instance().load_shaders();
 	Resources::instance().load_models();
 	Resources::instance().load_textures();
+    Resources::instance().load_render_entities();
 
 	Game::instance().get_map().import_from_file("resources/map.bin");
-	// FIXME: For some reason this causes crash - may be something wrong with shader.
-	// Game::instance().get_map().upload_clickable_vertices();
-    Game::instance().get_map().upload_decoration();
-    Game::instance().get_flora().import_from_file("resources/flora.bin");
+	Game::instance().get_map().upload_decoration();
+	Game::instance().get_map().upload_clickable();
+	Game::instance().get_flora().import_from_file("resources/flora.bin");
     Game::instance().get_water().import_from_file("resources/water.bin");
 	Game::instance().get_water().create_water(Game::instance().get_map());
 
-	Timestep timestep(30);
+	blue::Context::gpu_system().submit(SetClearColorEntity{ {1.0f, 1.0f, 1.0f} });
+
+    MapIntersectionJob job;
+    job.start();
+
+    Timestep timestep(30);
 
 	while (Game::instance().is_running())
 	{
@@ -49,6 +55,8 @@ int main(int argc, char* argv[])
 		timestep.mark_end();
 		timestep.delay();
 	}
+
+    job.shutdown();
 
 	Callbacks::dispose();
 	Game::dispose();

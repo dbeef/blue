@@ -72,8 +72,8 @@ ModelingTerrain::ModelingTerrain(const bool map_imported) : _map_imported(map_im
 				{
 					last_entity.entity.rotation = glm::quat(last_entity.euler);
 					last_entity.entity.position = last_entity.position;
-                    Application::instance().get_flora().update_entry(last_entity.entity);
-                    updated_model.store(true);
+					Application::instance().get_flora().update_entry(last_entity.entity);
+					updated_model.store(true);
 				}
 
 				ImGui::End();
@@ -89,7 +89,7 @@ ModelingTerrain::ModelingTerrain(const bool map_imported) : _map_imported(map_im
 			}
 		}
 
-		});
+	});
 }
 
 ModelingTerrain::~ModelingTerrain()
@@ -124,18 +124,21 @@ std::shared_ptr<BaseState> ModelingTerrain::update()
 			// Ascend points in radius R from xy point:
 			if (Application::instance().input.clicked_button.load() == SDL_BUTTON_LEFT)
 			{
-				Application::instance().get_map().elevate_points(x, y, _radius, 0.25f);
+				Application::instance().get_map().elevate_decoration_points(x, y, _radius, 0.25f);
+				Application::instance().get_map().elevate_clickable_points(x, y, _radius, 0.25f);
 			}
 			else
 			{
-				Application::instance().get_map().elevate_points(x, y, _radius, -0.25f);
+				Application::instance().get_map().elevate_decoration_points(x, y, _radius, -0.25f);
+				Application::instance().get_map().elevate_clickable_points(x, y, _radius, -0.25f);
 			}
 		}
 		else if (_mode == Mode::VERTEX_PAINT)
 		{
 			// Color points in radius R from xy point:
 			float R = 5.25f;
-			Application::instance().get_map().color_points(x, y, _radius, { _paint[0], _paint[1], _paint[2] });
+			Application::instance().get_map().color_clickable_points(x, y, _radius, { _paint[0], _paint[1], _paint[2] });
+			Application::instance().get_map().color_decoration_points(x, y, _radius, { _paint[0], _paint[1], _paint[2] });
 		}
 		else if (_mode == Mode::VERTEX_PAINT_SHUFFLE)
 		{
@@ -144,15 +147,17 @@ std::shared_ptr<BaseState> ModelingTerrain::update()
 			Application::instance().get_map().shuffle_color_points(x, y, _radius);
 		}
 		else if (_mode == Mode::ADDING_MODELS)
-        {
-            glm::vec3 position = {x.load(), 0, y.load()};
-            last_entity.entity = Application::instance().get_flora().add_entry(_model, position, {0, 0, 0});
-            last_entity.position = last_entity.entity.position;
-        }
+		{
+			glm::vec3 position = {x.load(), 0, y.load()};
+			last_entity.entity = Application::instance().get_flora().add_entry(_model, position, {0, 0, 0});
+			last_entity.position = last_entity.entity.position;
+		}
 
 		// Dispose and reupload:
-		Application::instance().get_map().dispose_current_decoration_on_gpus();
+		Application::instance().get_map().dispose_current_map_on_gpu();
 		Application::instance().get_map().upload_decoration();
+		Application::instance().get_map().upload_clickable();
+
 		Application::instance().input.intersection.store(false);
 	}
 

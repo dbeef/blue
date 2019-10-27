@@ -30,6 +30,8 @@ public:
 
 	static void dispose();
 
+	void load_render_entities();
+
 	void load_environment();
 
 	void load_shaders();
@@ -58,6 +60,11 @@ public:
 		Framebuffer depth;
 	} light_environment;
 
+	struct
+	{
+		RenderEntity selected_tile_highlight;
+	} render_entities;
+
 	struct {
 		ShaderId clickable_map;
 		ShaderId decoration_map;
@@ -67,6 +74,7 @@ public:
 		ShaderId simple_depth_instanced;
 		ShaderId swinging;
 		ShaderId water;
+		ShaderId tile_highlight;
 	} shaders{};
 	
 	struct {
@@ -81,6 +89,7 @@ public:
 		VertexArray cut_tree;
 		VertexArray track;
 		VertexArray bridge;
+		VertexArray square;
 	} models;
 
 	struct {

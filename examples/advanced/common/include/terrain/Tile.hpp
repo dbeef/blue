@@ -2,6 +2,12 @@
 
 #include "blue/Renderer.h"
 
+enum class UnitType
+{
+	NONE,
+	TANK
+};
+
 class Tile
 {
 public:
@@ -13,5 +19,5 @@ public:
 	static Attributes get_attributes();
 
 	bool clickable = false;
-
+	UnitType occupant = UnitType::NONE;
 };
