@@ -1,9 +1,18 @@
 #include <states/MainMenu.hpp>
+#include <states/Playing.hpp>
+
 #include <Resources.hpp>
 
 std::shared_ptr<BaseState> MainMenu::update()
 {
-    return nullptr;
+    if (_start_requested.load())
+    {
+        return std::make_shared<Playing>();
+    }
+    else
+    {
+        return nullptr;
+    }
 }
 
 void MainMenu::on_entry()
@@ -103,5 +112,11 @@ void MainMenu::on_entry()
 
 MainMenu::~MainMenu()
 {
-    controls.start.dispose();
+    Button *start = &controls.start;
+    Button *end = &controls.exit;
+
+    for (Button *current = start; current <= end; current++)
+    {
+        current->dispose();
+    }
 }
