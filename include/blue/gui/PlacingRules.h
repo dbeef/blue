@@ -5,6 +5,8 @@
 
 struct PlacingRules
 {
+    float depth = 0;
+
     std::uint8_t width_in_screen_percent{};
     std::uint8_t height_in_screen_percent{};
 

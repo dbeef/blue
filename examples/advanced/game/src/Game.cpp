@@ -1,9 +1,10 @@
-#include "Resources.hpp"
-#include "Game.hpp"
-
 #include <blue/Assertions.h>
 #include <blue/Context.hpp>
 #include <imgui/imgui.h>
+#include <utility>
+
+#include "Resources.hpp"
+#include "Game.hpp"
 
 Game* Game::_instance = nullptr;
 
@@ -34,6 +35,13 @@ void Game::shutdown()
 void Game::handle_input()
 {
 	blue::Context::input().poll();
+
+	auto next_state = _current_state->update();
+	if (next_state)
+	{
+		_current_state = next_state;
+		_current_state->on_entry();
+	}
 }
 
 bool Game::is_running()
@@ -54,4 +62,10 @@ Flora &Game::get_flora()
 Water& Game::get_water()
 {
 	return *_water;
+}
+
+void Game::enter_state(std::shared_ptr<BaseState> state)
+{
+    _current_state = std::move(state);
+    _current_state->on_entry();
 }

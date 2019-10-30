@@ -52,7 +52,7 @@ int main(int argc, char *argv[])
     down_callback.key_type = SDL_BUTTON_LEFT;
     down_callback.action = SDL_MOUSEBUTTONDOWN;
     down_callback.callback = [&button](double x, double y) {
-        bool clicked = button.is_clicked(x, y);
+        bool clicked = button.collision(x, y);
         if(clicked) button.set_clicked(true);
     };
 

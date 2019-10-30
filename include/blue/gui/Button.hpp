@@ -16,7 +16,10 @@ public:
     void update_placing_rules(const PlacingRules&);
 
     void set_clicked(bool clicked);
-    bool is_clicked(std::uint16_t click_x, std::uint16_t click_y) const;
+    bool is_clicked() { return _clicked;}
+    bool collision(std::uint16_t click_x, std::uint16_t click_y) const;
+
+    void dispose();
 
 private:
 

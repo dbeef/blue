@@ -41,10 +41,6 @@ public:
 	void load_textures();
 
 	struct {
-		Button somebutton;
-	} controls;
-
-	struct {
 		UniformBufferId environment = 0;
 		PerspectiveCamera camera = PerspectiveCamera(0, 0);
 	} map_environment;
@@ -75,7 +71,7 @@ public:
 		ShaderId swinging;
 		ShaderId water;
 		ShaderId tile_highlight;
-	} shaders{};
+	} shaders;
 	
 	struct {
 		VertexArray pine_tree;
@@ -93,8 +89,12 @@ public:
 	} models;
 
 	struct {
-		Texture clicked;
-		Texture idle;
+		Texture start;
+		Texture start_clicked;
+		Texture options;
+		Texture options_clicked;
+		Texture exit;
+		Texture exit_clicked;
 	} textures;
 
 private:

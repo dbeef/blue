@@ -27,17 +27,17 @@ int main(int argc, char* argv[])
 	Resources::instance().load_textures();
     Resources::instance().load_render_entities();
 
-	Game::instance().get_map().import_from_file("resources/map.bin");
-	Game::instance().get_map().upload_decoration();
-	Game::instance().get_map().upload_clickable();
-	Game::instance().get_flora().import_from_file("resources/flora.bin");
-    Game::instance().get_water().import_from_file("resources/water.bin");
-	Game::instance().get_water().create_water(Game::instance().get_map());
+//	Game::instance().get_map().import_from_file("resources/map.bin");
+//	Game::instance().get_map().upload_decoration();
+//	Game::instance().get_map().upload_clickable();
+//	Game::instance().get_flora().import_from_file("resources/flora.bin");
+//    Game::instance().get_water().import_from_file("resources/water.bin");
+//	Game::instance().get_water().create_water(Game::instance().get_map());
 
-	blue::Context::gpu_system().submit(SetClearColorEntity{ {1.0f, 1.0f, 1.0f} });
+	Game::instance().enter_state(std::make_shared<MainMenu>());
 
-    MapIntersectionJob job;
-    job.start();
+//    MapIntersectionJob job;
+//    job.start();
 
     Timestep timestep(30);
 
@@ -56,7 +56,7 @@ int main(int argc, char* argv[])
 		timestep.delay();
 	}
 
-    job.shutdown();
+//    job.shutdown();
 
 	Callbacks::dispose();
 	Game::dispose();

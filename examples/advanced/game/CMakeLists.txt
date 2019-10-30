@@ -6,13 +6,18 @@ project(GameSample)
 
 set(SOURCES
         src/Main.cpp
-        src/Game.cpp
-        src/jobs/MapIntersectionJob.cpp
-        include/jobs/MapIntersectionJob.h
-        src/Callbacks.cpp
         include/Game.hpp
+        src/Game.cpp
         include/Callbacks.hpp
-        include/Callbacks.hpp src/Callbacks.cpp include/jobs/MapIntersectionJob.h src/jobs/MapIntersectionJob.cpp)
+        src/Callbacks.cpp
+        include/jobs/MapIntersectionJob.h
+        src/jobs/MapIntersectionJob.cpp
+        include/states/BaseState.hpp
+        include/states/Playing.hpp
+        src/states/Playing.cpp
+        include/states/MainMenu.hpp
+        src/states/MainMenu.cpp
+        )
 
 if(${BLUE_PLATFORM} STREQUAL "Android")
     add_library(GameSample SHARED ${SOURCES})

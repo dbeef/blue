@@ -25,7 +25,7 @@ void Button::create(const UniformBufferId &environment, const Texture &clicked, 
 {
     BLUE_ASSERT(initialized.load());
 
-    _entity.position = {_x_center, _y_center, 0.0f};
+    _entity.position = {_x_center, _y_center, _rules.depth};
 
     if (_clicked)
     {
@@ -65,6 +65,8 @@ void Button::set_clicked(bool clicked)
 
 void Button::init()
 {
+    if (initialized.load()) return;
+
     const std::string vertex_shader =
             R"(
                 layout(location = 0) in vec2 position;
@@ -103,6 +105,8 @@ void Button::init()
                 void main()
                 {
                         color = texture(sampler_clicked, TexCoord);
+                        if(color.a < 0.95)
+                            discard;
                 }
             )";
 
@@ -115,6 +119,8 @@ void Button::init()
                 void main()
                 {
                         color = texture(sampler_idle, TexCoord);
+                        if(color.a < 0.95)
+                            discard;
                 }
             )";
 
@@ -156,9 +162,14 @@ void Button::init()
     initialized.store(true);
 }
 
-bool Button::is_clicked(std::uint16_t click_x, std::uint16_t click_y) const
+bool Button::collision(std::uint16_t click_x, std::uint16_t click_y) const
 {
     const bool x_condition = click_x > _x_center - (_width / 2) && click_x < _x_center + (_width / 2);
     const bool y_condition = click_y > _y_center - (_height / 2)&& click_y < _y_center + (_height / 2);
     return x_condition && y_condition;
+}
+
+void Button::dispose()
+{
+    blue::Context::renderer().remove_render_entity(_entity.id);
 }

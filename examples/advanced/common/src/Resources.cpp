@@ -2,9 +2,10 @@
 #include <blue/ShaderUtils.h>
 #include <blue/ModelLoader.h>
 #include <blue/Context.hpp>
-#include <Resources.hpp>
 #include <blue/TextureUtils.hpp>
+#include <Resources.hpp>
 
+#include "Resources.hpp"
 
 Resources* Resources::_instance = nullptr;
 
@@ -87,6 +88,7 @@ void Resources::load_shaders()
 
 void Resources::load_render_entities()
 {
+	// TODO: This should be removed; render entities are to be created by specific state (extending BaseState)
     {
         RenderEntity entity;
         const auto& environment = Resources::instance().map_environment.environment;
@@ -209,7 +211,6 @@ void Resources::load_models()
 		auto vertex_array = blue::Context::gpu_system().submit(CreateMeshEntity{ vertices, {}, attributes, vertex_counter }).get();
 		models.bridge = vertex_array;
 	}
-
     {
         Vertices vertices =
                 {
@@ -235,99 +236,105 @@ void Resources::load_models()
 
 void Resources::load_textures()
 {
-	auto clicked_entity = CreateTextureEntity{ImageUtils::read("resources/clicked.png")};
-	clicked_entity.slot = 5;
-	textures.clicked = blue::Context::gpu_system().submit(clicked_entity).get();
-
-	auto idle_entity = CreateTextureEntity{ImageUtils::read("resources/idle.png")};
-	idle_entity.slot = 6;
-	textures.idle = blue::Context::gpu_system().submit(idle_entity).get();
-
-	Button::init();
-	PlacingRules rules;
-	rules.width_in_screen_percent = 9;
-	rules.height_in_screen_percent = 6;
-	rules.x_in_screen_percent_from_left = 90;
-	rules.y_in_screen_percent_from_up = 10;
-	controls.somebutton.update_placing_rules(rules);
-    controls.somebutton.create(gui_environment.environment, textures.clicked, textures.idle);
-
-	MouseKeyCallback down_callback;
-	down_callback.key_type = SDL_BUTTON_LEFT;
-	down_callback.action = SDL_MOUSEBUTTONDOWN;
-	down_callback.callback = [](double x, double y) {
-		bool clicked = Resources::instance().controls.somebutton.is_clicked(x, y);
-		if(clicked) Resources::instance().controls.somebutton.set_clicked(true);
-	};
-
-	MouseKeyCallback release_callback;
-	release_callback.key_type = SDL_BUTTON_LEFT;
-	release_callback.action = SDL_MOUSEBUTTONUP;
-	release_callback.callback = [](double x, double y) {
-        Resources::instance().controls.somebutton.set_clicked(false);
-	};
-
-	blue::Context::input().registerMouseKeyCallback({down_callback});
-	blue::Context::input().registerMouseKeyCallback({release_callback});
+    {
+        auto clicked_entity = CreateTextureEntity{ImageUtils::read("resources/button_start_clicked.png")};
+        clicked_entity.slot = 5;
+        textures.start_clicked = blue::Context::gpu_system().submit(clicked_entity).get();
+        auto idle_entity = CreateTextureEntity{ImageUtils::read("resources/button_start.png")};
+        idle_entity.slot = 6;
+        textures.start = blue::Context::gpu_system().submit(idle_entity).get();
+    }
+    {
+        auto clicked_entity = CreateTextureEntity{ImageUtils::read("resources/button_exit_clicked.png")};
+        clicked_entity.slot = 5;
+        textures.exit_clicked = blue::Context::gpu_system().submit(clicked_entity).get();
+        auto idle_entity = CreateTextureEntity{ImageUtils::read("resources/button_exit.png")};
+        idle_entity.slot = 6;
+        textures.exit = blue::Context::gpu_system().submit(idle_entity).get();
+    }
+    {
+        auto clicked_entity = CreateTextureEntity{ImageUtils::read("resources/button_options_clicked.png")};
+        clicked_entity.slot = 5;
+        textures.options_clicked = blue::Context::gpu_system().submit(clicked_entity).get();
+        auto idle_entity = CreateTextureEntity{ImageUtils::read("resources/button_options.png")};
+        idle_entity.slot = 6;
+        textures.options = blue::Context::gpu_system().submit(idle_entity).get();
+    }
 }
 
 void Resources::load_environment()
 {
+	// Cameras
 	light_environment.camera = OrthographicCamera(OrthographicCamera::Mode::CLIP_SPACE, blue::Context::window().get_width(), blue::Context::window().get_height());
 	map_environment.camera = PerspectiveCamera(blue::Context::window().get_width(), blue::Context::window().get_height());
 	gui_environment.camera = OrthographicCamera(OrthographicCamera::Mode::SCREEN_SPACE, blue::Context::window().get_width(), blue::Context::window().get_height());
 
-	// Create framebuffer with only depth component for shadows:
-	light_environment.depth = blue::Context::gpu_system().submit(CreateFramebufferEntity{}).get();
-
-	auto renderTexture = blue::Context::gpu_system().submit(CreateTextureEntity{
-			std::make_shared<std::vector<char>>(), true,
-			TextureFiltering::LINEAR,
-			TextureWrapping::CLAMP_TO_EDGE,
-			1024,
-			1024,
-			0,
-			TexturePassedDataFormat::DEPTH_COMPONENT,
-			TextureStoringFormat::DEPTH_COMPONENT,
-			TexturePassedDataComponentSize::UNSIGNED_BYTE
-	}).get();
-	light_environment.depth.texture = renderTexture;
-	blue::Context::gpu_system().submit(AddFramebufferTextureAttachmentEntity{ light_environment.depth, FramebufferAttachmentType::DEPTH_ATTACHMENT }).wait();
-
-	// Create map_environment
+	// Environments
 	map_environment.environment = blue::Context::gpu_system().submit(CreateEnvironmentEntity{}).get();
 	light_environment.environment = blue::Context::gpu_system().submit(CreateEnvironmentEntity{}).get();
 	gui_environment.environment = blue::Context::gpu_system().submit(CreateEnvironmentEntity{}).get();
+
+	{
+		// Create framebuffer with only depth component for shadows:
+		light_environment.depth = blue::Context::gpu_system().submit(CreateFramebufferEntity{}).get();
+
+		auto renderTexture = blue::Context::gpu_system().submit(CreateTextureEntity{
+				std::make_shared<std::vector<char>>(), true,
+				TextureFiltering::LINEAR,
+				TextureWrapping::CLAMP_TO_EDGE,
+				1024,
+				1024,
+				0,
+				TexturePassedDataFormat::DEPTH_COMPONENT,
+				TextureStoringFormat::DEPTH_COMPONENT,
+				TexturePassedDataComponentSize::UNSIGNED_BYTE
+		}).get();
+		light_environment.depth.texture = renderTexture;
+		blue::Context::gpu_system().submit(
+				AddFramebufferTextureAttachmentEntity{light_environment.depth, FramebufferAttachmentType::DEPTH_ATTACHMENT}).wait();
+	}
 
 	// Upload map environment camera matrices
 	blue::Context::gpu_system().submit(UpdateEnvironmentEntity_Projection{ map_environment.environment, map_environment.camera.get_projection() });
 	blue::Context::gpu_system().submit(UpdateEnvironmentEntity_View{ map_environment.environment, map_environment.camera.get_view() });
 
-	// Same for gui
+	// Upload GUI environment camera matrices
 	blue::Context::gpu_system().submit(UpdateEnvironmentEntity_Projection{gui_environment.environment, gui_environment.camera.get_projection()});
 	blue::Context::gpu_system().submit(UpdateEnvironmentEntity_View{gui_environment.environment, gui_environment.camera.get_view()});
 
-	// Set pale blue clear color
-	blue::Context::gpu_system().submit(SetClearColorEntity{ {0.25f, 0.45f, 0.8f} });
+	{
+		// Move light-source camera to initial position
+		light_environment.camera.set_far(500.0f);
+		light_environment.camera.set_near(-100.0f);
+		light_environment.camera.set_pos({64.0f, 20.4532f, 64.0f});
+		// FIXME: Add functionality to camera to look at specific point.
+		// light_environment.camera.look_at({64.0f, 0.0f, 64.0f});
 
-	// Move camera to initial position
-	map_environment.camera.add_rotation(-68.5f, -60.25f);
-	map_environment.camera.set_pos({ 32, 22, 32 });
-	//map_environment.camera.look_at({ 0, 0, 0 });
-	blue::Context::gpu_system().submit(UpdateEnvironmentEntity_View{ map_environment.environment, map_environment.camera.get_view() });
-	blue::Context::gpu_system().submit(UpdateEnvironmentEntity_CameraPos{ map_environment.environment, map_environment.camera.get_position() });
+		// Upload light-space matrices to both environments:
+		blue::Context::gpu_system().submit(
+				UpdateEnvironmentEntity_Projection{light_environment.environment, light_environment.camera.get_projection()});
+		blue::Context::gpu_system().submit(
+				UpdateEnvironmentEntity_View{light_environment.environment, light_environment.camera.get_view()});
 
-	// Move light-source camera to initial position
-	light_environment.camera.set_far(500.0f);
-	light_environment.camera.set_near(-100.0f);
-	light_environment.camera.set_pos({ 64.0f, 20.4532f, 64.0f});
-	// FIXME: Add functionality to camera to look at specific point.
-	// light_environment.camera.look_at({64.0f, 0.0f, 64.0f});
+		blue::Context::gpu_system().submit(UpdateEnvironmentEntity_LightSpaceMatrix{
+				map_environment.environment,
+				light_environment.camera.get_projection() * light_environment.camera.get_view()
+		});
+		blue::Context::gpu_system().submit(
+				UpdateEnvironmentEntity_LightPos{map_environment.environment, light_environment.camera.get_position()});
+	}
 
-	// Upload light-space matrices to both environments:
-	blue::Context::gpu_system().submit(UpdateEnvironmentEntity_Projection{ light_environment.environment, light_environment.camera.get_projection() });
-	blue::Context::gpu_system().submit(UpdateEnvironmentEntity_View{ light_environment.environment, light_environment.camera.get_view() });
+	{
+		// Move camera to initial position
+		map_environment.camera.add_rotation(-68.5f, -60.25f);
+		map_environment.camera.set_pos({32, 22, 32});
+		//map_environment.camera.look_at({ 0, 0, 0 });
+		blue::Context::gpu_system().submit(
+				UpdateEnvironmentEntity_View{map_environment.environment, map_environment.camera.get_view()});
+		blue::Context::gpu_system().submit(
+				UpdateEnvironmentEntity_CameraPos{map_environment.environment, map_environment.camera.get_position()});
+	}
 
-	blue::Context::gpu_system().submit(UpdateEnvironmentEntity_LightSpaceMatrix{ map_environment.environment, light_environment.camera.get_projection() * light_environment.camera.get_view() });
-	blue::Context::gpu_system().submit(UpdateEnvironmentEntity_LightPos{ map_environment.environment, light_environment.camera.get_position() });
+	// Set pale foggy-white clear color
+	blue::Context::gpu_system().submit(SetClearColorEntity{ {1.0f, 1.0f, 1.0f} });
 }

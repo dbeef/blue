@@ -4,8 +4,11 @@
 #include "terrain/Flora.hpp"
 #include "terrain/Water.hpp"
 
+#include "states/BaseState.hpp"
+
 #include <atomic>
 #include <memory>
+#include <states/MainMenu.hpp>
 
 class Game
 {
@@ -16,6 +19,8 @@ public:
 	static void init();
 
 	static void dispose();
+
+	void enter_state(std::shared_ptr<BaseState> state);
 
 	void shutdown();
 
@@ -50,6 +55,7 @@ public:
 
 private:
 
+	std::shared_ptr<BaseState> _current_state = nullptr;
 	std::shared_ptr<Map> _map = std::make_shared<Map>();
 	std::shared_ptr<Water> _water = std::make_shared<Water>();
 	std::shared_ptr<Flora> _flora = std::make_shared<Flora>();
