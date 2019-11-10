@@ -69,3 +69,8 @@ void Game::enter_state(std::shared_ptr<BaseState> state)
     _current_state = std::move(state);
     _current_state->on_entry();
 }
+
+void Game::reset_state()
+{
+	_current_state.reset();
+}

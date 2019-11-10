@@ -5,7 +5,13 @@
 #include <blue/TextureUtils.hpp>
 #include <Resources.hpp>
 
+#include <blue/FontUtils.hpp>
 #include "Resources.hpp"
+
+namespace
+{
+	const char* const ttf_filename = "C:/Users/dbeef/Downloads/lato/Lato-Black.ttf";
+}
 
 Resources* Resources::_instance = nullptr;
 
@@ -237,10 +243,12 @@ void Resources::load_models()
 void Resources::load_textures()
 {
     {
-        auto clicked_entity = CreateTextureEntity{ImageUtils::read("resources/button_start_clicked.png")};
+		auto font = FontUtils::read_ttf_absolute(ttf_filename);
+		auto clicked_entity = FontUtils::create_text(font, "dupa!", 200, 200, 80);
         clicked_entity.slot = 5;
         textures.start_clicked = blue::Context::gpu_system().submit(clicked_entity).get();
-        auto idle_entity = CreateTextureEntity{ImageUtils::read("resources/button_start.png")};
+
+		auto idle_entity = FontUtils::create_text(font, "kupa!", 200, 200, 80);
         idle_entity.slot = 6;
         textures.start = blue::Context::gpu_system().submit(idle_entity).get();
     }

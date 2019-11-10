@@ -20,6 +20,8 @@ public:
 
 	static void dispose();
 
+	void reset_state();
+
 	void enter_state(std::shared_ptr<BaseState> state);
 
 	void shutdown();
@@ -55,10 +57,10 @@ public:
 
 private:
 
+	std::atomic_bool _running{ true };
 	std::shared_ptr<BaseState> _current_state = nullptr;
 	std::shared_ptr<Map> _map = std::make_shared<Map>();
 	std::shared_ptr<Water> _water = std::make_shared<Water>();
 	std::shared_ptr<Flora> _flora = std::make_shared<Flora>();
-	std::atomic_bool _running{ true };
 	static Game* _instance;
 };

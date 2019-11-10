@@ -4,8 +4,6 @@
 #include "stb/image.h"
 
 #include <SDL2/SDL.h>
-#include <vector>
-#include <memory>
 
 CreateTextureEntity ImageUtils::read(const std::string& filepath)
 {
@@ -18,7 +16,8 @@ CreateTextureEntity ImageUtils::read(const std::string& filepath)
 	int size;
 	SDL_RWops* file = SDL_RWFromFile(absolute_path.c_str(), "rb");
 
-	if (file != nullptr) 
+	// TODO: Externalize filesystem operations.
+	if (file != nullptr)
 	{
 		size = file->size(file);
 		//Initialize data
@@ -28,7 +27,7 @@ CreateTextureEntity ImageUtils::read(const std::string& filepath)
 		SDL_RWclose(file);
 		blue::Context::logger().info("Succesfuly read image data.");
 	}
-	else 
+	else
 	{
 		blue::Context::logger().error("Unable to open file, SDL error: {}", SDL_GetError());
 	}

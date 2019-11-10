@@ -25,11 +25,11 @@ int main(int argc, char* argv[])
 	Resources::instance().load_shaders();
 	Resources::instance().load_models();
 	Resources::instance().load_textures();
-    Resources::instance().load_render_entities();
+	Resources::instance().load_render_entities();
 
 	Game::instance().enter_state(std::make_shared<MainMenu>());
 
-    Timestep timestep(30);
+	Timestep timestep(30);
 
 	while (Game::instance().is_running())
 	{
@@ -45,6 +45,8 @@ int main(int argc, char* argv[])
 		timestep.mark_end();
 		timestep.delay();
 	}
+
+	Game::instance().reset_state();
 
 	Callbacks::dispose();
 	Game::dispose();
