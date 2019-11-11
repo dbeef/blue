@@ -30,6 +30,8 @@ add_subdirectory(vendor)
 add_library(
         blue STATIC
         src/blue/TextureUtils.cpp
+        src/blue/FontUtils.cpp
+        include/blue/FontUtils.hpp
         src/blue/Window.cpp
         src/blue/Logger.cpp
         src/blue/Renderer.cpp

@@ -29,7 +29,7 @@ namespace
 
             if (buffer == nullptr)
             {
-                blue::Context::logger().error("Failed to create texture from passed data.");
+				blue::Context::logger().error("Failed to create texture from passed data. Reason: {}", stbi_failure_reason());
                 return texture;
             }
 
