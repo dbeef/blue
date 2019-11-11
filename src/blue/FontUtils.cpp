@@ -62,7 +62,7 @@ namespace
 
 namespace FontUtils
 {
-	FontUtils::Font FontUtils::read_ttf_absolute(const std::string& filepath)
+	Font read_ttf_absolute(const std::string& filepath)
 	{
 		return ::read_ttf(filepath);
 	}
@@ -126,7 +126,7 @@ namespace FontUtils
 		return entity;
 	}
 
-	FontUtils::Font FontUtils::read_ttf_relative(const std::string& filepath)
+	Font read_ttf_relative(const std::string& filepath)
 	{
 		auto absolute_path = paths::getResourcesPath() + filepath;
 		return ::read_ttf(absolute_path);
