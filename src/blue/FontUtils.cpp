@@ -11,12 +11,17 @@
 
 namespace
 {
-	auto stb_buffer = std::make_shared<std::vector<char>>();
-	void my_stbi_write_func(void* context, void* data, int size)
+	struct StbiContext
 	{
+		std::shared_ptr<std::vector<char>> bmp_texture;
+	};
+
+	void stbi_write_callback(void* context, void* data, int size)
+	{
+		auto out = reinterpret_cast<StbiContext*>(context);
 		for (std::size_t index = 0; index < size; index++)
 		{
-			stb_buffer->push_back(*(reinterpret_cast<char*>(data) + index));
+			out->bmp_texture->push_back(*(reinterpret_cast<char*>(data) + index));
 		}
 	}
 
@@ -64,7 +69,10 @@ namespace FontUtils
 
 	CreateTextureEntity create_text(const Font& font, const std::string& text, std::uint16_t width, std::uint16_t height, std::uint16_t line_height)
 	{
-		stb_buffer->clear();
+		// FIXME: There's too much dynamic allocations here.
+
+		// Made by Justin Meiners:
+		// https://github.com/justinmeiners/stb-truetype-example
 
 		/* create a bitmap for the phrase */
 		auto bitmap = std::make_shared<std::vector<char>>();
@@ -106,10 +114,11 @@ namespace FontUtils
 			x += kern * scale;
 		}
 
-		stbi_write_bmp_to_func(&my_stbi_write_func, nullptr, width, height, 1, bitmap->data());
+		StbiContext context{ std::make_shared<std::vector<char>>() };
+		stbi_write_bmp_to_func(&stbi_write_callback, &context, width, height, 1, bitmap->data());
 
 		CreateTextureEntity entity{};
-		entity.data = stb_buffer;
+		entity.data = context.bmp_texture;
 		entity.width = width;
 		entity.height = height;
 		entity.passedDataFormat = TexturePassedDataFormat::RED_INTEGER;

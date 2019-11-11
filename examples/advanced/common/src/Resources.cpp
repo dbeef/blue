@@ -244,11 +244,11 @@ void Resources::load_textures()
 {
     {
 		auto font = FontUtils::read_ttf_absolute(ttf_filename);
-		auto clicked_entity = FontUtils::create_text(font, "dupa!", 200, 200, 80);
+		auto clicked_entity = FontUtils::create_text(font, "dupa!", 200, 200, 100);
         clicked_entity.slot = 5;
         textures.start_clicked = blue::Context::gpu_system().submit(clicked_entity).get();
 
-		auto idle_entity = FontUtils::create_text(font, "kupa!", 200, 200, 80);
+		auto idle_entity = FontUtils::create_text(font, "kupa!", 200, 200, 100);
         idle_entity.slot = 6;
         textures.start = blue::Context::gpu_system().submit(idle_entity).get();
     }
