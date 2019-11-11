@@ -154,9 +154,10 @@ void Button::init()
     GLint idle_slot = 6;
 
     blue::Context::gpu_system().submit(
-            UpdateUniformVariableEntity{ShaderAttribute::Type::INT, &clicked_slot, shader_program_clicked, 9, ""});
+            UpdateUniformVariableEntity{ShaderAttribute::Type::INT, &clicked_slot, shader_program_clicked, 0, "sampler_clicked"});
     blue::Context::gpu_system().submit(
-            UpdateUniformVariableEntity{ShaderAttribute::Type::INT, &idle_slot, shader_program_idle, 9, ""});
+            UpdateUniformVariableEntity{ShaderAttribute::Type::INT, &idle_slot, shader_program_idle, 0, "sampler_idle"});
+
     blue::Context::gpu_thread().wait_for_render_pass();
 
     initialized.store(true);

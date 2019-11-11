@@ -1,22 +1,6 @@
 #include <blue/Context.hpp>
 #include "blue/gpu/handlers/AddFramebufferTextureAttachmentHandler.hpp"
 
-//            // TODO: This needs a generalized case, not only GL_DEPTH_COMPONENT; add format as parameter to entity;
-//            // How about handling this by spawning another entity and synchronizing via future/promise?
-//            // Or, already initialized texture ID is passed instead of "with_texture".
-//            DebugGlCall(
-//                    glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, entity.texture_width, entity.texture_height, 0,
-//                                 GL_DEPTH_COMPONENT, GL_FLOAT, NULL));
-//
-//            DebugGlCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST));
-//            DebugGlCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST));
-//
-//            DebugGlCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER));
-//            DebugGlCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER));
-//
-//            GLfloat borderColor[] = {1.0f, 1.0f, 1.0f, 1.0f};
-//            DebugGlCall(glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, borderColor));
-
 bool map_attachment(FramebufferAttachmentType type, GLenum &glType)
 {
     switch (type)
@@ -63,9 +47,11 @@ void handle(std::pair<std::promise<bool>, AddFramebufferTextureAttachmentEntity>
 
     if (entity.attachmentType == FramebufferAttachmentType::DEPTH_ATTACHMENT)
     {
+#if !defined BLUE_ANDROID
         // No color buffers are written.
         DebugGlCall(glDrawBuffer(GL_NONE));
         DebugGlCall(glReadBuffer(GL_NONE));
+#endif
     }
     else
     {

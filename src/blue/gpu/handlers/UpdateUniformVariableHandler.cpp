@@ -11,7 +11,7 @@ void handle(const UpdateUniformVariableEntity& entity)
 	}
 	else
 	{
-		DebugGlCall(glGetUniformLocation(entity.program, entity.name.c_str()));
+		DebugGlCall(location = glGetUniformLocation(entity.program, entity.name.c_str()));
 		if (location < 0)
 		{
 			blue::Context::logger().error("Failed to find location for uniform: {} in shader program: {}", entity.name, entity.program);
@@ -31,12 +31,12 @@ void handle(const UpdateUniformVariableEntity& entity)
 	{
 	case(ShaderAttribute::Type::FLOAT):
 	{
-		DebugGlCall(glUniform1f(location, *reinterpret_cast<const GLfloat*>(entity.value)));
+        DebugGlCall(glUniform1f(location, *reinterpret_cast<const GLfloat*>(entity.value)));
 		break;
 	}
 	case(ShaderAttribute::Type::INT):
 	{
-		DebugGlCall(glUniform1i(location, *reinterpret_cast<const GLint*>(entity.value)));
+        DebugGlCall(glUniform1i(location, *reinterpret_cast<const GLint*>(entity.value)));
 		break;
 	}
 	default: break;

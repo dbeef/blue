@@ -7,7 +7,7 @@ namespace
 {
     Texture create(const CreateTextureEntity &entity)
     {
-        Texture texture;
+        Texture texture{};
 
         stbi_uc *buffer = nullptr;
 

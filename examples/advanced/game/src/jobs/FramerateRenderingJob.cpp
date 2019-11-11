@@ -39,13 +39,14 @@ void FramerateRenderingJob::start()
 
 	// Now set used texture slot in shader:
 
-	std::uint32_t slot = 4;
+	std::uint32_t slot = 3;
 
 	UpdateUniformVariableEntity update_uniform_entity{};
 	update_uniform_entity.type = ShaderAttribute::Type::INT;
 	update_uniform_entity.value = &slot;
 	update_uniform_entity.program = Resources::instance().shaders.simple_texture;
-	update_uniform_entity.location = 9;
+	update_uniform_entity.location = 0;
+	update_uniform_entity.name = "sampler";
 
 	blue::Context::gpu_system().submit(update_uniform_entity);
 	blue::Context::gpu_thread().wait_for_render_pass();
@@ -55,11 +56,12 @@ void FramerateRenderingJob::start()
 	_entity.position = { blue::Context::window().get_width() / 2, blue::Context::window().get_height() / 2, 0.0f };
 	_entity.shader = Resources::instance().shaders.simple_texture;
 	_entity.vertex_array = vertex_array;
-	_entity.scale = { 65, 20, 1.0f };
+	_entity.scale = { 64, 64, 1.0f };
 	_entity.position = { 0.5f * _entity.scale.x, 0.5f * _entity.scale.y, 0 };
 	_entity.rotation = glm::identity<glm::quat>();
 	_entity.environment = Resources::instance().gui_environment.environment;
 	_entity.id = blue::Context::renderer().add(_entity);
+	_entity.framebuffer.framebuffer = 0;
 
 	_running.store(true);
 	_intersection_thread = std::thread(&FramerateRenderingJob::framerate_rendering_loop, this);
@@ -67,14 +69,13 @@ void FramerateRenderingJob::start()
 
 void FramerateRenderingJob::framerate_rendering_loop()
 {
-	Texture texture{};
 	Timestep timestep(1.0f);
 
 	while (_running.load())
 	{
 		timestep.mark_start();
 
-		if (texture.id)
+		if (_entity.textures[0].id)
 		{
 			blue::Context::gpu_system().submit(DisposeTextureEntity{ _entity.textures[0] });
 		}
@@ -83,14 +84,13 @@ void FramerateRenderingJob::framerate_rendering_loop()
 		(
 			Resources::instance().fonts.lato,
 			std::to_string(static_cast<int>(1000.0f * 1000.0f / blue::Context::gpu_thread().get_time_spent())) + " FPS",
-			65,
-			20,
+            64,
+			64,
 			16
 		);
-		create_texture_entity.slot = 4;
+		create_texture_entity.slot = 3;
 
-		texture = blue::Context::gpu_system().submit(create_texture_entity).get();
-		_entity.textures[0] = texture;
+        _entity.textures[0] = blue::Context::gpu_system().submit(create_texture_entity).get();
 		blue::Context::renderer().update(_entity);
 
 		timestep.mark_end();

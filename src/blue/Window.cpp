@@ -7,7 +7,7 @@
 #	include <glad/glad_egl.h>
 #endif
 
-namespace 
+namespace
 {
 	void set_window_attributes()
 	{
@@ -54,7 +54,7 @@ namespace blue
 		_height = height;
 		return _create();
 	}
-	
+
 	bool Window::create_hidden()
 	{
 		_fullscreen = false;
@@ -76,7 +76,7 @@ namespace blue
 		{
 			flags = flags | SDL_WINDOW_FULLSCREEN_DESKTOP;
 		}
-		
+
 		if (_hidden)
 		{
 			flags = flags | SDL_WINDOW_HIDDEN;
@@ -114,14 +114,36 @@ namespace blue
 		assert(gladLoadGLLoader((GLADloadproc)SDL_GL_GetProcAddress));
 #endif
 
+		bool explicitUniformsSupported = SDL_GL_ExtensionSupported("GL_ARB_explicit_uniform_location");
+		if (!explicitUniformsSupported)
+        {
+            blue::Context::logger().critical(
+                                         "Attention! Extension GL_ARB_explicit_uniform_location **not** "
+                                         "supported on this platform. "
+                                         "Your uniform values may not be set correctly - you may want"
+                                         "to fallback for querying for uniform locations.");
+        }
+
 		// Enable blending
-		glEnable(GL_BLEND);
-		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        DebugGlCall(glEnable(GL_BLEND));
+        DebugGlCall(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
 
 		DebugGlCall(glEnable(GL_DEPTH_TEST));
 		DebugGlCall(glEnable(GL_STENCIL_TEST));
 		DebugGlCall(glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE));
 		DebugGlCall(glViewport(0, 0, get_width(), get_height()));
+
+		int texture_units;
+		DebugGlCall(glGetIntegerv(GL_MAX_TEXTURE_IMAGE_UNITS, &texture_units));
+        if (texture_units < 8)
+        {
+            blue::Context::logger().critical("Attention! Blue utilizes 8 texture slots as for now,"
+                                             "but only {} were detected on this platform. "
+                                             "Features may not work as expected - you may want "
+                                             "to restrict to using only {} textures.",
+                                             texture_units, texture_units);
+        }
+
 
 		return true;
 	}

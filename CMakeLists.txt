@@ -98,6 +98,13 @@ add_library(
         include/blue/camera/Camera.hpp
         src/blue/gpu/handlers/AddFramebufferTextureAttachmentHandler.cpp include/blue/gui/PlacingRules.h)
 
+
+set_target_properties(blue
+        PROPERTIES
+        CXX_STANDARD
+        14
+        )
+
 target_include_directories(
         blue
         PUBLIC

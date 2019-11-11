@@ -32,5 +32,8 @@ CreateTextureEntity ImageUtils::read(const std::string& filepath)
 		blue::Context::logger().error("Unable to open file, SDL error: {}", SDL_GetError());
 	}
 
-	return { data };
+	// FIXME: Return data instead
+    CreateTextureEntity e;
+    e.data = data;
+    return e;
 }

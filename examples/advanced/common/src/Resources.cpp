@@ -299,14 +299,14 @@ void Resources::load_environment()
 
 		auto renderTexture = blue::Context::gpu_system().submit(CreateTextureEntity{
 				std::make_shared<std::vector<char>>(), true,
-				TextureFiltering::LINEAR,
-				TextureWrapping::CLAMP_TO_EDGE,
+				TextureFiltering::NEAREST,
+				TextureWrapping::CLAMP_TO_BORDER,
 				1024,
 				1024,
 				0,
 				TexturePassedDataFormat::DEPTH_COMPONENT,
 				TextureStoringFormat::DEPTH_COMPONENT,
-				TexturePassedDataComponentSize::UNSIGNED_BYTE
+				TexturePassedDataComponentSize::FLOAT
 		}).get();
 		light_environment.depth.texture = renderTexture;
 		blue::Context::gpu_system().submit(
