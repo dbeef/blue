@@ -2,7 +2,6 @@
 #include <blue/Timestep.hpp>
 #include <imgui/imgui.h>
 
-#include "Callbacks.hpp"
 #include "Game.hpp"
 #include "Resources.hpp"
 
@@ -18,9 +17,8 @@ int main(int argc, char* argv[])
 
 	Resources::init();
 	Game::init();
-	Callbacks::init();
-	Callbacks::instance().register_callbacks();
 
+	Resources::instance().load_fonts();
 	Resources::instance().load_environment();
 	Resources::instance().load_shaders();
 	Resources::instance().load_models();
@@ -48,7 +46,6 @@ int main(int argc, char* argv[])
 
 	Game::instance().reset_state();
 
-	Callbacks::dispose();
 	Game::dispose();
 	Resources::dispose();
 

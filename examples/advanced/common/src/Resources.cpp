@@ -43,6 +43,12 @@ void Resources::load_shaders()
 		BLUE_ASSERT(shader > 0);
 	}
 	{
+		auto entity = ShaderUtils::make_entity("resources/SimpleTexture.vertex.glsl", "resources/SimpleTexture.fragment.glsl");
+		auto shader = blue::Context::gpu_system().submit(entity).get();
+		shaders.simple_texture = shader;
+		BLUE_ASSERT(shader > 0);
+	}
+	{
 		auto entity = ShaderUtils::make_entity("resources/TileHighlight.vertex.glsl", "resources/TileHighlight.fragment.glsl");
 		auto shader = blue::Context::gpu_system().submit(entity).get();
 		shaders.tile_highlight = shader;
@@ -110,6 +116,13 @@ void Resources::load_render_entities()
 
         render_entities.selected_tile_highlight = entity;
     }
+}
+
+void Resources::load_fonts()
+{
+	{
+		fonts.lato = FontUtils::read_ttf_relative("resources/Lato-Black.ttf");
+	}
 }
 
 void Resources::load_models()
@@ -243,14 +256,12 @@ void Resources::load_models()
 void Resources::load_textures()
 {
     {
-		auto font = FontUtils::read_ttf_absolute(ttf_filename);
-		auto clicked_entity = FontUtils::create_text(font, "dupa!", 200, 200, 100);
-        clicked_entity.slot = 5;
-        textures.start_clicked = blue::Context::gpu_system().submit(clicked_entity).get();
-
-		auto idle_entity = FontUtils::create_text(font, "kupa!", 200, 200, 100);
-        idle_entity.slot = 6;
-        textures.start = blue::Context::gpu_system().submit(idle_entity).get();
+		auto clicked_entity = CreateTextureEntity{ ImageUtils::read("resources/button_start_clicked.png") };
+		clicked_entity.slot = 5;
+		textures.start_clicked = blue::Context::gpu_system().submit(clicked_entity).get();
+		auto idle_entity = CreateTextureEntity{ ImageUtils::read("resources/button_start.png") };
+		idle_entity.slot = 6;
+		textures.start = blue::Context::gpu_system().submit(idle_entity).get();
     }
     {
         auto clicked_entity = CreateTextureEntity{ImageUtils::read("resources/button_exit_clicked.png")};

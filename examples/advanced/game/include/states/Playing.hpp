@@ -1,6 +1,7 @@
 #pragma once
 
 #include "jobs/MapIntersectionJob.h"
+#include "jobs/FramerateRenderingJob.h"
 #include "BaseState.hpp"
 
 class Playing : public BaseState
@@ -11,4 +12,5 @@ public:
     void on_entry() override;
 private:
         MapIntersectionJob _intersection_job;
+        FramerateRenderingJob _framerate_rendering_job;
 };

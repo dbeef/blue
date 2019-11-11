@@ -29,8 +29,10 @@ public:
 
 	void delay() const;
 
-private:
+	inline std::uint64_t get_delta() const { return std::chrono::duration_cast<std::chrono::microseconds>(_end - _start).count();  };
 
+private:
+	
 	Timestamp _start;
 	Timestamp _end;
 	const std::chrono::microseconds _frequency;

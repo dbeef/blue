@@ -8,10 +8,10 @@ set(SOURCES
         src/Main.cpp
         include/Game.hpp
         src/Game.cpp
-        include/Callbacks.hpp
-        src/Callbacks.cpp
         include/jobs/MapIntersectionJob.h
+        include/jobs/FramerateRenderingJob.h
         src/jobs/MapIntersectionJob.cpp
+        src/jobs/FramerateRenderingJob.cpp
         include/states/BaseState.hpp
         include/states/Playing.hpp
         src/states/Playing.cpp

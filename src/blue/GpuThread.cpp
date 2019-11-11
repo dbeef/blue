@@ -126,6 +126,7 @@ void GpuThread::render_thread_loop()
 		lk.unlock();
 
 		timestep.mark_end();
+		_time_spent.store(timestep.get_delta());
 		timestep.delay();
 	}
 }

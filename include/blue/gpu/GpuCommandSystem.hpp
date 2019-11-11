@@ -26,6 +26,7 @@ public:
 	void submit(const UpdateUniformVariableEntity&);
 	void submit(const DisposeShaderEntity&);
 	void submit(const DisposeMeshEntity&);
+	void submit(const DisposeTextureEntity&);
 	void submit(const UpdateEnvironmentEntity_Projection&);
 	void submit(const UpdateEnvironmentEntity_View&);
 	void submit(const UpdateEnvironmentEntity_LightSpaceMatrix&);
@@ -51,6 +52,7 @@ private:
 	std::queue<SetClearColorEntity> set_clear_color_entities;
 	std::queue<std::pair<std::promise<bool>, AddFramebufferTextureAttachmentEntity>> add_framebuffer_texture_attachment_entities;
 	std::queue<DisposeMeshEntity> dispose_mesh_entities;
+	std::queue<DisposeTextureEntity> dispose_texture_entities;
 	std::queue<DisposeShaderEntity> dispose_shader_entities;
 	std::queue<UpdateEnvironmentEntity_CameraPos> update_environment_camera_pos_entities;
 	std::queue<UpdateEnvironmentEntity_LightPos> update_environment_light_pos_entities;

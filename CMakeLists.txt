@@ -43,6 +43,7 @@ add_library(
         src/blue/gpu/handlers/AddFramebufferTextureAttachmentHandler.cpp
         src/blue/gpu/handlers/CreateFramebufferHandler.cpp
         src/blue/gpu/handlers/CreateTextureHandler.cpp
+        src/blue/gpu/handlers/DisposeTextureHandler.cpp
         src/blue/gpu/handlers/DisposeShaderHandler.cpp
         src/blue/gpu/handlers/ReadFramebufferHandler.cpp
         src/blue/gpu/handlers/CreateMeshHandler.cpp
@@ -71,6 +72,7 @@ add_library(
         # TODO: Remove "Handler" postfix; they're already in "handlers" directory.
         include/blue/gpu/handlers/CompileShaderHandler.hpp
         include/blue/gpu/handlers/CreateTextureHandler.hpp
+        include/blue/gpu/handlers/DisposeTextureHandler.hpp
         include/blue/gpu/handlers/ReadFramebufferHandler.hpp
         include/blue/gpu/handlers/DisposeShaderHandler.hpp
         include/blue/gpu/handlers/AddFramebufferTextureAttachmentHandler.hpp

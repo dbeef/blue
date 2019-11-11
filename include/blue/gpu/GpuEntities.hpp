@@ -280,6 +280,11 @@ struct CreateInstancedMeshEntity
 	const std::uint32_t number_of_instances;
 };
 
+struct DisposeTextureEntity
+{
+	Texture texture;
+};
+
 struct CreateTextureEntity
 {
 	// Will not attempt to fill with data if empty vector passed.

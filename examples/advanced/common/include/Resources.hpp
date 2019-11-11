@@ -4,6 +4,7 @@
 #include <blue/camera/PerspectiveCamera.hpp>
 #include <blue/gpu/GpuEntities.hpp>
 #include <blue/gui/Button.hpp>
+#include <blue/FontUtils.hpp>
 
 class Resources
 {
@@ -36,9 +37,16 @@ public:
 
 	void load_shaders();
 
+	void load_fonts();
+
 	void load_models();
 
 	void load_textures();
+
+	struct
+	{
+		FontUtils::Font lato;
+	} fonts;
 
 	struct {
 		UniformBufferId environment = 0;
@@ -71,6 +79,7 @@ public:
 		ShaderId swinging;
 		ShaderId water;
 		ShaderId tile_highlight;
+		ShaderId simple_texture;
 	} shaders;
 	
 	struct {

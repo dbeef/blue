@@ -5,6 +5,7 @@
 #include "blue/gpu/handlers/CompileShaderHandler.hpp"
 #include "blue/gpu/handlers/DisposeShaderHandler.hpp"
 #include "blue/gpu/handlers/DisposeMeshHandler.hpp"
+#include "blue/gpu/handlers/DisposeTextureHandler.hpp"
 #include "blue/gpu/handlers/CreateMeshHandler.hpp"
 #include "blue/gpu/handlers/CreateFramebufferHandler.hpp"
 #include "blue/gpu/handlers/CreateInstancedMeshHandler.hpp"
@@ -60,6 +61,13 @@ bool GpuCommandSystem::execute()
 	{
 		handle(dispose_mesh_entities.front());
 		dispose_mesh_entities.pop();
+        executed_some_work = true;
+	}
+
+	while (!dispose_texture_entities.empty())
+	{
+		handle(dispose_texture_entities.front());
+		dispose_texture_entities.pop();
         executed_some_work = true;
 	}
 
@@ -269,6 +277,13 @@ void GpuCommandSystem::submit(const DisposeMeshEntity& entity)
 {
 	lock();
 	dispose_mesh_entities.push(entity);
+	unlock();
+}
+
+void GpuCommandSystem::submit(const DisposeTextureEntity& entity)
+{
+	lock();
+	dispose_texture_entities.push(entity);
 	unlock();
 }
 
