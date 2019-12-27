@@ -13,5 +13,6 @@ namespace models
 	};
 
 	const aiScene* load_scene(const std::string& path);
-	Vertices parse_scene(const aiScene*& scene, const Attributes& attributes, unsigned int& vertex_counter);
+	std::vector<Vertices> parse_scene(const aiScene*& scene, const Attributes& attributes, unsigned int& vertex_counter);
+	std::vector<CreateTextureEntity> parse_textures(const aiScene*& scene);
 };

@@ -53,9 +53,11 @@ int main(int argc, char* argv[])
 	// TODO: Supporting more textures; first merge image processing branch.
 	// TODO: Not only vertices; list of paths to textures
 
-	auto vertices = models::parse_scene(scene_ptr, attributes, vertex_counter);
+	auto meshes = models::parse_scene(scene_ptr, attributes, vertex_counter);
+	auto textures = models::parse_textures(scene_ptr);
+	// TODO: CreateTextureEntities + upload textures to GPU
 
-	auto vertex_array = blue::Context::gpu_system().submit(CreateMeshEntity{ vertices, {}, attributes, vertex_counter}).get();
+	auto vertex_array = blue::Context::gpu_system().submit(CreateMeshEntity{ meshes[0], {}, attributes, vertex_counter}).get();
 
 	// Create environment
 
