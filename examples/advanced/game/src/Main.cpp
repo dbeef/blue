@@ -29,6 +29,8 @@ int main(int argc, char* argv[])
 
 	Timestep timestep(30);
 
+	blue::Context::gpu_system().submit(SetClearColorEntity{ {1.0f, 1.0f, 1.0f} });
+
 	while (Game::instance().is_running())
 	{
 		timestep.mark_start();
@@ -39,7 +41,6 @@ int main(int argc, char* argv[])
 		float sin = std::sin(x) * 0.2f;
 		auto swing_update = UpdateUniformVariableEntity{ ShaderAttribute::Type::FLOAT, &sin, Resources::instance().shaders.swinging, 1, "" };
 		blue::Context::gpu_system().submit(swing_update);
-
 		timestep.mark_end();
 		timestep.delay();
 	}

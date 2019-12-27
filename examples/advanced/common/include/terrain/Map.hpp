@@ -38,6 +38,9 @@ public:
 	UnitType get_tile_occupant(std::uint16_t tile_x, std::uint16_t tile_y);
 
 private:
+	
+	void color_points(float x, float y, float R, const glm::vec3& color, Vertices& vertices);
+	void elevate_points(float x, float y, float R, float elevation, Vertices& vertices);
 
 	void color_points(float x, float y, float R, const glm::vec3& color, Vertices& vertices);
 	void elevate_points(float x, float y, float R, float elevation, Vertices& vertices);
@@ -47,6 +50,9 @@ private:
 
 	Vertices decoration_vertices;
 	Indices decoration_indices;
+	
+	Vertices clickable_vertices;
+	Indices clickable_indices;
 
 	Vertices clickable_vertices;
 	Indices clickable_indices;

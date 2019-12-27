@@ -82,7 +82,7 @@ namespace
 
 const aiScene* models::load_scene(const std::string& path)
 {
-	blue::Context::logger().info("Loading scene: {}", path);
+	blue::Context::logger().info("*** Loading scene: {} ***", path);
 
 	auto full_path = paths::getResourcesPath() + path;
 
@@ -107,30 +107,63 @@ const aiScene* models::load_scene(const std::string& path)
 		return nullptr;
 	}
 
-
 	const aiScene* scene;
 	scene = aiImportFileFromMemory(data.data(), size, aiProcessPreset_TargetRealtime_MaxQuality, "fbx");
 
 	aiVector3D scene_min, scene_max, scene_center;
 
-	if (!scene)
-	{
-		return nullptr;
-	}
-	else
-	{
-		blue::Context::logger().info("Number of animations: {}", scene->mNumAnimations);
-		blue::Context::logger().info("Number of cameras: {}", scene->mNumCameras);
-		blue::Context::logger().info("Number of lights: {}", scene->mNumLights);
-		blue::Context::logger().info("Number of meshes: {}", scene->mNumMeshes);
-		blue::Context::logger().info("Number of textures: {}", scene->mNumTextures);
-		blue::Context::logger().info("Number of materials: {}", scene->mNumMaterials);
-		return scene;
-	}
+	return scene;
 }
 
-std::vector<VertexType> models::parse_scene(const aiScene*& scene, const Attributes& attributes, unsigned int& vertex_counter)
+std::vector<CreateTextureEntity> models::parse_textures(const aiScene*& scene)
 {
+	std::vector<CreateTextureEntity> entities;
+
+	blue::Context::logger().info("*** Parsing textures ***");
+	blue::Context::logger().info("Number of animations: {}", scene->mNumAnimations);
+	blue::Context::logger().info("Number of cameras: {}", scene->mNumCameras);
+	blue::Context::logger().info("Number of lights: {}", scene->mNumLights);
+	blue::Context::logger().info("Number of meshes: {}", scene->mNumMeshes);
+	blue::Context::logger().info("Number of textures: {}", scene->mNumTextures);
+
+	for (std::size_t index = 0; index < scene->mNumTextures; index++)
+	{
+		blue::Context::logger().info("Texture {} name {}", index, scene->mTextures[index]->mFilename.C_Str());
+	}
+
+	blue::Context::logger().info("Number of materials: {}", scene->mNumMaterials);
+
+	for (std::size_t index = 0; index < scene->mNumMaterials; index++)
+	{
+		blue::Context::logger().info("Material {} name {}", index, scene->mMaterials[index]->GetName().C_Str());
+
+		for (std::size_t textureType = 0; textureType < 12; textureType++) {
+
+			unsigned int textureCount = scene->mMaterials[index]->GetTextureCount(static_cast<aiTextureType>(aiTextureType_NONE + textureType));
+			if (textureCount != 0)
+			{
+				blue::Context::logger().info("--- Texture type: {}, texture count: {}", textureType, textureCount);
+
+				for (int textureIndex = 0; textureIndex < textureCount; textureIndex++)
+				{
+					aiString outPath;
+					aiReturn tex = scene->mMaterials[index]->GetTexture(static_cast<aiTextureType>(aiTextureType_NONE + textureType), textureIndex, &outPath);
+					if (tex == aiReturn_SUCCESS)
+					{
+						blue::Context::logger().info("------- Texture: {}", outPath.C_Str());
+					}
+				}
+			}
+		}
+	}
+
+	return entities;
+}
+
+std::vector<Vertices> models::parse_scene(const aiScene*& scene, const Attributes& attributes, unsigned int& vertex_counter)
+{
+	blue::Context::logger().info("*** Parsing scene ***");
+
 	vertex_counter = 0;
 
 	aiMatrix4x4 trafo;
@@ -149,9 +182,13 @@ std::vector<VertexType> models::parse_scene(const aiScene*& scene, const Attribu
 		span = std::abs(max_height) + std::abs(min_height);
 	}
 
-	std::vector<VertexType> vertices;
+	std::vector<Vertices> meshes;
+
 	for (unsigned long mesh_index = 0; mesh_index < scene->mNumMeshes; mesh_index++) {
 		const auto& mesh = scene->mMeshes[mesh_index];
+
+		std::vector<VertexType> vertices;
+		blue::Context::logger().info("Mesh: {}", mesh->mName.C_Str());
 
 		for (unsigned long t = 0; t < mesh->mNumFaces; ++t) {
 			const struct aiFace* face = &mesh->mFaces[t];
@@ -175,7 +212,6 @@ std::vector<VertexType> models::parse_scene(const aiScene*& scene, const Attribu
 
 			for (unsigned long i = 0; i < face->mNumIndices; i++)
 			{
-
 				auto index = face->mIndices[i];
 				auto vertex = mesh->mVertices[index];
 				vertex_counter++;
@@ -201,6 +237,27 @@ std::vector<VertexType> models::parse_scene(const aiScene*& scene, const Attribu
 						}
 						else {
 							vertices.push_back(0);
+							vertices.push_back(0);
+							vertices.push_back(0);
+						}
+						break;
+					}
+					case(ShaderAttribute::Purpose::TEXTURE_COORDINATE):
+					{
+						if (mesh->mTextureCoords[0] != nullptr) {
+
+							// mesh->mMaterialIndex; !!!
+							// Obchodz¹  mnie tylko diffuse tekstury 
+
+							auto uv = mesh->mTextureCoords[0][index];
+							vertices.push_back(uv.x);
+							vertices.push_back(uv.y);
+
+							// TODO: Push texture index?
+
+							// Ignore Z component, will be 0.
+						}
+						else {
 							vertices.push_back(0);
 							vertices.push_back(0);
 						}
@@ -234,6 +291,7 @@ std::vector<VertexType> models::parse_scene(const aiScene*& scene, const Attribu
 			}
 		}
 
-		return vertices;
+		meshes.push_back(vertices);
 	}
+	return meshes;
 }

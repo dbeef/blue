@@ -113,6 +113,16 @@ UnitType Map::get_tile_occupant(std::uint16_t tile_x, std::uint16_t tile_y)
 	return tiles[tile_x][tile_y].occupant;
 }
 
+void Map::set_tile_occupant(UnitType occupant, std::uint16_t tile_x, std::uint16_t tile_y)
+{
+	tiles[tile_x][tile_y].occupant = occupant;
+}
+
+UnitType Map::get_tile_occupant(std::uint16_t tile_x, std::uint16_t tile_y)
+{
+	return tiles[tile_x][tile_y].occupant;
+}
+
 void Map::export_to_file(const std::string& filename)
 {
 	std::fstream out(paths::getResourcesPath() + filename, std::fstream::binary | std::fstream::out);
