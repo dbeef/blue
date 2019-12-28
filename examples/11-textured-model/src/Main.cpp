@@ -7,13 +7,13 @@
 #include <cmath>
 #include <atomic>
 
-int main(int argc, char* argv[]) 
+int main(int argc, char* argv[])
 {
 	blue::Context::init();
 	blue::Context::window().create(800, 600);
 
 	// Register ESC key callback: 
-	std::atomic_bool running {true};
+	std::atomic_bool running{ true };
 
 	blue::Context::input().registerKeyCallback({
 		[&running]()
@@ -54,16 +54,27 @@ int main(int argc, char* argv[])
 	// TODO: Not only vertices; list of paths to textures
 
 	auto meshes = models::parse_scene(scene_ptr, attributes, vertex_counter);
-	auto textures = models::parse_textures(scene_ptr);
-	// TODO: CreateTextureEntities + upload textures to GPU
+	auto create_texture_render_entities = models::parse_textures(scene_ptr);
+	std::vector<Texture> textures;
+	std::vector<VertexArray> vertex_arrays;
 
-	auto vertex_array = blue::Context::gpu_system().submit(CreateMeshEntity{ meshes[0], {}, attributes, vertex_counter}).get();
+	for (auto& entity : create_texture_render_entities)
+	{
+		auto texture_id = blue::Context::gpu_system().submit(entity).get();
+		textures.push_back(texture_id);
+	}
+
+	for (auto& mesh : meshes)
+	{
+		auto vertex_array = blue::Context::gpu_system().submit(CreateMeshEntity{ mesh, {}, attributes, vertex_counter }).get();
+		vertex_arrays.push_back(vertex_array);
+	}
 
 	// Create environment
 
 	auto environment = blue::Context::gpu_system().submit(CreateEnvironmentEntity{}).get();
 
-	PerspectiveCamera camera;
+	PerspectiveCamera camera(blue::Context::window().get_width(), blue::Context::window().get_height());
 
 	blue::Context::gpu_system().submit(UpdateEnvironmentEntity_Projection{ environment, camera.get_projection() });
 	blue::Context::gpu_system().submit(UpdateEnvironmentEntity_View{ environment, camera.get_view() });
@@ -71,15 +82,27 @@ int main(int argc, char* argv[])
 
 	// Submit render command consisting of compiled shader and uploaded mesh
 
-	RenderEntity entity;
-	entity.position = { 0, 0, -2.5f };
-	entity.shader = shader;
-	entity.vertex_array = vertex_array;
-	entity.scale = 0.5f;
-	entity.rotation = { 0, 0, 0, 0 };
-	entity.environment = environment;
+	std::vector<RenderEntity> render_entities;
 
-	entity.id = blue::Context::renderer().add(entity);
+	for (auto& vertex_array : vertex_arrays)
+	{
+		RenderEntity entity;
+		entity.position = { 0, 0, -2.5f };
+		entity.shader = shader;
+		entity.vertex_array = vertex_array;
+		entity.scale = { 0.5f };
+		entity.rotation = { 0, 0, 0, 0 };
+		entity.environment = environment;
+
+		for (std::size_t index = 0; index < textures.size(); index++)
+		{
+			if (index == BLUE_AVAILABLE_TEXTURE_SLOTS) break;
+			entity.textures[index] = textures[index];
+		}
+
+		entity.id = blue::Context::renderer().add(entity);
+		render_entities.push_back(entity);
+	}
 
 	// Start logics loop with timestep limited to 30 times per second:
 	Timestep timestep(30);
@@ -90,8 +113,12 @@ int main(int argc, char* argv[])
 
 		static glm::vec3 euler(0, 1.0f, 0);
 		euler.y += 0.02f;
-		entity.rotation = glm::quat(euler);
-		blue::Context::renderer().update(entity);
+
+		for (auto& entity : render_entities)
+		{
+			entity.rotation = glm::quat(euler);
+			blue::Context::renderer().update(entity);
+		}
 
 		blue::Context::input().poll();
 		timestep.mark_end();

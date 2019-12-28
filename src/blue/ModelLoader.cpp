@@ -1,6 +1,7 @@
 #include "blue/ModelLoader.h"
 #include "blue/Context.hpp"
 #include "blue/ResourcesPath.h"
+#include "blue/TextureUtils.hpp"
 
 #include <assimp/cimport.h>
 #include <assimp/postprocess.h>
@@ -151,6 +152,7 @@ std::vector<CreateTextureEntity> models::parse_textures(const aiScene*& scene)
 					if (tex == aiReturn_SUCCESS)
 					{
 						blue::Context::logger().info("------- Texture: {}", outPath.C_Str());
+						entities.push_back(ImageUtils::read(outPath.C_Str()));
 					}
 				}
 			}

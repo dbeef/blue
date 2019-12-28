@@ -16,6 +16,12 @@ CreateTextureEntity ImageUtils::read(const std::string& filepath)
 	int size;
 	SDL_RWops* file = SDL_RWFromFile(absolute_path.c_str(), "rb");
 
+	if (file == nullptr)
+	{
+		// Try reading again, relative path this time:
+		file = SDL_RWFromFile(filepath.c_str(), "rb");
+	}
+
 	// TODO: Externalize filesystem operations.
 	if (file != nullptr)
 	{
