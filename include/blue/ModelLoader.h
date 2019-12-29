@@ -2,6 +2,7 @@
 
 #include <assimp/scene.h>
 #include <vector>
+#include <tuple>
 #include <blue/Renderer.h>
 
 namespace models 
@@ -13,6 +14,6 @@ namespace models
 	};
 
 	const aiScene* load_scene(const std::string& path);
-	std::vector<Vertices> parse_scene(const aiScene*& scene, const Attributes& attributes, unsigned int& vertex_counter);
+	std::vector<std::pair<Vertices, unsigned int>> parse_scene(const aiScene*& scene, const Attributes& attributes);
 	std::vector<CreateTextureEntity> parse_textures(const aiScene*& scene);
 };

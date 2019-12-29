@@ -79,6 +79,148 @@ namespace
 	{
 		return 0;
 	}
+
+	std::pair<Vertices, unsigned int> process_mesh(aiMesh* mesh, const Attributes& attributes, float span, aiMatrix4x4 transformation)
+	{
+		std::pair<Vertices, unsigned int> vertices;
+
+		blue::Context::logger().info("Mesh: {}", mesh->mName.C_Str());
+
+		for (unsigned long t = 0; t < mesh->mNumFaces; ++t) {
+
+			const struct aiFace* face = &mesh->mFaces[t];
+
+			GLenum face_mode;
+			switch (face->mNumIndices) {
+			case 1:
+				face_mode = GL_POINTS;
+				continue;
+				break;
+			case 2:
+				face_mode = GL_LINES;
+				continue;
+				break;
+			case 3:
+				face_mode = GL_TRIANGLES;
+				break;
+			}
+
+			aiColor4D current_color;
+
+			for (unsigned long i = 0; i < face->mNumIndices; i++)
+			{
+				auto index = face->mIndices[i];
+				auto vertex = mesh->mVertices[index];
+
+				vertices.second++;
+
+				for (const auto& attribute : attributes)
+				{
+					switch (attribute._purpose)
+					{
+					case(ShaderAttribute::Purpose::VERTEX_POSITION):
+					{
+						aiVector3D transformed = transformation* vertex;
+
+						vertices.first.push_back(transformed.x);
+						vertices.first.push_back(transformed.y);
+						vertices.first.push_back(transformed.z);
+						break;
+					}
+					case(ShaderAttribute::Purpose::COLOR):
+					{
+						if (mesh->mColors[0] != nullptr) {
+							current_color = mesh->mColors[0][index];
+							vertices.first.push_back(current_color.r);
+							vertices.first.push_back(current_color.g);
+							vertices.first.push_back(current_color.b);
+						}
+						else {
+							vertices.first.push_back(0);
+							vertices.first.push_back(0);
+							vertices.first.push_back(0);
+						}
+						break;
+					}
+					case(ShaderAttribute::Purpose::TEXTURE_COORDINATE):
+					{
+						if (mesh->mTextureCoords[0] != nullptr) {
+
+							// mesh->mMaterialIndex; !!!
+							// Obchodz¹  mnie tylko diffuse tekstury 
+
+							auto uv = mesh->mTextureCoords[0][index];
+							vertices.first.push_back(uv.x);
+							vertices.first.push_back(uv.y);
+
+							// TODO: Push texture index?
+
+							// Ignore Z component, will be 0.
+						}
+						else {
+							vertices.first.push_back(0);
+							vertices.first.push_back(0);
+						}
+						break;
+					}
+					case(ShaderAttribute::Purpose::NORMAL):
+					{
+						if (mesh->mNormals != nullptr) {
+
+							auto normal = mesh->mNormals[index];
+							aiVector3D transformed = transformation * normal;
+
+							vertices.first.push_back(transformed.x);
+							vertices.first.push_back(transformed.y);
+							vertices.first.push_back(transformed.z);
+						}
+						else {
+							vertices.first.push_back(0);
+							vertices.first.push_back(0);
+							vertices.first.push_back(0);
+						}
+						break;
+					}
+					case(ShaderAttribute::Purpose::NORMALIZED_HEIGHT):
+					{
+						float current_height = std::abs(vertex.y);
+						float normalized = current_height / span;
+
+						vertices.first.push_back(normalized);
+						break;
+					}
+					}
+				}
+			}
+		}
+		return vertices;
+	}
+
+	std::vector<std::pair<Vertices, unsigned int>> process_node(aiNode* node, aiNode* parent, const aiScene* scene, const Attributes& attributes, float span, std::vector<std::pair<Vertices, unsigned int>>& meshes)
+	{
+		for (std::size_t mesh_index = 0; mesh_index < node->mNumMeshes; mesh_index++)
+		{
+			unsigned int internal_mesh_index = node->mMeshes[mesh_index];
+			aiMesh* mesh = scene->mMeshes[internal_mesh_index];
+
+			aiMatrix4x4 trafo;
+			aiIdentityMatrix4(&trafo);
+			auto& nd = parent;
+			aiMultiplyMatrix4(&trafo, &nd->mTransformation);
+
+			meshes.push_back(process_mesh(mesh, attributes, span, trafo));
+		}
+
+		if (node->mNumChildren)
+		{
+			for (std::size_t node_index = 0; node_index < node->mNumChildren; node_index++)
+			{
+				process_node(node->mChildren[node_index], node, scene, attributes, span, meshes);
+			}
+		}
+
+		return meshes;
+	}
 }
 
 const aiScene* models::load_scene(const std::string& path)
@@ -162,16 +304,9 @@ std::vector<CreateTextureEntity> models::parse_textures(const aiScene*& scene)
 	return entities;
 }
 
-std::vector<Vertices> models::parse_scene(const aiScene*& scene, const Attributes& attributes, unsigned int& vertex_counter)
+std::vector<std::pair<Vertices, unsigned int>> models::parse_scene(const aiScene*& scene, const Attributes& attributes)
 {
 	blue::Context::logger().info("*** Parsing scene ***");
-
-	vertex_counter = 0;
-
-	aiMatrix4x4 trafo;
-	aiIdentityMatrix4(&trafo);
-	auto& nd = scene->mRootNode;
-	aiMultiplyMatrix4(&trafo, &nd->mTransformation);
 
 	float max_height = 0.0f;
 	float min_height = 0.0f;
@@ -184,116 +319,8 @@ std::vector<Vertices> models::parse_scene(const aiScene*& scene, const Attribute
 		span = std::abs(max_height) + std::abs(min_height);
 	}
 
-	std::vector<Vertices> meshes;
+	std::vector<std::pair<Vertices, unsigned int>> meshes;
+	process_node(scene->mRootNode, scene->mRootNode, scene, attributes, span, meshes);
 
-	for (unsigned long mesh_index = 0; mesh_index < scene->mNumMeshes; mesh_index++) {
-		const auto& mesh = scene->mMeshes[mesh_index];
-
-		std::vector<VertexType> vertices;
-		blue::Context::logger().info("Mesh: {}", mesh->mName.C_Str());
-
-		for (unsigned long t = 0; t < mesh->mNumFaces; ++t) {
-			const struct aiFace* face = &mesh->mFaces[t];
-
-			GLenum face_mode;
-			switch (face->mNumIndices) {
-			case 1:
-				face_mode = GL_POINTS;
-				continue;
-				break;
-			case 2:
-				face_mode = GL_LINES;
-				continue;
-				break;
-			case 3:
-				face_mode = GL_TRIANGLES;
-				break;
-			}
-
-			aiColor4D current_color;
-
-			for (unsigned long i = 0; i < face->mNumIndices; i++)
-			{
-				auto index = face->mIndices[i];
-				auto vertex = mesh->mVertices[index];
-				vertex_counter++;
-
-				for (const auto& attribute : attributes)
-				{
-					switch (attribute._purpose)
-					{
-					case(ShaderAttribute::Purpose::VERTEX_POSITION):
-					{
-						vertices.push_back(vertex.x);
-						vertices.push_back(vertex.y);
-						vertices.push_back(vertex.z);
-						break;
-					}
-					case(ShaderAttribute::Purpose::COLOR):
-					{
-						if (mesh->mColors[0] != nullptr) {
-							current_color = mesh->mColors[0][index];
-							vertices.push_back(current_color.r);
-							vertices.push_back(current_color.g);
-							vertices.push_back(current_color.b);
-						}
-						else {
-							vertices.push_back(0);
-							vertices.push_back(0);
-							vertices.push_back(0);
-						}
-						break;
-					}
-					case(ShaderAttribute::Purpose::TEXTURE_COORDINATE):
-					{
-						if (mesh->mTextureCoords[0] != nullptr) {
-
-							// mesh->mMaterialIndex; !!!
-							// Obchodz¹  mnie tylko diffuse tekstury 
-
-							auto uv = mesh->mTextureCoords[0][index];
-							vertices.push_back(uv.x);
-							vertices.push_back(uv.y);
-
-							// TODO: Push texture index?
-
-							// Ignore Z component, will be 0.
-						}
-						else {
-							vertices.push_back(0);
-							vertices.push_back(0);
-						}
-						break;
-					}
-					case(ShaderAttribute::Purpose::NORMAL):
-					{
-						if (mesh->mNormals != nullptr) {
-							auto normal = mesh->mNormals[index];
-							vertices.push_back(normal.x);
-							vertices.push_back(normal.y);
-							vertices.push_back(normal.z);
-						}
-						else {
-							vertices.push_back(0);
-							vertices.push_back(0);
-							vertices.push_back(0);
-						}
-						break;
-					}
-					case(ShaderAttribute::Purpose::NORMALIZED_HEIGHT):
-					{
-						float current_height = std::abs(vertex.y);
-						float normalized = current_height / span;
-
-						vertices.push_back(normalized);
-						break;
-					}
-					}
-				}
-			}
-		}
-
-		meshes.push_back(vertices);
-	}
 	return meshes;
 }

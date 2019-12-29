@@ -11,10 +11,8 @@ layout (std140) uniform Matrices
     mat4 lightSpaceMatrix;
 };
 
-// flat so it would not interpolate color
-flat in lowp vec3 ColorRGB;
-
 in vec3 Normal;
+in vec2 TextureCoordinates;
 in vec3 FragPos;
 out vec4 color;
 
@@ -29,5 +27,5 @@ void main()
     float diff = max(dot(norm, lightDir), 0.0);
     vec3 diffuse = diff * lightColor;
 
-    color = vec4(ambient + diffuse, 1.0f) * vec4(ColorRGB, 1.0f);
+    color = vec4(ambient + diffuse, 1.0f);
 }

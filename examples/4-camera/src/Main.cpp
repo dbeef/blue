@@ -45,7 +45,8 @@ int main(int argc, char* argv[])
 	// Simple model I created, that utilizes vertex painting.
 	auto scene_ptr = models::load_scene("resources/PineTree.fbx");
 	unsigned int vertex_counter = 0;
-	auto vertices = models::parse_scene(scene_ptr, attributes, vertex_counter);
+	auto meshes = models::parse_scene(scene_ptr, attributes, vertex_counter);
+	auto vertices = meshes[0];
 
 	auto vertex_array = blue::Context::gpu_system().submit(CreateMeshEntity{ vertices, {}, attributes, vertex_counter }).get();
 
