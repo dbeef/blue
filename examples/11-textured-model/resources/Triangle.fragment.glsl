@@ -4,8 +4,8 @@ layout (std140) uniform Matrices
     mat4 view;
     mat4 projection;
 // Light
-    float ambientStrength; // TODO UPDATE
-    vec3 lightColor; // TODO UPDATE
+    float ambientStrength; 
+    vec3 lightColor;
     vec3 lightPos;
     vec3 cameraPos;
 // Shadows
@@ -38,7 +38,7 @@ void main()
 //    color = vec4(ambient + diffuse, 1.0f);
 
     // ambient
-    vec3 ambient = lightColor * MaterialAmbient * ambientStrength;
+    vec3 ambient = lightColor * ambientStrength * MaterialAmbient;
   	
     // diffuse 
     vec3 norm = normalize(Normal);

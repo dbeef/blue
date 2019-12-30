@@ -321,7 +321,8 @@ namespace
 						if (mesh->mNormals != nullptr) {
 
 							auto normal = mesh->mNormals[index];
-							aiVector3D transformed = transformation * normal;
+							//aiVector3D transformed = transformation * normal;
+							aiVector3D transformed = normal;
 
 							vertices.first.push_back(transformed.x);
 							vertices.first.push_back(transformed.y);
