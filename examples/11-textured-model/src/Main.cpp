@@ -88,7 +88,7 @@ int main(int argc, char* argv[])
 
 	PerspectiveCamera camera(blue::Context::window().get_width(), blue::Context::window().get_height());
 
-	glm::vec3 lightPos = { 30.0f, 33.0f, 30.f };
+	glm::vec3 lightPos = { 50.0f, 20.0f, 50.0f };
 	glm::vec3 lightColor = { 1.0f, 1.0f, 1.0f };
 	float ambientStrength = 1.0f;
 

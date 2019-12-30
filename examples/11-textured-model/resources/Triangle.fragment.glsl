@@ -57,11 +57,11 @@ void main()
 
 	// fresnel
 
-	vec3 toCameraVector = cameraPos - FragPos;
-	vec3 viewVector = normalize(toCameraVector);
-	float refractiveFactor = clamp(pow(dot(viewDir, norm), 10), 0.0, 1.0);
-	vec3 refractive = vec3(0.5, 0.5, 0.5) * refractiveFactor;
+	//vec3 toCameraVector = cameraPos - FragPos;
+	//vec3 viewVector = normalize(toCameraVector);
+	//float refractiveFactor = clamp(pow(dot(viewDir, norm), 10), 0.0, 1.0);
+	//vec3 refractive = vec3(0.5, 0.5, 0.5) * refractiveFactor;
         
-    vec3 result = ambient + diffuse + specular + refractive;
+    vec3 result = ambient + diffuse + specular;// + refractive;
     color = vec4(result, 1.0);
 }
