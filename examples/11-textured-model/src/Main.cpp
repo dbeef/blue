@@ -9,6 +9,7 @@
 #include <algorithm>
 
 // TODO: Postprocessing
+// TODO: Shadows
 
 static const float CAMERA_SPEED = 0.5f;
 
@@ -55,8 +56,8 @@ int main(int argc, char* argv[])
 	};
 
 	// Simple model I created, that utilizes vertex painting.
-	//auto scene_ptr = models::load_scene("resources/low-poly-mill.fbx");
-	auto scene_ptr = models::load_scene("resources/Low-Poly-Racing-Car.fbx");
+	auto scene_ptr = models::load_scene("resources/low-poly-mill.fbx");
+	//auto scene_ptr = models::load_scene("resources/Low-Poly-Racing-Car.fbx");
 
 	// TODO: Supporting more textures; first merge image processing branch.
 	// TODO: Not only vertices; list of paths to textures
