@@ -45,6 +45,10 @@ int main(int argc, char* argv[])
 	{
 		{ ShaderAttribute::Type::VEC3, ShaderAttribute::Purpose::VERTEX_POSITION, ShaderAttribute::Buffer::VERTEX},
 		{ ShaderAttribute::Type::VEC2, ShaderAttribute::Purpose::TEXTURE_COORDINATE, ShaderAttribute::Buffer::VERTEX},
+		{ ShaderAttribute::Type::VEC3, ShaderAttribute::Purpose::MATERIAL_AMBIENT, ShaderAttribute::Buffer::VERTEX},
+		{ ShaderAttribute::Type::VEC3, ShaderAttribute::Purpose::MATERIAL_DIFFUSE, ShaderAttribute::Buffer::VERTEX},
+		{ ShaderAttribute::Type::VEC3, ShaderAttribute::Purpose::MATERIAL_SPECULAR, ShaderAttribute::Buffer::VERTEX},
+		{ ShaderAttribute::Type::FLOAT, ShaderAttribute::Purpose::MATERIAL_SHININESS, ShaderAttribute::Buffer::VERTEX},
 		{ ShaderAttribute::Type::VEC3, ShaderAttribute::Purpose::NORMAL, ShaderAttribute::Buffer::VERTEX}
 	};
 
@@ -56,7 +60,7 @@ int main(int argc, char* argv[])
 
 	std::vector<std::pair<Vertices, unsigned int>> meshes = models::parse_scene(scene_ptr, attributes);
 
-	//meshes.erase(std::remove_if(meshes.begin(), meshes.end(), [](Vertices& v) {return v.empty();}));
+	//meshes.erase(std::remove_if(meshes.begin(), meshes.end(), [](std::pair<Vertices, unsigned int>& v) {return v.first.empty();}));
 
 	auto create_texture_render_entities = models::parse_textures(scene_ptr);
 	std::vector<Texture> textures;
@@ -80,8 +84,16 @@ int main(int argc, char* argv[])
 
 	PerspectiveCamera camera(blue::Context::window().get_width(), blue::Context::window().get_height());
 
+	glm::vec3 lightPos = { 10.0f, 10.0f, 10.f };
+	glm::vec3 lightColor = { 0.8f, 0.8f, 0.8f };
+	float ambientStrength = 0.8f;
+
 	blue::Context::gpu_system().submit(UpdateEnvironmentEntity_Projection{ environment, camera.get_projection() });
 	blue::Context::gpu_system().submit(UpdateEnvironmentEntity_View{ environment, camera.get_view() });
+	blue::Context::gpu_system().submit(UpdateEnvironmentEntity_CameraPos{ environment, camera.get_position() });
+	blue::Context::gpu_system().submit(UpdateEnvironmentEntity_LightPos{ environment, lightPos });
+	blue::Context::gpu_system().submit(UpdateEnvironmentEntity_LightColor{ environment, lightColor });
+	blue::Context::gpu_system().submit(UpdateEnvironmentEntity_AmbientStrength{ environment, ambientStrength });
 	blue::Context::gpu_system().submit(SetClearColorEntity{ {0.5f, 0.5f, 0.5f} });
 
 	// Register callbacks
@@ -97,6 +109,7 @@ int main(int argc, char* argv[])
 	{
 		camera.go_forward(CAMERA_SPEED);
 		blue::Context::gpu_system().submit(UpdateEnvironmentEntity_View{ environment, camera.get_view() });
+		blue::Context::gpu_system().submit(UpdateEnvironmentEntity_CameraPos{ environment, camera.get_position() });
 	};
 	blue::Context::input().registerKeyCallback({ w_callback, SDLK_w, SDL_KEYDOWN });
 
@@ -104,6 +117,7 @@ int main(int argc, char* argv[])
 	{
 		camera.go_backward(CAMERA_SPEED);
 		blue::Context::gpu_system().submit(UpdateEnvironmentEntity_View{ environment, camera.get_view() });
+		blue::Context::gpu_system().submit(UpdateEnvironmentEntity_CameraPos{ environment, camera.get_position() });
 	};
 	blue::Context::input().registerKeyCallback({ s_callback, SDLK_s, SDL_KEYDOWN });
 
@@ -111,6 +125,7 @@ int main(int argc, char* argv[])
 	{
 		camera.go_left(CAMERA_SPEED);
 		blue::Context::gpu_system().submit(UpdateEnvironmentEntity_View{ environment, camera.get_view() });
+		blue::Context::gpu_system().submit(UpdateEnvironmentEntity_CameraPos{ environment, camera.get_position() });
 	};
 	blue::Context::input().registerKeyCallback({ a_callback, SDLK_a, SDL_KEYDOWN });
 
@@ -118,6 +133,7 @@ int main(int argc, char* argv[])
 	{
 		camera.go_right(CAMERA_SPEED);
 		blue::Context::gpu_system().submit(UpdateEnvironmentEntity_View{ environment, camera.get_view() });
+		blue::Context::gpu_system().submit(UpdateEnvironmentEntity_CameraPos{ environment, camera.get_position() });
 	};
 	blue::Context::input().registerKeyCallback({ d_callback, SDLK_d, SDL_KEYDOWN });
 
@@ -125,6 +141,7 @@ int main(int argc, char* argv[])
 	{
 		camera.mouse_rotation(xpos, ypos);
 		blue::Context::gpu_system().submit(UpdateEnvironmentEntity_View{ environment, camera.get_view() });
+		blue::Context::gpu_system().submit(UpdateEnvironmentEntity_CameraPos{ environment, camera.get_position() });
 	};
 
 	blue::Context::input().registerMouseMoveCallback(mouse_move_callback);

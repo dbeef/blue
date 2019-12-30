@@ -120,6 +120,20 @@ bool GpuCommandSystem::execute()
         executed_some_work = true;
 	}
 
+	while (!update_light_color_entities.empty())
+	{
+		handle(update_light_color_entities.front());
+		update_light_color_entities.pop();
+        executed_some_work = true;
+	}
+
+	while (!update_ambient_strength_entities.empty())
+	{
+		handle(update_ambient_strength_entities.front());
+		update_ambient_strength_entities.pop();
+        executed_some_work = true;
+	}
+
 	while (!update_environment_projection_entities.empty())
 	{
 		handle(update_environment_projection_entities.front());
@@ -305,6 +319,20 @@ void GpuCommandSystem::submit(const UpdateEnvironmentEntity_LightPos& entity)
 {
 	lock();
 	update_environment_light_pos_entities.push(entity);
+	unlock();
+}
+
+void GpuCommandSystem::submit(const UpdateEnvironmentEntity_LightColor& entity)
+{
+	lock();
+	update_light_color_entities.push(entity);
+	unlock();
+}
+
+void GpuCommandSystem::submit(const UpdateEnvironmentEntity_AmbientStrength& entity)
+{
+	lock();
+	update_ambient_strength_entities.push(entity);
 	unlock();
 }
 

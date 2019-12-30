@@ -80,7 +80,7 @@ namespace
 		return 0;
 	}
 
-	std::pair<Vertices, unsigned int> process_mesh(aiMesh* mesh, const Attributes& attributes, float span, aiMatrix4x4 transformation)
+	std::pair<Vertices, unsigned int> process_mesh(aiMesh* mesh, const Attributes& attributes, float span, aiMatrix4x4 transformation, const aiScene* scene)
 	{
 		std::pair<Vertices, unsigned int> vertices;
 
@@ -131,6 +131,7 @@ namespace
 					{
 						if (mesh->mColors[0] != nullptr) {
 							current_color = mesh->mColors[0][index];
+
 							vertices.first.push_back(current_color.r);
 							vertices.first.push_back(current_color.g);
 							vertices.first.push_back(current_color.b);
@@ -140,6 +141,158 @@ namespace
 							vertices.first.push_back(0);
 							vertices.first.push_back(0);
 						}
+						break;
+					}
+					case(ShaderAttribute::Purpose::MATERIAL_AMBIENT):
+					{
+						auto material_index = mesh->mMaterialIndex;
+						const aiMaterial* material = scene->mMaterials[material_index];
+
+						for (std::size_t material_property_index = 0; material_property_index < material->mNumProperties; material_property_index++)
+						{
+							const aiMaterialProperty* material_property = material->mProperties[material_property_index];
+							if (material_property->mKey == aiString("$raw.Ambient"))
+							{
+								switch (material_property->mType)
+								{
+									case(aiPropertyTypeInfo::aiPTI_Float):
+									{
+										float* p = (float*) material_property->mData;
+										vertices.first.push_back(*(p + 0));
+										vertices.first.push_back(*(p + 1));
+										vertices.first.push_back(*(p + 2));
+										break;
+									}
+									case(aiPropertyTypeInfo::aiPTI_Double):
+									{
+										double* p = (double*) material_property->mData;
+										vertices.first.push_back(*(p + 0));
+										vertices.first.push_back(*(p + 1));
+										vertices.first.push_back(*(p + 2));
+										break;
+									}
+									default: 
+									{
+										BLUE_ASSERT(false);
+										break;
+									}
+								}
+							}
+						}
+
+						break;
+					}
+					case(ShaderAttribute::Purpose::MATERIAL_DIFFUSE):
+					{
+						auto material_index = mesh->mMaterialIndex;
+						const aiMaterial* material = scene->mMaterials[material_index];
+
+						for (std::size_t material_property_index = 0; material_property_index < material->mNumProperties; material_property_index++)
+						{
+							const aiMaterialProperty* material_property = material->mProperties[material_property_index];
+							if (material_property->mKey == aiString("$raw.Diffuse"))
+							{
+								switch (material_property->mType)
+								{
+									case(aiPropertyTypeInfo::aiPTI_Float):
+									{
+										float* p = (float*) material_property->mData;
+										vertices.first.push_back(*(p + 0));
+										vertices.first.push_back(*(p + 1));
+										vertices.first.push_back(*(p + 2));
+										break;
+									}
+									case(aiPropertyTypeInfo::aiPTI_Double):
+									{
+										double* p = (double*) material_property->mData;
+										vertices.first.push_back(*(p + 0));
+										vertices.first.push_back(*(p + 1));
+										vertices.first.push_back(*(p + 2));
+										break;
+									}
+									default: 
+									{
+										BLUE_ASSERT(false);
+										break;
+									}
+								}
+							}
+						}
+
+						break;
+					}
+					case(ShaderAttribute::Purpose::MATERIAL_SPECULAR):
+					{
+						auto material_index = mesh->mMaterialIndex;
+						const aiMaterial* material = scene->mMaterials[material_index];
+
+						for (std::size_t material_property_index = 0; material_property_index < material->mNumProperties; material_property_index++)
+						{
+							const aiMaterialProperty* material_property = material->mProperties[material_property_index];
+							if (material_property->mKey == aiString("$raw.Specular"))
+							{
+								switch (material_property->mType)
+								{
+									case(aiPropertyTypeInfo::aiPTI_Float):
+									{
+										float* p = (float*) material_property->mData;
+										vertices.first.push_back(*(p + 0));
+										vertices.first.push_back(*(p + 1));
+										vertices.first.push_back(*(p + 2));
+										break;
+									}
+									case(aiPropertyTypeInfo::aiPTI_Double):
+									{
+										double* p = (double*) material_property->mData;
+										vertices.first.push_back(*(p + 0));
+										vertices.first.push_back(*(p + 1));
+										vertices.first.push_back(*(p + 2));
+										break;
+									}
+									default: 
+									{
+										BLUE_ASSERT(false);
+										break;
+									}
+								}
+							}
+						}
+
+						break;
+					}
+					case(ShaderAttribute::Purpose::MATERIAL_SHININESS):
+					{
+						auto material_index = mesh->mMaterialIndex;
+						const aiMaterial* material = scene->mMaterials[material_index];
+
+						for (std::size_t material_property_index = 0; material_property_index < material->mNumProperties; material_property_index++)
+						{
+							const aiMaterialProperty* material_property = material->mProperties[material_property_index];
+							if (material_property->mKey == aiString("$raw.Shininess"))
+							{
+								switch (material_property->mType)
+								{
+									case(aiPropertyTypeInfo::aiPTI_Float):
+									{
+										float* p = (float*) material_property->mData;
+										vertices.first.push_back(*(p));
+										break;
+									}
+									case(aiPropertyTypeInfo::aiPTI_Double):
+									{
+										double* p = (double*) material_property->mData;
+										vertices.first.push_back(*(p));
+										break;
+									}
+									default: 
+									{
+										BLUE_ASSERT(false);
+										break;
+									}
+								}
+							}
+						}
+
 						break;
 					}
 					case(ShaderAttribute::Purpose::TEXTURE_COORDINATE):
@@ -208,7 +361,7 @@ namespace
 			auto& nd = parent;
 			aiMultiplyMatrix4(&trafo, &nd->mTransformation);
 
-			meshes.push_back(process_mesh(mesh, attributes, span, trafo));
+			meshes.push_back(process_mesh(mesh, attributes, span, trafo, scene));
 		}
 
 		if (node->mNumChildren)
@@ -279,6 +432,13 @@ std::vector<CreateTextureEntity> models::parse_textures(const aiScene*& scene)
 	for (std::size_t index = 0; index < scene->mNumMaterials; index++)
 	{
 		blue::Context::logger().info("Material {} name {}", index, scene->mMaterials[index]->GetName().C_Str());
+		
+		blue::Context::logger().info("--- Properties: ");
+		for (std::size_t property_index = 0; property_index < scene->mMaterials[index]->mNumProperties; property_index++)
+		{
+			auto material_property = scene->mMaterials[index]->mProperties[property_index];
+			blue::Context::logger().info("--- Property: {}, type: {}, data length: {}", material_property->mKey.C_Str(), (int)material_property->mType, (int) material_property->mDataLength);
+		}
 
 		for (std::size_t textureType = 0; textureType < 12; textureType++) {
 

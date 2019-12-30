@@ -12,3 +12,6 @@ void handle(UpdateEnvironmentEntity_LightSpaceMatrix& entity);
 
 void handle(UpdateEnvironmentEntity_View& entity);
 
+void handle(UpdateEnvironmentEntity_AmbientStrength& entity);
+
+void handle(UpdateEnvironmentEntity_LightColor& entity);

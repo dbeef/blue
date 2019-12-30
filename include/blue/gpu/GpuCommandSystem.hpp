@@ -32,6 +32,8 @@ public:
 	void submit(const UpdateEnvironmentEntity_LightSpaceMatrix&);
 	void submit(const UpdateEnvironmentEntity_CameraPos&);
 	void submit(const UpdateEnvironmentEntity_LightPos&);
+	void submit(const UpdateEnvironmentEntity_LightColor&);
+	void submit(const UpdateEnvironmentEntity_AmbientStrength&);
 	void submit(const SetClearColorEntity&);
 
 private:
@@ -59,6 +61,8 @@ private:
 	std::queue<UpdateEnvironmentEntity_View> update_environment_view_entities;
 	std::queue<UpdateEnvironmentEntity_LightSpaceMatrix> update_environment_light_space_matrix_entities;
 	std::queue<UpdateEnvironmentEntity_Projection> update_environment_projection_entities;
+	std::queue<UpdateEnvironmentEntity_AmbientStrength> update_ambient_strength_entities;
+	std::queue<UpdateEnvironmentEntity_LightColor> update_light_color_entities;
 
 	std::atomic_bool locked {false};
 };

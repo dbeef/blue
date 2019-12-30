@@ -43,3 +43,13 @@ void handle(UpdateEnvironmentEntity_View& entity)
 {
 	upload_chunk(entity.id, glm::value_ptr(entity.view), 0, 64);
 }
+
+void handle(UpdateEnvironmentEntity_AmbientStrength& entity)
+{
+	upload_chunk(entity.id, &entity.strength, 128, 4);
+}
+
+void handle(UpdateEnvironmentEntity_LightColor& entity)
+{
+	upload_chunk(entity.id, glm::value_ptr(entity.color), 144, 12);
+}

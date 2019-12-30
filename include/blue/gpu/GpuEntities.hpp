@@ -30,6 +30,11 @@ struct ShaderAttribute
 		TRANSLATION,
 		QUATERNION,
 		MODEL,
+		MATERIAL_AMBIENT,
+		MATERIAL_DIFFUSE,
+		MATERIAL_SPECULAR,
+		MATERIAL_SHININESS,
+
 	};
 
 	enum class Buffer
@@ -323,6 +328,18 @@ struct UpdateEnvironmentEntity_View
 {
 	const UniformBufferId id;
 	const glm::mat4 view;
+};
+
+struct UpdateEnvironmentEntity_AmbientStrength
+{
+	const UniformBufferId id;
+	float strength;
+};
+
+struct UpdateEnvironmentEntity_LightColor
+{
+	const UniformBufferId id;
+	glm::vec3 color;
 };
 
 struct UpdateEnvironmentEntity_LightSpaceMatrix

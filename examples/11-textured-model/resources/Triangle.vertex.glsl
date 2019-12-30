@@ -1,6 +1,10 @@
 layout(location = 0) in vec3 position;
 layout(location = 1) in vec2 tex_coordinates;
-layout(location = 2) in vec3 normal;
+layout(location = 2) in vec3 m_ambient;
+layout(location = 3) in vec3 m_diffuse;
+layout(location = 4) in vec3 m_specular;
+layout(location = 5) in float m_shininess;
+layout(location = 6) in vec3 normal;
 
 layout(location = 0) uniform lowp mat4 model;
 
@@ -13,6 +17,7 @@ layout (std140) uniform Matrices
         float ambientStrength;
         vec3 lightColor;
         vec3 lightPos;
+        vec3 cameraPos;
 // Shadows
         mat4 lightSpaceMatrix;
 };
@@ -23,6 +28,11 @@ out vec3 FragPos;
 out vec2 TexCoordinates;
 out vec3 Normal;
 
+out vec3 MaterialAmbient;
+out vec3 MaterialDiffuse;
+out vec3 MaterialSpecular;
+out float MaterialShininess;
+
 void main()
 {
         gl_Position = projection * view * model * vec4(position, 1.0f);
@@ -30,6 +40,8 @@ void main()
         FragPos = vec3(model * vec4(position, 1.0f));
         Normal = normal;
         TexCoordinates = tex_coordinates;
+        MaterialAmbient = m_ambient;
+        MaterialDiffuse = m_diffuse;
+        MaterialSpecular = m_specular;
+        MaterialShininess = m_shininess;
 }
-
-
