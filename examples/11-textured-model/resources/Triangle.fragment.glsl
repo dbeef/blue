@@ -38,7 +38,7 @@ void main()
 //    color = vec4(ambient + diffuse, 1.0f);
 
     // ambient
-    vec3 ambient = lightColor * MaterialAmbient;
+    vec3 ambient = lightColor * MaterialAmbient * ambientStrength;
   	
     // diffuse 
     vec3 norm = normalize(Normal);

@@ -84,9 +84,9 @@ int main(int argc, char* argv[])
 
 	PerspectiveCamera camera(blue::Context::window().get_width(), blue::Context::window().get_height());
 
-	glm::vec3 lightPos = { 10.0f, 10.0f, 10.f };
-	glm::vec3 lightColor = { 0.8f, 0.8f, 0.8f };
-	float ambientStrength = 0.8f;
+	glm::vec3 lightPos = { 10.0f, 40.0f, 10.f };
+	glm::vec3 lightColor = { 1.0f, 1.0f, 1.0f };
+	float ambientStrength = 0.25f;
 
 	blue::Context::gpu_system().submit(UpdateEnvironmentEntity_Projection{ environment, camera.get_projection() });
 	blue::Context::gpu_system().submit(UpdateEnvironmentEntity_View{ environment, camera.get_view() });

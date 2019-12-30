@@ -120,7 +120,7 @@ namespace
 					{
 					case(ShaderAttribute::Purpose::VERTEX_POSITION):
 					{
-						aiVector3D transformed = transformation* vertex;
+						aiVector3D transformed = transformation * vertex;
 
 						vertices.first.push_back(transformed.x);
 						vertices.first.push_back(transformed.y);
@@ -155,27 +155,27 @@ namespace
 							{
 								switch (material_property->mType)
 								{
-									case(aiPropertyTypeInfo::aiPTI_Float):
-									{
-										float* p = (float*) material_property->mData;
-										vertices.first.push_back(*(p + 0));
-										vertices.first.push_back(*(p + 1));
-										vertices.first.push_back(*(p + 2));
-										break;
-									}
-									case(aiPropertyTypeInfo::aiPTI_Double):
-									{
-										double* p = (double*) material_property->mData;
-										vertices.first.push_back(*(p + 0));
-										vertices.first.push_back(*(p + 1));
-										vertices.first.push_back(*(p + 2));
-										break;
-									}
-									default: 
-									{
-										BLUE_ASSERT(false);
-										break;
-									}
+								case(aiPropertyTypeInfo::aiPTI_Float):
+								{
+									float* p = (float*)material_property->mData;
+									vertices.first.push_back(*(p + 0));
+									vertices.first.push_back(*(p + 1));
+									vertices.first.push_back(*(p + 2));
+									break;
+								}
+								case(aiPropertyTypeInfo::aiPTI_Double):
+								{
+									double* p = (double*)material_property->mData;
+									vertices.first.push_back(*(p + 0));
+									vertices.first.push_back(*(p + 1));
+									vertices.first.push_back(*(p + 2));
+									break;
+								}
+								default:
+								{
+									BLUE_ASSERT(false);
+									break;
+								}
 								}
 							}
 						}
@@ -194,27 +194,27 @@ namespace
 							{
 								switch (material_property->mType)
 								{
-									case(aiPropertyTypeInfo::aiPTI_Float):
-									{
-										float* p = (float*) material_property->mData;
-										vertices.first.push_back(*(p + 0));
-										vertices.first.push_back(*(p + 1));
-										vertices.first.push_back(*(p + 2));
-										break;
-									}
-									case(aiPropertyTypeInfo::aiPTI_Double):
-									{
-										double* p = (double*) material_property->mData;
-										vertices.first.push_back(*(p + 0));
-										vertices.first.push_back(*(p + 1));
-										vertices.first.push_back(*(p + 2));
-										break;
-									}
-									default: 
-									{
-										BLUE_ASSERT(false);
-										break;
-									}
+								case(aiPropertyTypeInfo::aiPTI_Float):
+								{
+									float* p = (float*)material_property->mData;
+									vertices.first.push_back(*(p + 0));
+									vertices.first.push_back(*(p + 1));
+									vertices.first.push_back(*(p + 2));
+									break;
+								}
+								case(aiPropertyTypeInfo::aiPTI_Double):
+								{
+									double* p = (double*)material_property->mData;
+									vertices.first.push_back(*(p + 0));
+									vertices.first.push_back(*(p + 1));
+									vertices.first.push_back(*(p + 2));
+									break;
+								}
+								default:
+								{
+									BLUE_ASSERT(false);
+									break;
+								}
 								}
 							}
 						}
@@ -233,27 +233,27 @@ namespace
 							{
 								switch (material_property->mType)
 								{
-									case(aiPropertyTypeInfo::aiPTI_Float):
-									{
-										float* p = (float*) material_property->mData;
-										vertices.first.push_back(*(p + 0));
-										vertices.first.push_back(*(p + 1));
-										vertices.first.push_back(*(p + 2));
-										break;
-									}
-									case(aiPropertyTypeInfo::aiPTI_Double):
-									{
-										double* p = (double*) material_property->mData;
-										vertices.first.push_back(*(p + 0));
-										vertices.first.push_back(*(p + 1));
-										vertices.first.push_back(*(p + 2));
-										break;
-									}
-									default: 
-									{
-										BLUE_ASSERT(false);
-										break;
-									}
+								case(aiPropertyTypeInfo::aiPTI_Float):
+								{
+									float* p = (float*)material_property->mData;
+									vertices.first.push_back(*(p + 0));
+									vertices.first.push_back(*(p + 1));
+									vertices.first.push_back(*(p + 2));
+									break;
+								}
+								case(aiPropertyTypeInfo::aiPTI_Double):
+								{
+									double* p = (double*)material_property->mData;
+									vertices.first.push_back(*(p + 0));
+									vertices.first.push_back(*(p + 1));
+									vertices.first.push_back(*(p + 2));
+									break;
+								}
+								default:
+								{
+									BLUE_ASSERT(false);
+									break;
+								}
 								}
 							}
 						}
@@ -272,23 +272,23 @@ namespace
 							{
 								switch (material_property->mType)
 								{
-									case(aiPropertyTypeInfo::aiPTI_Float):
-									{
-										float* p = (float*) material_property->mData;
-										vertices.first.push_back(*(p));
-										break;
-									}
-									case(aiPropertyTypeInfo::aiPTI_Double):
-									{
-										double* p = (double*) material_property->mData;
-										vertices.first.push_back(*(p));
-										break;
-									}
-									default: 
-									{
-										BLUE_ASSERT(false);
-										break;
-									}
+								case(aiPropertyTypeInfo::aiPTI_Float):
+								{
+									float* p = (float*)material_property->mData;
+									vertices.first.push_back(*(p));
+									break;
+								}
+								case(aiPropertyTypeInfo::aiPTI_Double):
+								{
+									double* p = (double*)material_property->mData;
+									vertices.first.push_back(*(p));
+									break;
+								}
+								default:
+								{
+									BLUE_ASSERT(false);
+									break;
+								}
 								}
 							}
 						}
@@ -349,18 +349,17 @@ namespace
 		return vertices;
 	}
 
-	std::vector<std::pair<Vertices, unsigned int>> process_node(aiNode* node, aiNode* parent, const aiScene* scene, const Attributes& attributes, float span, std::vector<std::pair<Vertices, unsigned int>>& meshes)
+	std::vector<std::pair<Vertices, unsigned int>> process_node(aiNode* node, aiNode* parent, const aiScene* scene, const Attributes& attributes, float span, std::vector<std::pair<Vertices, unsigned int>>& meshes, aiMatrix4x4& transformation)
 	{
+		aiMatrix4x4 trafo;
+		aiIdentityMatrix4(&trafo);
+		aiMultiplyMatrix4(&trafo, &transformation);
+		aiMultiplyMatrix4(&trafo, &node->mTransformation);
+
 		for (std::size_t mesh_index = 0; mesh_index < node->mNumMeshes; mesh_index++)
 		{
 			unsigned int internal_mesh_index = node->mMeshes[mesh_index];
 			aiMesh* mesh = scene->mMeshes[internal_mesh_index];
-
-			aiMatrix4x4 trafo;
-			aiIdentityMatrix4(&trafo);
-			auto& nd = parent;
-			aiMultiplyMatrix4(&trafo, &nd->mTransformation);
-
 			meshes.push_back(process_mesh(mesh, attributes, span, trafo, scene));
 		}
 
@@ -368,7 +367,11 @@ namespace
 		{
 			for (std::size_t node_index = 0; node_index < node->mNumChildren; node_index++)
 			{
-				process_node(node->mChildren[node_index], node, scene, attributes, span, meshes);
+				aiIdentityMatrix4(&trafo);
+				aiMultiplyMatrix4(&trafo, &transformation);
+				aiMultiplyMatrix4(&trafo, &node->mTransformation);
+
+				process_node(node->mChildren[node_index], node, scene, attributes, span, meshes, trafo);
 			}
 		}
 
@@ -432,12 +435,12 @@ std::vector<CreateTextureEntity> models::parse_textures(const aiScene*& scene)
 	for (std::size_t index = 0; index < scene->mNumMaterials; index++)
 	{
 		blue::Context::logger().info("Material {} name {}", index, scene->mMaterials[index]->GetName().C_Str());
-		
+
 		blue::Context::logger().info("--- Properties: ");
 		for (std::size_t property_index = 0; property_index < scene->mMaterials[index]->mNumProperties; property_index++)
 		{
 			auto material_property = scene->mMaterials[index]->mProperties[property_index];
-			blue::Context::logger().info("--- Property: {}, type: {}, data length: {}", material_property->mKey.C_Str(), (int)material_property->mType, (int) material_property->mDataLength);
+			blue::Context::logger().info("--- Property: {}, type: {}, data length: {}", material_property->mKey.C_Str(), (int)material_property->mType, (int)material_property->mDataLength);
 		}
 
 		for (std::size_t textureType = 0; textureType < 12; textureType++) {
@@ -479,8 +482,11 @@ std::vector<std::pair<Vertices, unsigned int>> models::parse_scene(const aiScene
 		span = std::abs(max_height) + std::abs(min_height);
 	}
 
+	aiMatrix4x4 trafo;
+	aiIdentityMatrix4(&trafo);
+
 	std::vector<std::pair<Vertices, unsigned int>> meshes;
-	process_node(scene->mRootNode, scene->mRootNode, scene, attributes, span, meshes);
+	process_node(scene->mRootNode, scene->mRootNode, scene, attributes, span, meshes, trafo);
 
 	return meshes;
 }
