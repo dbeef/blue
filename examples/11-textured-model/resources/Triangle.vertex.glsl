@@ -38,7 +38,7 @@ void main()
         gl_Position = projection * view * model * vec4(position, 1.0f);
         // Forwarding values to fragment shader
         FragPos = vec3(model * vec4(position, 1.0f));
-        Normal = normal;
+        Normal = -1.0 * vec3(model * vec4(normal, 1.0f));
         TexCoordinates = tex_coordinates;
         MaterialAmbient = m_ambient;
         MaterialDiffuse = m_diffuse;

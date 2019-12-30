@@ -53,8 +53,8 @@ int main(int argc, char* argv[])
 	};
 
 	// Simple model I created, that utilizes vertex painting.
-	auto scene_ptr = models::load_scene("resources/low-poly-mill.fbx");
-	//auto scene_ptr = models::load_scene("resources/Low-Poly-Racing-Car.fbx");
+	//auto scene_ptr = models::load_scene("resources/low-poly-mill.fbx");
+	auto scene_ptr = models::load_scene("resources/Low-Poly-Racing-Car.fbx");
 
 	// TODO: Supporting more textures; first merge image processing branch.
 	// TODO: Not only vertices; list of paths to textures
@@ -85,9 +85,9 @@ int main(int argc, char* argv[])
 
 	PerspectiveCamera camera(blue::Context::window().get_width(), blue::Context::window().get_height());
 
-	glm::vec3 lightPos = { 0.0f, 30.0f, 10.f };
+	glm::vec3 lightPos = { 30.0f, 33.0f, 30.f };
 	glm::vec3 lightColor = { 1.0f, 1.0f, 1.0f };
-	float ambientStrength = 0.9f;
+	float ambientStrength = 1.0f;
 
 	blue::Context::gpu_system().submit(UpdateEnvironmentEntity_Projection{ environment, camera.get_projection() });
 	blue::Context::gpu_system().submit(UpdateEnvironmentEntity_View{ environment, camera.get_view() });

@@ -318,11 +318,12 @@ namespace
 					}
 					case(ShaderAttribute::Purpose::NORMAL):
 					{
-						if (mesh->mNormals != nullptr) {
+						if (mesh->HasNormals() && mesh->mNormals != nullptr) {
 
 							auto normal = mesh->mNormals[index];
-							//aiVector3D transformed = transformation * normal;
-							aiVector3D transformed = normal;
+
+							aiVector3D transformed = transformation * normal;
+							transformed = transformed.Normalize();
 
 							vertices.first.push_back(transformed.x);
 							vertices.first.push_back(transformed.y);
@@ -352,6 +353,8 @@ namespace
 
 	std::vector<std::pair<Vertices, unsigned int>> process_node(aiNode* node, aiNode* parent, const aiScene* scene, const Attributes& attributes, float span, std::vector<std::pair<Vertices, unsigned int>>& meshes, aiMatrix4x4& transformation)
 	{
+		blue::Context::logger().info("Current node: {}", node->mName.C_Str());
+
 		aiMatrix4x4 trafo;
 		aiIdentityMatrix4(&trafo);
 		aiMultiplyMatrix4(&trafo, &transformation);
@@ -408,7 +411,7 @@ const aiScene* models::load_scene(const std::string& path)
 	}
 
 	const aiScene* scene;
-	scene = aiImportFileFromMemory(data.data(), size, aiProcessPreset_TargetRealtime_MaxQuality, "fbx");
+	scene = aiImportFileFromMemory(data.data(), size, aiProcessPreset_TargetRealtime_MaxQuality | aiProcess_FixInfacingNormals | aiProcess_PreTransformVertices, "fbx");
 
 	aiVector3D scene_min, scene_max, scene_center;
 
