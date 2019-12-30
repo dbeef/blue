@@ -8,6 +8,8 @@
 #include <atomic>
 #include <algorithm>
 
+// TODO: Postprocessing
+
 static const float CAMERA_SPEED = 0.5f;
 
 int main(int argc, char* argv[])

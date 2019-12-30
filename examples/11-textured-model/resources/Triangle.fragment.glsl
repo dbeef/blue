@@ -20,6 +20,8 @@ in vec3 MaterialAmbient;
 in vec3 MaterialDiffuse;
 in vec3 MaterialSpecular;
 
+in vec3 ToCameraPos; // For fresnel effect
+
 in float MaterialShininess;
 
 out vec4 color;
@@ -52,7 +54,14 @@ void main()
     vec3 reflectDir = reflect(-lightDir, norm);  
     float spec = pow(max(dot(viewDir, reflectDir), 0.0), MaterialShininess);
     vec3 specular = lightColor * (spec * MaterialSpecular);  
+
+	// fresnel
+
+	vec3 toCameraVector = cameraPos - FragPos;
+	vec3 viewVector = normalize(toCameraVector);
+	float refractiveFactor = pow(dot(viewVector, norm), 10.0);
+	vec3 refractive = vec3(0.7, 0.7, 0.7) * refractiveFactor;
         
-    vec3 result = ambient + diffuse + specular;
+    vec3 result = ambient + diffuse + specular + refractive;
     color = vec4(result, 1.0);
 }
