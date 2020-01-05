@@ -11,6 +11,7 @@ function(blue_find_dependencies_linux)
 
     target_link_libraries(Dependencies INTERFACE
             SDL2::SDL2-static
+            dl
             glm
             glad
             assimp
