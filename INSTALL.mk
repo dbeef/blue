@@ -36,6 +36,7 @@ SDL2: $(VCPKG)
 build:
 	cmake -DCMAKE_BUILD_TYPE=Debug -DCMAKE_C_COMPILER=/usr/local/bin/gcc -DCMAKE_CXX_COMPILER=/usr/local/bin/g++ -DCMAKE_TOOLCHAIN_FILE=bundle/vcpkg/scripts/buildsystems/vcpkg.cmake -G "CodeBlocks - Unix Makefiles"
 	cmake --build cmake-build-debug-ccache --target ClearColorSample -j 4
+	cmake --build cmake-build-debug-ccache -j 4
 
 .PHONY: run
 run:
