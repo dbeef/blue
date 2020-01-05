@@ -110,6 +110,7 @@ target_include_directories(
         PUBLIC
         include
         ${OPENGL_INCLUDE_DIRS}
+        bundle/vcpkg/installed/x64-linux/include/
 )
 
 target_link_libraries(
