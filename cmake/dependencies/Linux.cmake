@@ -7,7 +7,7 @@ function(blue_find_dependencies_linux)
     find_package(glm REQUIRED)
     find_package(SDL2 REQUIRED)
     find_package(spdlog REQUIRED)
-    find_package(Assimp REQUIRED)
+
 
     target_link_libraries(Dependencies INTERFACE
             SDL2::SDL2-static

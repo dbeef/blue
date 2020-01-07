@@ -5,7 +5,12 @@
 #include "blue/ResourcesPath.h"
 #include <string>
 #include <assert.h>
+
+#ifdef _WIN32
 #include <SDL.h>
+#else
+#include <SDL2/SDL.h>
+#endif
 
 namespace {
     const char *CURRENT_PLATFORM = BLUE_PLATFORM;
