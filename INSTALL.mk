@@ -29,21 +29,22 @@ SDL2: $(VCPKG)
 	$(VCPKG) install SDL2
 
 
+BUILD_DIR=cmake-build-debug-ccache
 .PHONY: build
 build: | SDL2 assimp
 	cmake -DCMAKE_BUILD_TYPE=Debug -DCMAKE_C_COMPILER=/usr/local/bin/gcc -DCMAKE_CXX_COMPILER=/usr/local/bin/g++ -DCMAKE_TOOLCHAIN_FILE=bundle/vcpkg/scripts/buildsystems/vcpkg.cmake -G "CodeBlocks - Unix Makefiles"
-	cmake --build cmake-build-debug-ccache --target ClearColorSample -j 4
-	cmake --build cmake-build-debug-ccache -j 4
+	cmake --build $(BUILD_DIR) --target ClearColorSample -j 4
+	cmake --build $(BUILD_DIR) -j 4
 
 .PHONY: run
 run:
-	./cmake-build-debug-ccache/examples/1-clear-color/ClearColorSample
+	./$(BUILD_DIR)/examples/1-clear-color/ClearColorSample
 
 IMAGE=blue-build
 .PHONY: build-docker-image
 build-docker-image:
-	sudo docker build . -t $(IMAGE)
+	cd docker && sudo docker build . -t $(IMAGE)
 
 .PHONY: build-docker
 build-docker:
-	sudo docker run -it --rm -v $(PWD):/project $(IMAGE) make build
+	sudo docker run -it --rm -v $(PWD):/project $(IMAGE) make -f INSTALL.mk build BUILD_DIR=cmake-build-docker
